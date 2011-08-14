@@ -1,4 +1,4 @@
-﻿<Application x:Class="MeloManager.App"
+﻿<Application x:Class="Oleg_ivo.MeloManager.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">

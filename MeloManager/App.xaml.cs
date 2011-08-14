@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 
-namespace MeloManager
+namespace Oleg_ivo.MeloManager
 {
     /// <summary>
     /// Interaction logic for App.xaml
