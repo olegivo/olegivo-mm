@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeloManager", "MeloManager\MeloManager.csproj", "{6A996E0A-E930-41F1-B1CC-2E8E0E6E33A5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oleg_ivo.MeloManager", "Oleg_ivo.MeloManager\Oleg_ivo.MeloManager.csproj", "{6A996E0A-E930-41F1-B1CC-2E8E0E6E33A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
