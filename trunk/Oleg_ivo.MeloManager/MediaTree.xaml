@@ -1,0 +1,13 @@
+﻿<UserControl x:Class="Oleg_ivo.MeloManager.MediaTree"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300" xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol" xmlns:XtraTreeList="clr-namespace:DevExpress.XtraTreeList;assembly=DevExpress.XtraTreeList.v10.2">
+    <dxlc:LayoutControl HorizontalAlignment="Stretch" Margin="12" Name="layoutControl1" VerticalAlignment="Stretch">
+        <WindowsFormsHost HorizontalAlignment="Stretch" Name="windowsFormsHost1" VerticalAlignment="Stretch" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" >
+            <XtraTreeList:TreeList AutoSize="False" Dock="Fill" x:Name="tree" />
+        </WindowsFormsHost>
+    </dxlc:LayoutControl>
+
+</UserControl>
