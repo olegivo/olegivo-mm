@@ -1,8 +1,18 @@
 ﻿<Window x:Class="Oleg_ivo.MeloManager.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        Title="MeloManager" Height="692" Width="1189" xmlns:my="clr-namespace:Oleg_ivo.MeloManager" xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol" xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors" WindowStartupLocation="CenterOwner" WindowState="Maximized">
+    <dxlc:LayoutControl HorizontalAlignment="Stretch" Margin="25,10,0,0" Name="layoutControl1" VerticalAlignment="Stretch">
+        <dxlc:LayoutGroup Name="layoutGroup2" View="GroupBox">
+            <my:MediaTree HorizontalAlignment="Stretch" x:Name="mediaTree1" VerticalAlignment="Stretch" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" />
+        </dxlc:LayoutGroup>
+        <dxlc:LayoutGroup Name="layoutGroup1" View="GroupBox" Orientation="Vertical" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True">
+            <dxlc:LayoutItem Label="Содержит" Name="layoutItem1" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" VerticalAlignment="Stretch" LabelPosition="Top">
+                <my:MediaList HorizontalAlignment="Stretch" x:Name="mediaList1" VerticalAlignment="Stretch" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" />
+            </dxlc:LayoutItem>
+            <dxlc:LayoutItem Label="Содержится в" Name="layoutItem2" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" VerticalAlignment="Stretch" LabelPosition="Top">
+                <my:MediaList HorizontalAlignment="Stretch" x:Name="mediaList2" VerticalAlignment="Stretch" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" />
+            </dxlc:LayoutItem>
+        </dxlc:LayoutGroup>
+    </dxlc:LayoutControl>
 </Window>
