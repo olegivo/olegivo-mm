@@ -19,6 +19,7 @@ namespace Oleg_ivo.MeloManager
 
         private void InitDatasource()
         {
+            //tree.DataSource = DataProvider.DataContext.MediaContainers.GetNewBindingList();
             var ds = new[]
                          {
                              new {Name = "Плейлисты", ID = 0, ParentID = 0},

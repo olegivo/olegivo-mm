@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="MeloManager" Class="MediaDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=OLEG-A\SQLEXPRESS;Initial Catalog=MeloManager;Integrated Security=True" SettingsObjectName="Oleg_ivo.MeloManager.MediaObjects.Properties.Settings" SettingsPropertyName="MeloManagerConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.MediaContainer" Member="MediaContainers">
+    <Type Name="MediaContainer" InheritanceCode="MediaContainer" IsInheritanceDefault="true">
+      <Column Name="Id" Type="System.Int64" DbType="BigInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Type" Type="System.String" DbType="varchar NOT NULL" CanBeNull="false" IsDiscriminator="true" />
+      <Column Name="Name" Type="System.String" DbType="NChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="IsRepaired" Type="System.Boolean" DbType="BIT NOT NULL" CanBeNull="false" />
+      <Association Name="MediaContainer_MediaContainersParentChild" Member="ParentMediaContainers" AccessModifier="Internal" ThisKey="Id" OtherKey="ChildId" Type="MediaContainersParentChild" />
+      <Association Name="MediaContainer_MediaContainersParentChild1" Member="ChildMediaContainers" AccessModifier="Internal" ThisKey="Id" OtherKey="ParentId" Type="MediaContainersParentChild" />
+      <Type Name="Playlist" InheritanceCode="Playlist">
+        <Column Name="Id" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
+      </Type>
+      <Type Name="MediaFile" InheritanceCode="MediaFile">
+        <Column Name="Id" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
+      </Type>
+      <Type Name="Category" InheritanceCode="Category">
+        <Column Name="Id" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
+      </Type>
+    </Type>
+  </Table>
+  <Table Name="dbo.MediaContainersParentChild" Member="MediaContainersParentChilds">
+    <Type Name="MediaContainersParentChild">
+      <Column Name="ParentId" Type="System.Int64" DbType="BigInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ChildId" Type="System.Int64" DbType="BigInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="MediaContainer_MediaContainersParentChild" Member="ChildMediaContainer" AccessModifier="Internal" ThisKey="ChildId" OtherKey="Id" Type="MediaContainer" IsForeignKey="true" />
+      <Association Name="MediaContainer_MediaContainersParentChild1" Member="ParentMediaContainer" AccessModifier="Internal" ThisKey="ParentId" OtherKey="Id" Type="MediaContainer" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>
