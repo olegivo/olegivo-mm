@@ -95,7 +95,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private long _Id;
+		private long _Id = default(long);
 		
 		private string _Type;
 		
@@ -111,8 +111,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnIdChanging(long value);
-    partial void OnIdChanged();
     partial void OnTypeChanging(string value);
     partial void OnTypeChanged();
     partial void OnNameChanging(string value);
@@ -128,23 +126,12 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
 		public long Id
 		{
 			get
 			{
 				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
 			}
 		}
 		
@@ -282,117 +269,45 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 	public partial class Playlist : MediaContainer
 	{
 		
-		private long _Id;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnIdChanging(long value);
-    partial void OnIdChanged();
     #endregion
 		
 		public Playlist()
 		{
 			OnCreated();
 		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="BigInt NOT NULL")]
-		public long Id
-		{
-			get
-			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
-			}
-		}
 	}
 	
 	public partial class MediaFile : MediaContainer
 	{
 		
-		private long _Id;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnIdChanging(long value);
-    partial void OnIdChanged();
     #endregion
 		
 		public MediaFile()
 		{
 			OnCreated();
 		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="BigInt NOT NULL")]
-		public long Id
-		{
-			get
-			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
-			}
-		}
 	}
 	
 	public partial class Category : MediaContainer
 	{
 		
-		private long _Id;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnIdChanging(long value);
-    partial void OnIdChanged();
     #endregion
 		
 		public Category()
 		{
 			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="BigInt NOT NULL")]
-		public long Id
-		{
-			get
-			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
-			}
 		}
 	}
 	
