@@ -128,7 +128,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="BigInt NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
 		public long Id
 		{
 			get
@@ -148,7 +148,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Type", DbType="varchar NOT NULL", CanBeNull=false, IsDiscriminator=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Type", DbType="VarChar(255) NOT NULL", CanBeNull=false, IsDiscriminator=true)]
 		public string Type
 		{
 			get
@@ -168,7 +168,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NChar(255) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="VarChar(255) NOT NULL", CanBeNull=false)]
 		public string Name
 		{
 			get
@@ -188,7 +188,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsRepaired", DbType="BIT NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsRepaired", DbType="Bit NOT NULL")]
 		public bool IsRepaired
 		{
 			get
