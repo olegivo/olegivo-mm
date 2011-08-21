@@ -87,9 +87,9 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MediaContainer")]
 	[global::System.Data.Linq.Mapping.InheritanceMappingAttribute(Code="MediaContainer", Type=typeof(MediaContainer), IsDefault=true)]
+	[global::System.Data.Linq.Mapping.InheritanceMappingAttribute(Code="Category", Type=typeof(Category))]
 	[global::System.Data.Linq.Mapping.InheritanceMappingAttribute(Code="Playlist", Type=typeof(Playlist))]
 	[global::System.Data.Linq.Mapping.InheritanceMappingAttribute(Code="MediaFile", Type=typeof(MediaFile))]
-	[global::System.Data.Linq.Mapping.InheritanceMappingAttribute(Code="Category", Type=typeof(Category))]
 	public partial class MediaContainer : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
@@ -196,7 +196,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MediaContainer_MediaContainersParentChild", Storage="_ParentMediaContainers", ThisKey="Id", OtherKey="ChildId")]
-		internal EntitySet<MediaContainersParentChild> ParentMediaContainers
+		public EntitySet<MediaContainersParentChild> ParentMediaContainers
 		{
 			get
 			{
@@ -209,7 +209,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MediaContainer_MediaContainersParentChild1", Storage="_ChildMediaContainers", ThisKey="Id", OtherKey="ParentId")]
-		internal EntitySet<MediaContainersParentChild> ChildMediaContainers
+		public EntitySet<MediaContainersParentChild> ChildMediaContainers
 		{
 			get
 			{
@@ -266,6 +266,21 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 		}
 	}
 	
+	public partial class Category : MediaContainer
+	{
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    #endregion
+		
+		public Category()
+		{
+			OnCreated();
+		}
+	}
+	
 	public partial class Playlist : MediaContainer
 	{
 		
@@ -291,21 +306,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     #endregion
 		
 		public MediaFile()
-		{
-			OnCreated();
-		}
-	}
-	
-	public partial class Category : MediaContainer
-	{
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    #endregion
-		
-		public Category()
 		{
 			OnCreated();
 		}
@@ -391,7 +391,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MediaContainer_MediaContainersParentChild", Storage="_ChildMediaContainer", ThisKey="ChildId", OtherKey="Id", IsForeignKey=true)]
-		internal MediaContainer ChildMediaContainer
+		public MediaContainer ChildMediaContainer
 		{
 			get
 			{
@@ -425,7 +425,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MediaContainer_MediaContainersParentChild1", Storage="_ParentMediaContainer", ThisKey="ParentId", OtherKey="Id", IsForeignKey=true)]
-		internal MediaContainer ParentMediaContainer
+		public MediaContainer ParentMediaContainer
 		{
 			get
 			{
