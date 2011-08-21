@@ -44,6 +44,8 @@
     <Compile Include="Category.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="MediaContainer.cs" />
+    <Compile Include="MediaContainerTreeSource.cs" />
+    <Compile Include="MediaContainerTreeWrapper.cs" />
     <Compile Include="MediaDataContext.cs">
       <DependentUpon>MediaDataContext.dbml</DependentUpon>
     </Compile>

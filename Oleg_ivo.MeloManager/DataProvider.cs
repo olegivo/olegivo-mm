@@ -1,3 +1,4 @@
+using System;
 using Oleg_ivo.MeloManager.MediaObjects;
 
 namespace Oleg_ivo.MeloManager
@@ -12,7 +13,7 @@ namespace Oleg_ivo.MeloManager
         /// </summary>
         static DataProvider()
         {
-            DataContext = new MediaDataContext();
+            DataContext = new MediaDataContext {Log = Console.Out};
         }
 
         /// <summary>

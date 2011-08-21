@@ -1,4 +1,7 @@
-﻿using System.Windows.Controls;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Controls;
+using Oleg_ivo.MeloManager.MediaObjects;
 
 namespace Oleg_ivo.MeloManager
 {
@@ -14,25 +17,62 @@ namespace Oleg_ivo.MeloManager
         {
             InitializeComponent();
 
-            InitDatasource();
+            //InitDataSource();
         }
 
-        private void InitDatasource()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        public void InitDataSource(IEnumerable<MediaContainer> data)
         {
-            //tree.DataSource = DataProvider.DataContext.MediaContainers.GetNewBindingList();
-            var ds = new[]
-                         {
-                             new {Name = "Плейлисты", ID = 0, ParentID = 0},
-                                new {Name = "Плейлист1", ID = 1, ParentID = 0}, 
-                                    new {Name = "Файл11", ID = 11, ParentID = 1}, 
-                                    new {Name = "Файл12", ID = 12, ParentID = 1},
-                                new {Name = "Плейлист2", ID = 2, ParentID = 0}, 
-                                    new {Name = "Файл21", ID = 21, ParentID = 2}, 
-                                    new {Name = "Файл22", ID = 22, ParentID = 2}
-                         };
+            MediaContainerTreeSource treeSource = new MediaContainerTreeSource();
+            treeSource.MediaDataContext = DataProvider.DataContext;
+            foreach (var category in data.OfType<Category>().Where(c => c!=null && c.ParentCategory == null))
+            {
+                treeSource.AddCategory(category);
+            }
 
+            tree.DataSource = treeSource;
             //tree.Columns.AddField("Name");
-            tree.DataSource = ds;
-            tree.ExpandAll();}
+            //tree.DataSource = ds;
+            //tree.ExpandAll();
+        }
+
+        private void btnRemove_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            MediaContainerTreeWrapper item = tree.GetDataRecordByNode(tree.FocusedNode) as MediaContainerTreeWrapper;
+            var treeSource = tree.DataSource as MediaContainerTreeSource;
+            if (item!=null && treeSource!=null)
+            {
+                treeSource.Remove(item);
+            }
+            //tree.Selection
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool NodeFocused
+        {
+            get
+            {
+                return tree.FocusedNode != null;
+            }
+        }
+
+        private void tree_FocusedNodeChanged(object sender, DevExpress.XtraTreeList.FocusedNodeChangedEventArgs e)
+        {
+            btnRemove.IsEnabled = tree.FocusedNode != null;
+        }
+
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        //public object DataSource
+        //{
+        //    get { return tree.DataSource; }
+        //    set { tree.DataSource = value; }
+        //}
     }
 }

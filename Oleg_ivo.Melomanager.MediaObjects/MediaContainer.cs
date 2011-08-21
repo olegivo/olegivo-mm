@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
@@ -10,7 +12,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <summary>
         /// Дочерние элементы
         /// </summary>
-        protected IQueryable<MediaContainer> Childs
+        protected internal IQueryable<MediaContainer> Childs
         {
             get
             {
@@ -51,20 +53,36 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Удаляет дочерний элемент
         /// </summary>
         /// <param name="child"></param>
-        protected void RemoveChild(MediaContainer child)
+        protected internal void RemoveChild(MediaContainer child)
         {
             MediaContainersParentChild found =
                 ChildMediaContainers.Where(mc => mc.ParentMediaContainer == this && mc.ChildMediaContainer == child).
                     FirstOrDefault();
             if (found != null)
+            {
+                //BeginRemoveChild(found);
                 ChildMediaContainers.Remove(found);
+                EndRemoveChild(found);
+            }
         }
+
+        private void EndRemoveChild(MediaContainersParentChild child)
+        {
+            InvokeChildsChanged(ListChangedType.ItemDeleted, child.ChildMediaContainer);
+        }
+
+/*
+        private void BeginRemoveChild(MediaContainersParentChild mediaContainersParentChild)
+        {
+            
+        }
+*/
 
         /// <summary>
         /// Добавляет родительский элемент
         /// </summary>
         /// <param name="parent"></param>
-        protected void RemoveParent(MediaContainer parent)
+        protected internal void RemoveParent(MediaContainer parent)
         {
             MediaContainersParentChild found =
                 ChildMediaContainers.Where(mc => mc.ChildMediaContainer == this && mc.ParentMediaContainer == parent).
@@ -118,6 +136,86 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                     if (!IsRepaired)
                         IsRepaired = mediaContainer.IsRepaired;
                 }
+        }
+
+        partial void OnCreated()
+        {
+            ChildMediaContainers.ListChanged += ChildMediaContainers_ListChanged;
+        }
+
+        void ChildMediaContainers_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            if (e.ListChangedType == ListChangedType.ItemAdded)
+            {
+                MediaContainer child = ChildMediaContainers[e.NewIndex].ChildMediaContainer;
+                InvokeChildsChanged(e.ListChangedType, child);
+            }                      
+        }
+
+        private void InvokeChildsChanged(ListChangedType listChangedType, MediaContainer child)
+        {
+            if (ChildsChanged != null)
+                ChildsChanged(this, new MediaListChangedEventArgs(listChangedType, child));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        internal event EventHandler<MediaListChangedEventArgs> ChildsChanged;
+
+        /// <summary>
+        /// Получить связь, 
+        /// в которой данный <see cref="MediaContainer"/> выступает в качестве родительского, 
+        /// а <paramref name="child"/> - в качестве дочернего элемента
+        /// </summary>
+        /// <param name="child"></param>
+        /// <returns></returns>
+        internal MediaContainersParentChild GetChildRelation(MediaContainer child)
+        {
+            return ChildMediaContainers
+                .Where(relation => relation.ChildId == child.Id)
+                .SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Получить связь, 
+        /// в которой данный <see cref="MediaContainer"/> выступает в качестве дочернего, 
+        /// а <paramref name="parent"/> - в качестве родительского элемента
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <returns></returns>
+        internal MediaContainersParentChild GetParentRelation(MediaContainer parent)
+        {
+            return ParentMediaContainers
+                .Where(relation => relation.ParentId == parent.Id)
+                .SingleOrDefault();
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class MediaListChangedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public ListChangedType ListChangedType { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public MediaContainer MediaContainer { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="listChangedType"></param>
+        /// <param name="mediaContainer"></param>
+        public MediaListChangedEventArgs(ListChangedType listChangedType, MediaContainer mediaContainer)
+        {
+            ListChangedType = listChangedType;
+            MediaContainer = mediaContainer;
         }
     }
 }
