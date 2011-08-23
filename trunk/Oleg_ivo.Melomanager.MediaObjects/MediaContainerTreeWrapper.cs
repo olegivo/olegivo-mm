@@ -1,12 +1,19 @@
 using System;
+using System.ComponentModel;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
     /// <summary>
     /// Обёртка для <see cref="MediaContainer"/>
     /// </summary>
-    public class MediaContainerTreeWrapper
+    public class MediaContainerTreeWrapper : INotifyPropertyChanged
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
         public delegate long getMyTreeSourceIdDelegate(MediaContainerTreeWrapper key);
 
         private readonly getMyTreeSourceIdDelegate _getMySourceIdDelegateId;
@@ -81,5 +88,31 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// 
         /// </summary>
         internal event EventHandler<MediaListChangedEventArgs> ChildsChanged;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="propertyName"></param>
+        protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChangedEventArgs e = new PropertyChangedEventArgs(propertyName);
+                PropertyChanged(this, e);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public BitmapImage Image
+        {
+            get { return ImageResourceFactory.GetImage(UnderlyingItem.GetType()); }
+        }
     }
 }

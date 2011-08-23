@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Oleg_ivo.MeloManager.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MeloManager" Height="692" Width="1189" xmlns:my="clr-namespace:Oleg_ivo.MeloManager" xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol" WindowStartupLocation="CenterOwner" WindowState="Maximized" xmlns:dxn="http://schemas.devexpress.com/winfx/2008/xaml/navbar">
+        Title="MeloManager" Height="692" Width="1189" xmlns:my="clr-namespace:Oleg_ivo.MeloManager" xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol" WindowStartupLocation="CenterOwner" WindowState="Maximized" xmlns:dxn="http://schemas.devexpress.com/winfx/2008/xaml/navbar" Icon="/Oleg_ivo.MeloManager;component/headphones.ico">
     <dxlc:LayoutControl HorizontalAlignment="Stretch" Margin="25,10,0,0" Name="layoutControl1" VerticalAlignment="Stretch">
         <dxlc:LayoutGroup Name="layoutGroup2" View="GroupBox">
             <my:MediaTree HorizontalAlignment="Stretch" x:Name="mediaTree1" VerticalAlignment="Stretch" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" />
