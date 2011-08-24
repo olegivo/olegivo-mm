@@ -44,14 +44,17 @@
     <Reference Include="DevExpress.Data.v11.1, Version=11.1.6.0, Culture=neutral, PublicKeyToken=49668c1a5a525926, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Utils.v11.1, Version=11.1.6.0, Culture=neutral, PublicKeyToken=49668c1a5a525926, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Core.v11.1, Version=11.1.6.0, Culture=neutral, PublicKeyToken=49668c1a5a525926, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Docking.v11.1, Version=11.1.6.0, Culture=neutral, PublicKeyToken=49668c1a5a525926" />
     <Reference Include="DevExpress.Xpf.Grid.v11.1, Version=11.1.6.0, Culture=neutral, PublicKeyToken=49668c1a5a525926, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Grid.v11.1.Core, Version=11.1.6.0, Culture=neutral, PublicKeyToken=49668c1a5a525926, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Layout.v11.1.Core, Version=11.1.6.0, Culture=neutral, PublicKeyToken=49668c1a5a525926" />
     <Reference Include="DevExpress.Xpf.LayoutControl.v11.1, Version=11.1.6.0, Culture=neutral, PublicKeyToken=49668c1a5a525926, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.NavBar.v11.1, Version=11.1.6.0, Culture=neutral, PublicKeyToken=49668c1a5a525926" />
     <Reference Include="DevExpress.Xpf.Printing.v11.1.Core, Version=11.1.6.0, Culture=neutral, PublicKeyToken=49668c1a5a525926, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Printing.v11.1, Version=11.1.6.0, Culture=neutral, PublicKeyToken=49668c1a5a525926, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.XtraEditors.v11.1, Version=11.1.6.0, Culture=neutral, PublicKeyToken=49668c1a5a525926, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.XtraTreeList.v11.1, Version=11.1.6.0, Culture=neutral, PublicKeyToken=49668c1a5a525926, processorArchitecture=MSIL" />
+    <Reference Include="GalaSoft.MvvmLight.WPF4, Version=3.0.0.28535, Culture=neutral, PublicKeyToken=63eb5c012e0b3c1c, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
@@ -77,7 +80,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
+    <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Page Include="MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -86,24 +91,25 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DataProvider.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="IMediaContainerSourceUI.cs" />
+    <Compile Include="MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MediaList.xaml">
+    <Page Include="MediaList\MediaList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MediaTree.xaml">
+    <Page Include="MediaTree\MediaTree.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MediaList.xaml.cs">
+    <Compile Include="MediaList\MediaList.xaml.cs">
       <DependentUpon>MediaList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MediaTree.xaml.cs">
+    <Compile Include="MediaTree\MediaTree.xaml.cs">
       <DependentUpon>MediaTree.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">

@@ -110,12 +110,12 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         }
 
         /// <summary>
-        /// 
+        /// Добавить категорию
         /// </summary>
         /// <param name="category"></param>
         public void AddCategory(Category category)
         {
-            var item = category.CreateWrapper(GetSourceId);
+            var item = new MediaContainerTreeWrapper(GetSourceId, category, null);
             Add(item);
         }
 
@@ -149,15 +149,5 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// </summary>
     internal static class CategoryWrapperExtension
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="category"></param>
-        /// <param name="GetSourceId"></param>
-        /// <returns></returns>
-        public static MediaContainerTreeWrapper CreateWrapper(this Category category, MediaContainerTreeWrapper.getMyTreeSourceIdDelegate GetSourceId)
-        {
-            return new MediaContainerTreeWrapper(GetSourceId, category, null);
-        }
     }
 }

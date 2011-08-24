@@ -1,48 +1,27 @@
 ﻿using System;
 using System.Data.Linq;
 using System.Linq;
-using System.Windows;
-using DevExpress.Xpf.NavBar;
 using Oleg_ivo.MeloManager.MediaObjects;
+using Oleg_ivo.MeloManager.ViewModel;
 
 namespace Oleg_ivo.MeloManager
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MainView.xaml
     /// </summary>
-    public partial class MainWindow
+    public partial class MainView
     {
         /// <summary>
         /// 
         /// </summary>
-        public MainWindow()
+        public MainView()
         {
             InitializeComponent();
         }
 
-        private void ExplorerBarView_Click(object sender, RoutedEventArgs e)
+        MainViewModel vm
         {
-            NavBarGroup group = navBarControl1.View.GetNavBarGroup(e);
-            NavBarItem item = navBarControl1.View.GetNavBarItem(e);
-            if (group != null || item != null)
-            {
-                //MessageBox.Show("Click - " + (item != null
-                //                                  ? "Item: " + item.Content
-                //                                  : "Group: " +
-                //                                    group.Header));
-                if (item == nbiFillTestData)
-                {
-                    InitDataSource();
-                }
-                else if(item==nbiLoadFromDb)
-                {
-                    LoadFromDb();
-                }
-                else if (item == nbiSave)
-                {
-                    SaveAndLoad();
-                }
-            }
+            get { return DataContext as MainViewModel; }
         }
 
         private static MediaDataContext MediaDataContext
@@ -56,8 +35,6 @@ namespace Oleg_ivo.MeloManager
         {
             
             LoadFromDb();
-
-            //tree.DataSource = MediaDataContext.MediaContainers.GetNewBindingList();
 
             Category category1 = MediaDataContext.CreateCategory();
             category1.Name = "Категория1";
@@ -94,20 +71,7 @@ namespace Oleg_ivo.MeloManager
             category2.AddChild(playlist3);
             category2.AddChild(playlist4);
 
-            //MediaDataContext.MediaContainers.InsertAllOnSubmit(new MediaContainer[] {category});
             SaveAndLoad();
-
-
-            //var ds = new[]
-            //             {
-            //                 new {Name = "Плейлисты", ID = 0, ParentID = 0},
-            //                    new {Name = "Плейлист1", ID = 1, ParentID = 0}, 
-            //                        new {Name = "Файл11", ID = 11, ParentID = 1}, 
-            //                        new {Name = "Файл12", ID = 12, ParentID = 1},
-            //                    new {Name = "Плейлист2", ID = 2, ParentID = 0}, 
-            //                        new {Name = "Файл21", ID = 21, ParentID = 2}, 
-            //                        new {Name = "Файл22", ID = 22, ParentID = 2}
-            //             };
 
         }
 
@@ -138,12 +102,43 @@ namespace Oleg_ivo.MeloManager
                 treeSource.AddCategory(category);
             }
 
-
-            mediaTree1.DataSource = treeSource;
+            vm.TreeDataSource = treeSource;
             //if (mediaTree1.tree.ItemsSource != MediaDataContext.MediaContainers)
             //{
             //    mediaTree1.InitDataSource(MediaDataContext.MediaContainers);
             //}
+        }
+
+        private void bbiInit_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
+        {
+            InitDataSource();
+        }
+
+        private void bbiLoad_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
+        {
+            LoadFromDb();
+        }
+
+        private void bbiSave_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
+        {
+            SaveAndLoad();
+        }
+
+        private void mediaTree1_FocusedRowChanged(object sender, DevExpress.Xpf.Grid.FocusedRowChangedEventArgs e)
+        {
+            MediaContainerTreeWrapper mediaContainerTreeWrapper = e.NewRow as MediaContainerTreeWrapper;
+            if (mediaContainerTreeWrapper != null)
+            {
+                MediaContainer mediaContainer = mediaContainerTreeWrapper.UnderlyingItem;
+                vm.CurrentTreeMediaContainer = mediaContainer;
+                if(mediaContainer!=null)
+                {
+                    mediaListChilds.DataSource = mediaContainer.ChildMediaContainers;
+                    mediaListParents.DataSource = mediaContainer.ParentMediaContainers;
+                }
+            }
+
+            //e.NewRow
         }
     }
 }
