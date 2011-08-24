@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Input;
+using DevExpress.Xpf.Grid;
 using Oleg_ivo.MeloManager.MediaObjects;
 
 namespace Oleg_ivo.MeloManager
@@ -21,22 +24,7 @@ namespace Oleg_ivo.MeloManager
             //InitDataSource();
         }
 
-        MediaContainerTreeSource _dataSource;
 
-        /// <summary>
-        /// Источник данных
-        /// </summary>
-        public MediaContainerTreeSource DataSource
-        {
-            get { return _dataSource; }
-            set
-            {
-                if (_dataSource == value)
-                    return;
-                _dataSource = value;
-                OnPropertyChanged("DataSource");
-            }
-        }
 
         /// <summary>
         /// 
@@ -46,7 +34,7 @@ namespace Oleg_ivo.MeloManager
         {
             MediaContainerTreeSource treeSource = new MediaContainerTreeSource();
             treeSource.MediaDataContext = DataProvider.DataContext;
-            foreach (var category in data.OfType<Category>().Where(c => c!=null && c.ParentCategory == null))
+            foreach (var category in data.OfType<Category>().Where(c => c != null && c.ParentCategory == null))
             {
                 treeSource.AddCategory(category);
             }
@@ -57,15 +45,16 @@ namespace Oleg_ivo.MeloManager
             //tree.ExpandAll();
         }
 
-        private void btnRemove_Click(object sender, System.Windows.RoutedEventArgs e)
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Remove()
         {
             MediaContainerTreeWrapper item = treeListView1.FocusedRow as MediaContainerTreeWrapper;
             var treeSource = tree.ItemsSource as MediaContainerTreeSource;
-            if (item!=null && treeSource!=null)
-            {
-                treeSource.Remove(item);
-            }
-            //tree.Selection
+            if (item != null)
+                if (treeSource != null)
+                    treeSource.Remove(item);
         }
 
         /// <summary>
@@ -79,12 +68,12 @@ namespace Oleg_ivo.MeloManager
             }
         }
 
-/*
-        private void tree_FocusedNodeChanged(object sender, DevExpress.XtraTreeList.FocusedNodeChangedEventArgs e)
-        {
-            btnRemove.IsEnabled = treeListView1.FocusedRow != null;
-        }
-*/
+        /*
+                private void tree_FocusedNodeChanged(object sender, DevExpress.XtraTreeList.FocusedNodeChangedEventArgs e)
+                {
+                    btnRemove.IsEnabled = treeListView1.FocusedRow != null;
+                }
+        */
 
         ///// <summary>
         ///// 
@@ -102,7 +91,6 @@ namespace Oleg_ivo.MeloManager
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="e"></param>
         /// <param name="propertyName"></param>
         protected void OnPropertyChanged(string propertyName)
         {
@@ -111,6 +99,15 @@ namespace Oleg_ivo.MeloManager
                 PropertyChangedEventArgs e = new PropertyChangedEventArgs(propertyName);
                 PropertyChanged(this, e);
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public event FocusedRowChangedEventHandler FocusedRowChanged
+        {
+            add { treeListView1.FocusedRowChanged += value; }
+            remove { treeListView1.FocusedRowChanged -= value; }
         }
     }
 }
