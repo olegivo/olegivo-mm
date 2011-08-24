@@ -42,13 +42,13 @@
                                   VerticalAlignment="Stretch" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" />
                 </dxlc:LayoutItem>
                 <dxlc:LayoutGroup Name="layoutGroup1" View="Group" Orientation="Vertical" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True">
-                    <dxlc:LayoutItem Label="Содержит" Name="layoutItem1" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" VerticalAlignment="Stretch" LabelPosition="Top" LabelHorizontalAlignment="Center">
-                        <MediaList:MediaList HorizontalAlignment="Stretch" x:Name="mediaListChilds" VerticalAlignment="Stretch" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" 
-                                      DataContext="{Binding Path=ChildListDataSource}" />
-                    </dxlc:LayoutItem>
                     <dxlc:LayoutItem Label="Содержится в" Name="layoutItem2" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" VerticalAlignment="Stretch" LabelPosition="Top" LabelHorizontalAlignment="Center">
                         <MediaList:MediaList HorizontalAlignment="Stretch" x:Name="mediaListParents" VerticalAlignment="Stretch" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" 
                                       DataContext="{Binding Path=ParentListDataSource}" />
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Содержит" Name="layoutItem1" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" VerticalAlignment="Stretch" LabelPosition="Top" LabelHorizontalAlignment="Center">
+                        <MediaList:MediaList HorizontalAlignment="Stretch" x:Name="mediaListChilds" VerticalAlignment="Stretch" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" 
+                                      DataContext="{Binding Path=ChildListDataSource}" />
                     </dxlc:LayoutItem>
                 </dxlc:LayoutGroup>
             </dxlc:LayoutControl>
