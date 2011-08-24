@@ -12,7 +12,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <summary>
         /// Дочерние элементы
         /// </summary>
-        protected internal IQueryable<MediaContainer> Childs
+        public IQueryable<MediaContainer> Childs
         {
             get
             {
@@ -23,7 +23,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <summary>
         /// Родительские элементы
         /// </summary>
-        protected IQueryable<MediaContainer> Parents
+        public IQueryable<MediaContainer> Parents
         {
             get
             {

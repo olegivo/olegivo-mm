@@ -133,8 +133,8 @@ namespace Oleg_ivo.MeloManager
                 vm.CurrentTreeMediaContainer = mediaContainer;
                 if(mediaContainer!=null)
                 {
-                    mediaListChilds.DataSource = mediaContainer.ChildMediaContainers;
-                    mediaListParents.DataSource = mediaContainer.ParentMediaContainers;
+                    //mediaListChilds.DataSource = mediaContainer.ChildMediaContainers;
+                    //mediaListParents.DataSource = mediaContainer.ParentMediaContainers;
                 }
             }
 

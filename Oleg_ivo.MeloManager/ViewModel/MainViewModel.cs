@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.Linq;
+﻿using System.Linq;
 using GalaSoft.MvvmLight;
 using Oleg_ivo.MeloManager.MediaObjects;
 
@@ -31,8 +30,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private MediaContainerTreeSource _treeDataSource;
         private MediaContainerTreeWrapper _currentItem;
-        private EntitySet<MediaContainersParentChild> _ChildListDataSource;
-        private EntitySet<MediaContainersParentChild> _ParentListDataSource;
+        private IQueryable<MediaContainer> _ChildListDataSource;
+        private IQueryable<MediaContainer> _ParentListDataSource;
 
         /// <summary>
         /// 
@@ -65,9 +64,9 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// <summary>
         /// Источник данных для списка родителей текущего медиа-контейнера
         /// </summary>
-        public EntitySet<MediaContainersParentChild> ParentListDataSource
+        public IQueryable<MediaContainer> ParentListDataSource
         {
-            get { return CurrentTreeMediaContainer!=null ? CurrentTreeMediaContainer.ParentMediaContainers : null; }
+            get { return _ParentListDataSource; }
             set
             {
                 if (_ParentListDataSource == value) return;
@@ -79,9 +78,9 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// <summary>
         /// Источник данных для списка детей текущего медиа-контейнера
         /// </summary>
-        public EntitySet<MediaContainersParentChild> ChildListDataSource
+        public IQueryable<MediaContainer> ChildListDataSource
         {
-            get { return CurrentTreeMediaContainer != null ? CurrentTreeMediaContainer.ChildMediaContainers : null; }
+            get { return _ChildListDataSource; }
             set
             {
                 if (_ChildListDataSource == value) return;
@@ -104,8 +103,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 if(_currentTreeMediaContainer==value) return;
 
                 _currentTreeMediaContainer = value;
-                ChildListDataSource = CurrentTreeMediaContainer.ChildMediaContainers;
-                ParentListDataSource = CurrentTreeMediaContainer.ParentMediaContainers;
+                ChildListDataSource = CurrentTreeMediaContainer.Childs;
+                ParentListDataSource = CurrentTreeMediaContainer.Parents;
                 RaisePropertyChanged("CurrentTreeMediaContainer");
             }
         }
