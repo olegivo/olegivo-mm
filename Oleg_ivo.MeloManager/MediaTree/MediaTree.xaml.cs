@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Windows.Controls;
-using System.Windows.Input;
 using DevExpress.Xpf.Grid;
 using Oleg_ivo.MeloManager.MediaObjects;
 
-namespace Oleg_ivo.MeloManager
+namespace Oleg_ivo.MeloManager.MediaTree
 {
     /// <summary>
     /// Interaction logic for MediaTree.xaml
     /// </summary>
     public partial class MediaTree : UserControl, INotifyPropertyChanged
     {
+        private MediaContainer _currentMediaContainer;
+
         /// <summary>
         /// 
         /// </summary>
@@ -21,11 +19,39 @@ namespace Oleg_ivo.MeloManager
         {
             InitializeComponent();
 
+            this.FocusedRowChanged += MediaTree_FocusedRowChanged;
             //InitDataSource();
         }
 
+        void MediaTree_FocusedRowChanged(object sender, FocusedRowChangedEventArgs e)
+        {
+            MediaContainer container = null;
+            MediaContainerTreeWrapper wrapper = e.NewRow as MediaContainerTreeWrapper;
+            if (wrapper != null)
+            {
+                CurrentMediaContainer = wrapper.UnderlyingItem;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public MediaContainer CurrentMediaContainer
+        {
+            get
+            {
+                return _currentMediaContainer;
+            }
+            set
+            {
+                if (_currentMediaContainer == value) return;
+                _currentMediaContainer = value;
+                OnPropertyChanged("CurrentMediaContainer");
+            }
+        }
 
 
+/*
         /// <summary>
         /// 
         /// </summary>
@@ -44,6 +70,7 @@ namespace Oleg_ivo.MeloManager
             //tree.DataSource = ds;
             //tree.ExpandAll();
         }
+*/
 
         /// <summary>
         /// 

@@ -10,7 +10,7 @@
             <dxg:GridColumn FieldName="Name" />
         </dxg:GridControl.Columns>
         <dxg:GridControl.View>
-            <dxg:TableView Name="tableView1" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" ShowGroupPanel="False" />
+            <dxg:TableView Name="tableView1" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" ShowGroupPanel="False" AllowEditing="False" />
         </dxg:GridControl.View>
     </dxg:GridControl>
 </UserControl>

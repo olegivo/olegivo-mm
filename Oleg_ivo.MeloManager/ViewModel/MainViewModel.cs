@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using Oleg_ivo.MeloManager.MediaObjects;
 
 namespace Oleg_ivo.MeloManager.ViewModel
@@ -32,6 +35,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private MediaContainerTreeWrapper _currentItem;
         private IQueryable<MediaContainer> _ChildListDataSource;
         private IQueryable<MediaContainer> _ParentListDataSource;
+        private ICommand _CommandTreeAddCategory;
 
         /// <summary>
         /// 
@@ -100,13 +104,28 @@ namespace Oleg_ivo.MeloManager.ViewModel
             }
             set
             {
-                if(_currentTreeMediaContainer==value) return;
+                if (_currentTreeMediaContainer == value) return;
 
                 _currentTreeMediaContainer = value;
                 ChildListDataSource = CurrentTreeMediaContainer.Childs;
                 ParentListDataSource = CurrentTreeMediaContainer.Parents;
                 RaisePropertyChanged("CurrentTreeMediaContainer");
             }
+        }
+
+        public ICommand CommandTreeAddCategory
+        {
+            get
+            { //TODO
+                return _CommandTreeAddCategory ??
+                       (_CommandTreeAddCategory = new RelayCommand<object>(TreeAddCategory));
+            }
+        }
+
+        private void TreeAddCategory(object mediaTree)
+        {
+            
+            //throw new NotImplementedException();
         }
 
         /// <summary>
