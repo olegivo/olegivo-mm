@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oleg_ivo.MeloManager", "Oleg_ivo.MeloManager\Oleg_ivo.MeloManager.csproj", "{6A996E0A-E930-41F1-B1CC-2E8E0E6E33A5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{37A5A35A-5C84-4021-9EDA-58DAD90B43AF}"
@@ -13,6 +13,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oleg_ivo.MeloManager.MediaObjects.Test", "Oleg_ivo.MelolManager.MediaObjects.Test\Oleg_ivo.MeloManager.MediaObjects.Test.csproj", "{38C1B790-53EA-4BCB-AFF2-D9F9D084500D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oleg_ivo.MeloManager.MediaObjects", "Oleg_ivo.MeloManager.MediaObjects\Oleg_ivo.MeloManager.MediaObjects.csproj", "{988AEBCA-984D-4E0D-A8BA-119DAF572B12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oleg_ivo.Tools", "External\Oleg_ivo.Tools\Oleg_ivo.Tools\Oleg_ivo.Tools.csproj", "{332A1894-922F-49A1-BD6A-E4E981FA2FEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oleg_ivo.Base", "External\Oleg_ivo.Tools\Oleg_ivo.Base\Oleg_ivo.Base.csproj", "{AC7D7F53-A330-45B0-A6B3-498BE85B9739}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -57,6 +61,30 @@ Global
 		{988AEBCA-984D-4E0D-A8BA-119DAF572B12}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{988AEBCA-984D-4E0D-A8BA-119DAF572B12}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{988AEBCA-984D-4E0D-A8BA-119DAF572B12}.Release|x86.ActiveCfg = Release|Any CPU
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Debug|x86.ActiveCfg = Debug|x86
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Debug|x86.Build.0 = Debug|x86
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Release|Mixed Platforms.Build.0 = Release|x86
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Release|x86.ActiveCfg = Release|x86
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Release|x86.Build.0 = Release|x86
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Debug|x86.ActiveCfg = Debug|x86
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Debug|x86.Build.0 = Debug|x86
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Release|Mixed Platforms.Build.0 = Release|x86
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Release|x86.ActiveCfg = Release|x86
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
