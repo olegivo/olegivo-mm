@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NLog, Version=2.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NLog.2.1.0\lib\net40\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -80,6 +84,7 @@
       <LastGenOutput>MediaDataContext.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
     <None Include="Properties\DataSources\Category.datasource" />
     <None Include="Properties\DataSources\MediaContainer.datasource" />
     <None Include="Properties\DataSources\MediaFile.datasource" />
@@ -201,6 +206,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\music.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\External\Oleg_ivo.Tools\Oleg_ivo.Base\Oleg_ivo.Base.csproj">
+      <Project>{AC7D7F53-A330-45B0-A6B3-498BE85B9739}</Project>
+      <Name>Oleg_ivo.Base</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
