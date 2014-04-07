@@ -1,0 +1,66 @@
+﻿<UserControl 
+    x:Class="Oleg_ivo.MeloManager.View.MainView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:View="clr-namespace:Oleg_ivo.MeloManager.View"
+    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+    ScrollViewer.CanContentScroll="True"
+    Loaded="MainView_OnLoaded">
+    <dxb:BarManager 
+        Name="barManager1" 
+        ScrollViewer.CanContentScroll="True">
+        <dxb:BarManager.Items>
+            <dxb:BarButtonItem Content="Init" Name="bbiInit" ItemClick="bbiInit_ItemClick" />
+            <dxb:BarButtonItem Content="Load" Name="bbiLoad" ItemClick="bbiLoad_ItemClick"/>
+            <dxb:BarButtonItem Content="Save" Name="bbiSave" ItemClick="bbiSave_ItemClick"/>
+        </dxb:BarManager.Items>
+        <dxb:BarManager.Bars>
+            <dxb:Bar Caption="Main Menu" IsMainMenu="True" Name="mainMenuBar">
+                <dxb:Bar.ItemLinks>
+                    <dxb:BarButtonItemLink BarItemName="bbiSave" />
+                </dxb:Bar.ItemLinks>
+                <dxb:Bar.DockInfo>
+                    <dxb:BarDockInfo ContainerType="Top" />
+                </dxb:Bar.DockInfo>
+            </dxb:Bar>
+            <dxb:Bar Caption="bar1" Name="bar1">
+                <dxb:Bar.ItemLinks>
+                    <dxb:BarButtonItemLink BarItemName="bbiInit" />
+                    <dxb:BarButtonItemLink BarItemName="bbiLoad" />
+                    <dxb:BarButtonItemLink BarItemName="bbiSave" />
+                </dxb:Bar.ItemLinks>
+                <dxb:Bar.DockInfo>
+                    <dxb:BarDockInfo ContainerType="Top" />
+                </dxb:Bar.DockInfo>
+            </dxb:Bar>
+            <dxb:Bar Caption="Status Bar" IsStatusBar="True" Name="statusBar">
+                <dxb:Bar.DockInfo>
+                    <dxb:BarDockInfo ContainerType="Bottom" />
+                </dxb:Bar.DockInfo>
+            </dxb:Bar>
+        </dxb:BarManager.Bars>
+        <Grid 
+            VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+            ScrollViewer.CanContentScroll="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition MinHeight="300" Height="*" />
+                <RowDefinition MinHeight="300" Height="*" />
+            </Grid.RowDefinitions>
+            <View:MediaTree 
+                DataContext="{Binding Path=MediaTree}"
+                Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
+            </View:MediaTree>
+            <View:MediaList 
+                Grid.Row="0" Grid.Column="1" 
+                DataContext="{Binding Path=Parents}">
+            </View:MediaList>
+            <View:MediaList 
+                Grid.Row="1" Grid.Column="1" 
+                DataContext="{Binding Path=Childs}" />
+        </Grid>
+    </dxb:BarManager>
+</UserControl>

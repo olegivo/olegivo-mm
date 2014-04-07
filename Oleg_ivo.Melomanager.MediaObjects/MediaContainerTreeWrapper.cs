@@ -1,7 +1,9 @@
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows.Media;
+using System.Linq;
 using System.Windows.Media.Imaging;
+using Oleg_ivo.Base.Autofac;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
@@ -10,13 +12,24 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// </summary>
     public class MediaContainerTreeWrapper : INotifyPropertyChanged
     {
+        private readonly Func<MediaContainerTreeWrapper, long> _getMySourceIdDelegateId;
+
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="key"></param>
-        public delegate long getMyTreeSourceIdDelegate(MediaContainerTreeWrapper key);
+        /// <param name="underlyingItem"></param>
+        /// <param name="parent"></param>
+        public MediaContainerTreeWrapper(MediaContainer underlyingItem, MediaContainerTreeWrapper parent)
+        {
+            //ќбЄртка не может быть пустой
+            UnderlyingItem = Enforce.ArgumentNotNull(underlyingItem, "underlyingItem");
+            UnderlyingItem.ChildsChanged += UnderlyingItem_ChildsChanged;
+            Parent = parent;
 
-        private readonly getMyTreeSourceIdDelegate _getMySourceIdDelegateId;
+            var mediaContainerTreeWrappers = UnderlyingItem.Childs.Select(mc => new MediaContainerTreeWrapper(mc, this));
+            ChildItems = new ObservableCollection<MediaContainerTreeWrapper>(mediaContainerTreeWrappers);
+            ChildItems.CollectionChanged += ChildItems_CollectionChanged;
+        }
 
         /// <summary>
         /// 
@@ -24,20 +37,37 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <param name="sourceIdDelegate"></param>
         /// <param name="underlyingItem"></param>
         /// <param name="parent"></param>
-        public MediaContainerTreeWrapper(getMyTreeSourceIdDelegate sourceIdDelegate, MediaContainer underlyingItem, MediaContainerTreeWrapper parent)
+        [Obsolete]
+        public MediaContainerTreeWrapper(Func<MediaContainerTreeWrapper, long> sourceIdDelegate, MediaContainer underlyingItem, MediaContainerTreeWrapper parent)
         {
-            if (sourceIdDelegate == null) throw new ArgumentNullException("sourceIdDelegate");
-            _getMySourceIdDelegateId = sourceIdDelegate;
-            if (underlyingItem == null) throw new ArgumentNullException("underlyingItem", "ќбЄртка не может быть пустой");
-            UnderlyingItem = underlyingItem;
+            _getMySourceIdDelegateId = Enforce.ArgumentNotNull(sourceIdDelegate, "sourceIdDelegate");
+            //ќбЄртка не может быть пустой
+            UnderlyingItem = Enforce.ArgumentNotNull(underlyingItem, "underlyingItem");
             UnderlyingItem.ChildsChanged += UnderlyingItem_ChildsChanged;
             Parent = parent;
+
+            var mediaContainerTreeWrappers =
+                UnderlyingItem.Childs.Select(
+                    mc => new MediaContainerTreeWrapper(sourceIdDelegate, mc, this));
+            ChildItems = new ObservableCollection<MediaContainerTreeWrapper>(mediaContainerTreeWrappers);
+            ChildItems.CollectionChanged += ChildItems_CollectionChanged;
         }
 
+        void ChildItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+
+        }
+
+        #region Properties
         /// <summary>
         /// 
         /// </summary>
         public MediaContainer UnderlyingItem { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ObservableCollection<MediaContainerTreeWrapper> ChildItems { get; private set; }
 
         /// <summary>
         /// 
@@ -78,6 +108,16 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public BitmapImage Image
+        {
+            get { return ImageResourceFactory.GetImage(UnderlyingItem.GetType()); }
+        }
+
+        #endregion
+
         void UnderlyingItem_ChildsChanged(object sender, MediaListChangedEventArgs e)
         {
             if (ChildsChanged != null)
@@ -89,6 +129,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// </summary>
         internal event EventHandler<MediaListChangedEventArgs> ChildsChanged;
 
+        #region INPC
         /// <summary>
         /// 
         /// </summary>
@@ -107,12 +148,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public BitmapImage Image
-        {
-            get { return ImageResourceFactory.GetImage(UnderlyingItem.GetType()); }
-        }
+        #endregion
     }
 }

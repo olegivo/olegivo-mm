@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using NLog;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
@@ -9,6 +11,8 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// </summary>
     partial class MediaContainer
     {
+        private static readonly Logger log = LogManager.GetCurrentClassLogger();
+
         /// <summary>
         /// Дочерние элементы
         /// </summary>
@@ -126,16 +130,18 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// </summary>
         /// <param name="foundFiles"></param>
         /// <param name="optionRepairOnlyBadFiles"></param>
-        public virtual void BatchRepair(string[] foundFiles, bool optionRepairOnlyBadFiles)
+        public virtual void BatchRepair(IEnumerable<string> foundFiles, bool optionRepairOnlyBadFiles)
         {
             IsRepaired = false;
-            if (foundFiles.Length > 0)
-                foreach (MediaContainer mediaContainer in Childs)
-                {
-                    mediaContainer.BatchRepair(foundFiles, optionRepairOnlyBadFiles);
-                    if (!IsRepaired)
-                        IsRepaired = mediaContainer.IsRepaired;
-                }
+            var foundFilesList = foundFiles as IList<string> ?? foundFiles.ToList();
+            foreach (MediaContainer mediaContainer in Childs)
+            {
+                if(mediaContainer is Category || mediaContainer is Playlist)
+                    log.Trace("Починка {0}", mediaContainer);
+                mediaContainer.BatchRepair(foundFilesList, optionRepairOnlyBadFiles);
+                if (!IsRepaired)
+                    IsRepaired = mediaContainer.IsRepaired;
+            }
         }
 
         partial void OnCreated()
@@ -189,6 +195,18 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             return ParentMediaContainers
                 .Where(relation => relation.ParentId == parent.Id)
                 .SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public override string ToString()
+        {
+            return string.Format("Медиа-контейнер [{0}]", Name);
         }
     }
 

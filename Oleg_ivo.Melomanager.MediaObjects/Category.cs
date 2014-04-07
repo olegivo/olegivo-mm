@@ -21,11 +21,23 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         }
 
         /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public override string ToString()
+        {
+            return string.Format("Категория [{0}]", Name);
+        }
+
+        /// <summary>
         /// Дочерние элементы
         /// </summary>
         public new IQueryable<MediaContainer> Childs
         {
-            get { return Childs; }
+            get { return base.Childs; }
         }
 
         /// <summary>

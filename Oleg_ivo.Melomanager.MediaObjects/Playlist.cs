@@ -8,6 +8,18 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     partial class Playlist
     {
         /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public override string ToString()
+        {
+            return string.Format("Плейлист [{0}]", Name);
+        }
+
+        /// <summary>
         /// Родительские категории
         /// </summary>
         public IQueryable<Category> ParentCategories
@@ -20,8 +32,13 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// </summary>
         public IQueryable<MediaFile> MediaFiles
         {
-            get { return Parents != null ? Parents.Cast<MediaFile>() : null; }
+            get { return Childs != null ? Childs.Cast<MediaFile>() : null; }
         }
+
+        /// <summary>
+        /// Файл-источник плейлиста
+        /// </summary>
+        public string OriginalFileName { get; set; }
 
         /// <summary>
         /// Добавить дочерний медиа-файл
@@ -57,5 +74,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         {
             RemoveParent(parent);
         }
+
     }
 }

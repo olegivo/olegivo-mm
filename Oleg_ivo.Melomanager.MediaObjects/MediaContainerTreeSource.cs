@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 
@@ -7,7 +8,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// <summary>
     /// 
     /// </summary>
-    public class MediaContainerTreeSource : BindingList<MediaContainerTreeWrapper>
+    public class MediaContainerTreeSource : ObservableCollection<MediaContainerTreeWrapper>
     {
         private long identity = 0;
         private Hashtable ids = new Hashtable();

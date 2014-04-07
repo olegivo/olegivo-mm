@@ -1,5 +1,10 @@
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
+    partial class MediaFile
+    {
+
+    }
+
     partial class MediaDataContext
     {
 

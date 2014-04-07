@@ -1,0 +1,30 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:MediaObjects="clr-namespace:Oleg_ivo.MeloManager.MediaObjects;assembly=Oleg_ivo.MeloManager.MediaObjects"
+    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+    x:Class="Oleg_ivo.MeloManager.View.MediaList" 
+    mc:Ignorable="d" 
+    d:DesignHeight="280" d:DesignWidth="310">
+    <UserControl.Resources>
+        <DataTemplate DataType="MediaObjects:Category">
+            <TextBlock>Категория</TextBlock>
+        </DataTemplate>
+        <DataTemplate DataType="MediaObjects:Playlist">
+            <TextBlock>Плейлист</TextBlock>
+        </DataTemplate>
+    </UserControl.Resources>
+    
+    <telerik:RadGridView 
+        AutoGenerateColumns="False"
+        ItemsSource="{Binding ListDataSource}"
+        SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
+        <telerik:RadGridView.Columns>
+            <telerik:GridViewDataColumn 
+                Header="Название" 
+                DataMemberBinding="{Binding Name}"/>
+        </telerik:RadGridView.Columns>
+    </telerik:RadGridView>
+</UserControl>

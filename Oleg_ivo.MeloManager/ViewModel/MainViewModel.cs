@@ -1,115 +1,77 @@
-﻿using System;
-using System.Linq;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.MeloManager.MediaObjects;
 
 namespace Oleg_ivo.MeloManager.ViewModel
 {
     /// <summary>
-    /// This class contains properties that the main View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// You can also use Blend to data bind with the tool's support.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm/getstarted
-    /// </para>
+    /// 
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        private MediaContainer _currentTreeMediaContainer;
+        #region Fields
+        private ICommand commandTreeAddCategory;
+        private MediaTreeViewModel mediaTree;
+        private MediaListViewModel parents;
+        private MediaListViewModel childs;
 
-        public string Welcome
+        #endregion
+        
+        [Dependency(Required = true)]
+        public MediaTreeViewModel MediaTree
         {
-            get
+            get { return mediaTree; }
+            set
             {
-                return "Welcome to MVVM Light";
+                if (mediaTree == value) return;
+                if (MediaTree != null)
+                {
+                    MediaTree.ParentListDataSourceChanged -= MediaTree_ParentListDataSourceChanged;
+                    MediaTree.ChildListDataSourceChanged -= MediaTree_ChildListDataSourceChanged;
+                }
+                mediaTree = value;
+                if (MediaTree != null)
+                {
+                    MediaTree.ParentListDataSourceChanged += MediaTree_ParentListDataSourceChanged;
+                    MediaTree.ChildListDataSourceChanged += MediaTree_ChildListDataSourceChanged;
+                }
+                RaisePropertyChanged(() => MediaTree);
             }
         }
 
-        private MediaContainerTreeSource _treeDataSource;
-        private MediaContainerTreeWrapper _currentItem;
-        private IQueryable<MediaContainer> _ChildListDataSource;
-        private IQueryable<MediaContainer> _ParentListDataSource;
-        private ICommand _CommandTreeAddCategory;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public MediaContainerTreeWrapper CurrentItem
+        void MediaTree_ParentListDataSourceChanged(object sender, System.EventArgs e)
         {
-            get { return _currentItem; }
+            Parents.ListDataSource = MediaTree.ParentListDataSource;
+        }
+
+        void MediaTree_ChildListDataSourceChanged(object sender, System.EventArgs e)
+        {
+            Childs.ListDataSource = MediaTree.ChildListDataSource;
+        }
+
+        [Dependency(Required = true)]
+        public MediaListViewModel Parents
+        {
+            get { return parents; }
             set
             {
-                if (_currentItem == value) return;
-                _currentItem = value;
-                RaisePropertyChanged("CurrentItem");
+                if(parents == value) return;
+                parents = value;
+                RaisePropertyChanged(() => Parents);
             }
         }
 
-        /// <summary>
-        /// Источник данных для дерева
-        /// </summary>
-        public MediaContainerTreeSource TreeDataSource
+        [Dependency(Required = true)]
+        public MediaListViewModel Childs
         {
-            get { return _treeDataSource; }
+            get { return childs; }
             set
             {
-                if (_treeDataSource == value) return;
-                _treeDataSource = value;
-                RaisePropertyChanged("TreeDataSource");
-            }
-        }
-
-        /// <summary>
-        /// Источник данных для списка родителей текущего медиа-контейнера
-        /// </summary>
-        public IQueryable<MediaContainer> ParentListDataSource
-        {
-            get { return _ParentListDataSource; }
-            set
-            {
-                if (_ParentListDataSource == value) return;
-                _ParentListDataSource = value;
-                RaisePropertyChanged("ParentListDataSource");
-            }
-        }
-
-        /// <summary>
-        /// Источник данных для списка детей текущего медиа-контейнера
-        /// </summary>
-        public IQueryable<MediaContainer> ChildListDataSource
-        {
-            get { return _ChildListDataSource; }
-            set
-            {
-                if (_ChildListDataSource == value) return;
-                _ChildListDataSource = value;
-                RaisePropertyChanged("ChildListDataSource");
-            }
-        }
-
-        /// <summary>
-        /// Текущий медиа-контейнер
-        /// </summary>
-        public MediaContainer CurrentTreeMediaContainer
-        {
-            get
-            {
-                return _currentTreeMediaContainer;
-            }
-            set
-            {
-                if (_currentTreeMediaContainer == value) return;
-
-                _currentTreeMediaContainer = value;
-                ChildListDataSource = CurrentTreeMediaContainer.Childs;
-                ParentListDataSource = CurrentTreeMediaContainer.Parents;
-                RaisePropertyChanged("CurrentTreeMediaContainer");
+                if(childs == value) return;
+                childs = value;
+                RaisePropertyChanged(() => Childs);
             }
         }
 
@@ -117,14 +79,13 @@ namespace Oleg_ivo.MeloManager.ViewModel
         {
             get
             { //TODO
-                return _CommandTreeAddCategory ??
-                       (_CommandTreeAddCategory = new RelayCommand<object>(TreeAddCategory));
+                return commandTreeAddCategory ??
+                       (commandTreeAddCategory = new RelayCommand<object>(TreeAddCategory));
             }
         }
 
         private void TreeAddCategory(object mediaTree)
         {
-            
             //throw new NotImplementedException();
         }
 
@@ -133,25 +94,57 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// </summary>
         public MainViewModel()
         {
-            /*
-                        if (IsInDesignMode)
-                        {
-                            // Code runs in Blend --> create design time data.
-                        }
-                        else
-                        {
-                            // Code runs "for real"
-                        }
-            */
+            ////if (IsInDesignMode)
+            ////{
+            ////    // Code runs in Blend --> create design time data.
+            ////}
+            ////else
+            ////{
+            ////    // Code runs "for real"
+            ////}
         }
 
-        /*
-                public override void Cleanup()
-                {
-                    // Clean up if needed
+        public void InitDataSource()
+        {
+            var f1 = new MediaFile { Name = "Файл 1" };
+            var f2 = new MediaFile { Name = "Файл 2" };
+            var f3 = new MediaFile { Name = "Файл 3" };
+            var f4 = new MediaFile { Name = "Файл 4" };
+            var f5 = new MediaFile { Name = "Файл 4" };
 
-                    base.Cleanup();
-                }
-        */
+            var p1 = new Playlist { Name = "Плейлист 1" };
+            p1.AddChildMediaFile(f1);
+            p1.AddChildMediaFile(f2);
+            var p2 = new Playlist { Name = "Плейлист 2" };
+            p2.AddChildMediaFile(f2);
+            p2.AddChildMediaFile(f3);
+            var p3 = new Playlist { Name = "Плейлист 3" };
+            p3.AddChildMediaFile(f3);
+            p3.AddChildMediaFile(f4);
+            p3.AddChildMediaFile(f5);
+
+            var c1 = new Category { Name = "Категория 1" };
+            c1.AddChild(p1);
+            var c2 = new Category { Name = "Категория 2" };
+            c2.AddChild(p2);
+            var c3 = new Category { Name = "Категория 3" };
+            c3.AddChild(p2);
+            c3.AddChild(p3);
+
+            c1.AddChild(c2);
+
+            MediaTree.AddCategory(c1, null);
+            MediaTree.AddCategory(c3, null);
+        }
+
+        public void LoadFromDb()
+        {
+            //throw new System.NotImplementedException();
+        }
+
+        public void SaveAndLoad()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

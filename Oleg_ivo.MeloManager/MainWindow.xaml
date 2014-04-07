@@ -1,0 +1,17 @@
+﻿<Window 
+    x:Class="Oleg_ivo.MeloManager.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cal="http://www.codeplex.com/prism"
+    HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" 
+    
+    WindowStartupLocation="CenterScreen"
+    WindowState="Maximized"
+    Title="MeloManager"
+    Background="#FFD8F3FF" 
+    OpacityMask="#F0000000" 
+    Icon="/Oleg_ivo.MeloManager;component/headphones.ico">
+    <ContentControl 
+        BorderBrush="Black" BorderThickness="10" 
+        cal:RegionManager.RegionName="MainRegion" />
+</Window>
