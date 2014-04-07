@@ -24,6 +24,7 @@ namespace Oleg_ivo.MeloManager.View
             set { DataContext = value; }
         }
 
+        /* TODO:
         private void bbiInit_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
         {
             ViewModel.InitDataSource();
@@ -38,6 +39,7 @@ namespace Oleg_ivo.MeloManager.View
         {
             ViewModel.SaveAndLoad();
         }
+        */
 
         private void MainView_OnLoaded(object sender, RoutedEventArgs e)
         {
