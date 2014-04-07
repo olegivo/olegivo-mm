@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Category.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="File.cs" />
     <Compile Include="ImageResourceFactory.cs" />
     <Compile Include="MediaContainer.cs" />
     <Compile Include="MediaContainerTreeSource.cs" />

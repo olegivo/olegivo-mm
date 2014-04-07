@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="MeloManager" Class="MediaDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=OLEG-A\SQLEXPRESS;Initial Catalog=MeloManager;Integrated Security=True" SettingsObjectName="Oleg_ivo.MeloManager.MediaObjects.Properties.Settings" SettingsPropertyName="MeloManagerConnectionString" Provider="System.Data.SqlClient" />
-  <Table Name="dbo.MediaContainer" Member="MediaContainers">
+  <Table Name="dbo.MediaContainers" Member="MediaContainers">
     <Type Name="MediaContainer" InheritanceCode="MediaContainer" IsInheritanceDefault="true">
       <Column Name="Id" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsReadOnly="true" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Type" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" IsDiscriminator="true" />
@@ -8,17 +8,39 @@
       <Column Name="IsRepaired" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="MediaContainer_MediaContainersParentChild" Member="ParentMediaContainers" ThisKey="Id" OtherKey="ChildId" Type="MediaContainersParentChild" />
       <Association Name="MediaContainer_MediaContainersParentChild1" Member="ChildMediaContainers" ThisKey="Id" OtherKey="ParentId" Type="MediaContainersParentChild" />
+      <Association Name="MediaContainer_MediaContainerFile" Member="MediaContainerFiles" ThisKey="Id" OtherKey="MediaContainerId" Type="MediaContainerFile" />
       <Type Name="Category" InheritanceCode="Category" />
       <Type Name="Playlist" InheritanceCode="Playlist" />
       <Type Name="MediaFile" InheritanceCode="MediaFile" />
     </Type>
   </Table>
-  <Table Name="dbo.MediaContainersParentChild" Member="MediaContainersParentChilds">
+  <Table Name="dbo.MediaContainersParentChilds" Member="MediaContainersParentChilds">
     <Type Name="MediaContainersParentChild">
       <Column Name="ParentId" Type="System.Int64" DbType="BigInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="ChildId" Type="System.Int64" DbType="BigInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Association Name="MediaContainer_MediaContainersParentChild" Member="ChildMediaContainer" ThisKey="ChildId" OtherKey="Id" Type="MediaContainer" IsForeignKey="true" />
       <Association Name="MediaContainer_MediaContainersParentChild1" Member="ParentMediaContainer" ThisKey="ParentId" OtherKey="Id" Type="MediaContainer" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Files" Member="Files">
+    <Type Name="File">
+      <Column Name="Id" Type="System.Int64" DbType="BigInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Drive" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Path" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Filename" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Extention" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="FullFileName" Type="System.String" DbType="VarChar(162) NOT NULL" IsDbGenerated="true" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="FileNameWithoutExtension" Type="System.String" DbType="VarChar(40) NOT NULL" CanBeNull="false" />
+      <Association Name="File_MediaContainerFile" Member="MediaContainerFiles" ThisKey="Id" OtherKey="FileId" Type="MediaContainerFile" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MediaContainerFiles" Member="MediaContainerFiles">
+    <Type Name="MediaContainerFile">
+      <Column Name="Id" Type="System.Int64" DbType="BigInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="MediaContainerId" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
+      <Column Name="FileId" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
+      <Association Name="File_MediaContainerFile" Member="File" ThisKey="FileId" OtherKey="Id" Type="File" IsForeignKey="true" />
+      <Association Name="MediaContainer_MediaContainerFile" Member="MediaContainer" ThisKey="MediaContainerId" OtherKey="Id" Type="MediaContainer" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>
