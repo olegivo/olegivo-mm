@@ -133,7 +133,7 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Prism\MeloManagerCommandLineOptions.cs" />
+    <Compile Include="Prism\MeloManagerOptions.cs" />
     <Compile Include="Prism\MeloManagerBootstrapper.cs" />
     <Compile Include="Prism\MeloManagerPrismModule.cs" />
     <Compile Include="Prism\MeloManagerAutofacModule.cs" />

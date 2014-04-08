@@ -1,6 +1,8 @@
+using Oleg_ivo.MeloManager.Properties;
+
 namespace Oleg_ivo.MeloManager.Prism
 {
-    public class MeloManagerCommandLineOptions
+    public class MeloManagerOptions
     {
         /// <summary>
         /// Название конфигурации
@@ -10,12 +12,12 @@ namespace Oleg_ivo.MeloManager.Prism
         /// <summary>
         /// Путь, по которому располагаются плейлисты, которые необходимо починить (без конечного "\")
         /// </summary>
-        public string PlaylistsPath { get; set; }
+        public string PlaylistsPath { get { return Settings.Default.PlaylistsPath; } }
 
         /// <summary>
         /// Пути (через ";"), содержащие музыкальные файлы (без конечных "\")
         /// </summary>
-        public string MusicFilesSource { get; set; }
+        public string MusicFilesSource { get { return Settings.Default.MusicFilesSource; } }
 
         /// <summary>
         /// Режим автоматической починки. Для данного режима следует указывать также параметры <see cref="PlaylistsPath"/> и <see cref="MusicFilesSource"/>
@@ -30,6 +32,6 @@ namespace Oleg_ivo.MeloManager.Prism
         /// <summary>
         /// 
         /// </summary>
-        public string Mp3TagRenamePreviewFileName { get; set; }
+        public string Mp3TagRenamePreviewFileName { get { return Settings.Default.Mp3TagRenamePreviewFileName; } }
     }
 }
