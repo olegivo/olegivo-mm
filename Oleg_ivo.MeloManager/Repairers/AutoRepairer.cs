@@ -15,7 +15,7 @@ namespace Oleg_ivo.MeloManager.Repairers
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public AutoRepairer(MeloManagerCommandLineOptions options) : base(options)
+        public AutoRepairer(MeloManagerOptions options) : base(options)
         {
         }
 

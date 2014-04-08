@@ -1,7 +1,15 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Oleg_ivo.MeloManager.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="PlaylistsPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\oleg\AppData\Roaming\Winamp\Plugins\ml\playlists</Value>
+    </Setting>
+    <Setting Name="MusicFilesSource" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\Music</Value>
+    </Setting>
+    <Setting Name="Mp3TagRenamePreviewFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Users\oleg\AppData\Local\Temp\Mp3tag v2.58\preview.txt</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

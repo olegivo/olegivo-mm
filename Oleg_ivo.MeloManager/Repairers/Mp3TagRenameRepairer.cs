@@ -10,7 +10,7 @@ namespace Oleg_ivo.MeloManager.Repairers
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public Mp3TagRenameRepairer(MeloManagerCommandLineOptions options) : base(options)
+        public Mp3TagRenameRepairer(MeloManagerOptions options) : base(options)
         {
         }
 

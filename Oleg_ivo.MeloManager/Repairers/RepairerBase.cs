@@ -15,11 +15,11 @@ namespace Oleg_ivo.MeloManager.Repairers
         protected readonly static string[] PlaylistFilesSearchPatterns = { "*.m3u8", "*.m3u" };
         protected static readonly string[] MusicFilesSearchPatterns = { "*.mp3", "*.wma", "*.ogg" };
 
-        protected readonly MeloManagerCommandLineOptions Options;
+        protected readonly MeloManagerOptions Options;
         protected readonly Dictionary<string, string> Dic;
         protected string BackupPath;
 
-        protected RepairerBase(MeloManagerCommandLineOptions options)
+        protected RepairerBase(MeloManagerOptions options)
         {
             Options = Enforce.ArgumentNotNull(options, "options");
             Dic = GetPlaylistsDictionary(options.PlaylistsPath);

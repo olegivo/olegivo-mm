@@ -22,7 +22,7 @@ namespace Oleg_ivo.MeloManager.Prism
         {
             base.ConfigureContainer(builder);
 
-            builder.RegisterModule(new CommandLineHelperAutofacModule<MeloManagerCommandLineOptions>(args));
+            builder.RegisterModule(new CommandLineHelperAutofacModule<MeloManagerOptions>(args));
             builder.RegisterModule<MeloManagerAutofacModule>();
         }
 
@@ -63,10 +63,10 @@ namespace Oleg_ivo.MeloManager.Prism
         {
             try
             {
-                var options = Container.Resolve<MeloManagerCommandLineOptions>();
+                var options = Container.Resolve<MeloManagerOptions>();
                 if (options.Mp3TagRenameMode)
                 {
-                    var mp3TagRenameRepairer = Container.ResolveUnregistered <Mp3TagRenameRepairer>();
+                    var mp3TagRenameRepairer = Container.ResolveUnregistered<Mp3TagRenameRepairer>();
                     //mp3TagRenameRepairer.Repair(@"C:\Users\oleg\AppData\Roaming\Winamp\Plugins\ml\playlists\", @"C:\Users\oleg\AppData\Local\Temp\Mp3tag v2.58\preview.txt");
                     mp3TagRenameRepairer.Repair();
                 }
