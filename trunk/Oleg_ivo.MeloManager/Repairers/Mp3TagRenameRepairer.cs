@@ -1,7 +1,9 @@
 using System;
 using System.IO;
 using System.Linq;
+using Autofac;
 using NLog;
+using Oleg_ivo.MeloManager.PlaylistFileAdapters;
 using Oleg_ivo.MeloManager.Prism;
 
 namespace Oleg_ivo.MeloManager.Repairers
@@ -10,7 +12,8 @@ namespace Oleg_ivo.MeloManager.Repairers
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public Mp3TagRenameRepairer(MeloManagerOptions options) : base(options)
+        public Mp3TagRenameRepairer(MeloManagerOptions options, IComponentContext context)
+            : base(options, context)
         {
         }
 
@@ -25,7 +28,7 @@ namespace Oleg_ivo.MeloManager.Repairers
         {
             log.Info("Замена имён файлов на новые после пеерименования с помощью Mp3Tag");
             log.Debug("Получение списка замен");
-            string mp3TagRenamePreviewFileName = Options.Mp3TagRenamePreviewFileName;
+            var mp3TagRenamePreviewFileName = Options.Mp3TagRenamePreviewFileName;
             if (!File.Exists(mp3TagRenamePreviewFileName))
             {
                 log.Error("Не найден файл, содержащий список замен [{0}]", mp3TagRenamePreviewFileName);
@@ -42,18 +45,13 @@ namespace Oleg_ivo.MeloManager.Repairers
             if(!replacements.Any())
                 return;
 
-            log.Debug("Получение списка плейлистов");
-            string playlistsPath = Options.PlaylistsPath;
             var playlistFiles =
-                PlaylistFilesSearchPatterns.SelectMany(
-                    searchPattern => Directory.GetFiles(playlistsPath, searchPattern, SearchOption.TopDirectoryOnly))
-                    .ToList();
-            log.Debug("Получено плейлистов: {0}", playlistFiles.Count);
+                WinampM3UPlaylistFileAdapter.GetPlaylistsFiles(PlaylistFileAdapter.PlaylistFilesSearchPatterns);
 
             foreach (var playlistFile in playlistFiles)
             {
                 var fileName = Path.GetFileName(playlistFile);
-                log.Debug("Замена в файле [{0}] ({1})", playlistFile, Dic[fileName]);
+                log.Debug("Замена в файле [{0}] ({1})", playlistFile, WinampM3UPlaylistFileAdapter.Dic[fileName]);
                 var replacedPlaylistContent =
                     replacements.Aggregate(new
                         {

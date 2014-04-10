@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
@@ -47,6 +48,18 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         public new void AddChild(MediaContainer child)
         {
             base.AddChild(child);
+        }
+
+        /// <summary>
+        /// Добавить дочерний элемент
+        /// </summary>
+        /// <param name="children"></param>
+        public void AddChildren(IEnumerable<MediaContainer> children)
+        {
+            foreach (var child in children)
+            {
+                base.AddChild(child);
+            }
         }
 
         /// <summary>

@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Xml.Linq;
+using Autofac;
 using Oleg_ivo.Base.Autofac;
+using Oleg_ivo.Base.Autofac.DependencyInjection;
+using Oleg_ivo.MeloManager.PlaylistFileAdapters;
 using Oleg_ivo.MeloManager.Prism;
 
 namespace Oleg_ivo.MeloManager.Repairers
@@ -12,17 +12,16 @@ namespace Oleg_ivo.MeloManager.Repairers
     {
         public abstract void Repair();
 
-        protected readonly static string[] PlaylistFilesSearchPatterns = { "*.m3u8", "*.m3u" };
         protected static readonly string[] MusicFilesSearchPatterns = { "*.mp3", "*.wma", "*.ogg" };
 
         protected readonly MeloManagerOptions Options;
-        protected readonly Dictionary<string, string> Dic;
         protected string BackupPath;
+        protected readonly WinampM3UPlaylistFileAdapter WinampM3UPlaylistFileAdapter;
 
-        protected RepairerBase(MeloManagerOptions options)
+        protected RepairerBase(MeloManagerOptions options, IComponentContext context)
         {
             Options = Enforce.ArgumentNotNull(options, "options");
-            Dic = GetPlaylistsDictionary(options.PlaylistsPath);
+            WinampM3UPlaylistFileAdapter = Enforce.NotNull(Enforce.ArgumentNotNull(context, "context").ResolveUnregistered<WinampM3UPlaylistFileAdapter>());
         }
 
         protected void EnsureBackupPath(string suffix)
@@ -34,13 +33,5 @@ namespace Oleg_ivo.MeloManager.Repairers
                 Directory.CreateDirectory(BackupPath);
         }
 
-        protected Dictionary<string,string> GetPlaylistsDictionary(string playlistsPath)
-        {
-            return
-                XDocument.Load(Path.Combine(playlistsPath, "playlists.xml"))
-                    .Root.Elements()
-                    .ToDictionary(xElement => xElement.Attribute("filename").Value,
-                        xElement => xElement.Attribute("title").Value);
-        }
     }
 }
