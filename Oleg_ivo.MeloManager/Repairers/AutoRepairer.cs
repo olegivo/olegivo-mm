@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Autofac;
 using NLog;
 using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
-using Oleg_ivo.MeloManager.PlaylistFileAdapters;
 using Oleg_ivo.MeloManager.Prism;
 using File = System.IO.File;
 
@@ -15,7 +15,8 @@ namespace Oleg_ivo.MeloManager.Repairers
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public AutoRepairer(MeloManagerOptions options) : base(options)
+        public AutoRepairer(MeloManagerOptions options, IComponentContext context)
+            : base(options, context)
         {
         }
 
@@ -24,10 +25,10 @@ namespace Oleg_ivo.MeloManager.Repairers
             log.Info("Автоматическая починка путей файлов");
             log.Debug("Получение списка плейлистов");
             var categoryToRepair = new Category();
-            var playlistFileAdapter = new M3UPlaylistFileAdapter();
 
-            var playlistsPath = Options.PlaylistsPath;
-            var playlistFiles =
+            categoryToRepair.AddChildren(WinampM3UPlaylistFileAdapter.GetPlaylists());
+
+            /*var playlistFiles =
                 PlaylistFilesSearchPatterns.SelectMany(
                     searchPattern => Directory.GetFiles(playlistsPath, searchPattern, SearchOption.TopDirectoryOnly))
                     .Distinct()
@@ -42,7 +43,7 @@ namespace Oleg_ivo.MeloManager.Repairers
             {
                 playlist.Name = Dic[Path.GetFileName(playlist.OriginalFileName)];
                 categoryToRepair.AddChild(playlist);
-            }
+            }*/
 
             var fileInfos =
                 categoryToRepair.Childs.Cast<Playlist>()
@@ -52,7 +53,7 @@ namespace Oleg_ivo.MeloManager.Repairers
                                 .SelectMany(mediaFile => mediaFile.MediaContainerFiles.Select(mcf => mcf.File.FileInfo))).ToList();
 
             var count1 = fileInfos.Count();
-            var distinctFilesCpount = fileInfos.Select(fi=>fi.FullName).Distinct().Count();
+            var distinctFilesCpount = fileInfos.Select(fi => fi.FullName).Distinct().Count();
             //var existsCount1 = fileInfos.Count(fi => fi.Exists);
             var notExistsCount1 = fileInfos.Count(fi => !fi.Exists);
 
@@ -111,7 +112,7 @@ namespace Oleg_ivo.MeloManager.Repairers
                 foreach (var playlist in categoryToRepair.Childs.Cast<Playlist>())
                 {
                     File.Copy(playlist.OriginalFileName, Path.Combine(BackupPath, Path.GetFileName(playlist.OriginalFileName)));
-                    playlistFileAdapter.PlaylistToFile(playlist, playlist.OriginalFileName);
+                    WinampM3UPlaylistFileAdapter.PlaylistToFile(playlist, playlist.OriginalFileName);
                 }
             }
 
