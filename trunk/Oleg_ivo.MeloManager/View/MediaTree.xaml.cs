@@ -1,5 +1,6 @@
 ﻿using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.MeloManager.ViewModel;
+using Telerik.Windows.Controls;
 
 namespace Oleg_ivo.MeloManager.View
 {
@@ -19,8 +20,24 @@ namespace Oleg_ivo.MeloManager.View
         [Dependency(Required = true)]
         public MediaTreeViewModel ViewModel
         {
-            get { return (MediaTreeViewModel) DataContext; }
+            get { return (MediaTreeViewModel)DataContext; }
             set { DataContext = value; }
+        }
+
+        private void RadTreeView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var radTreeView = (RadTreeView)sender;
+            var currentItem = ViewModel.CurrentItem;
+            string path = string.Empty;
+            while (currentItem != null)
+            {
+                if (path != string.Empty)
+                    path = radTreeView.PathSeparator + path;
+                path = currentItem.Name + path;
+                currentItem = currentItem.Parent;
+            }
+            var treeViewItem = radTreeView.GetItemByPath(path);
+            radTreeView.BringPathIntoView(path);
         }
 
 

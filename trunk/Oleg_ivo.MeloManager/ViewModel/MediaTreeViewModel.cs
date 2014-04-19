@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using NLog;
 using Oleg_ivo.MeloManager.MediaObjects;
 
 namespace Oleg_ivo.MeloManager.ViewModel
@@ -14,15 +16,22 @@ namespace Oleg_ivo.MeloManager.ViewModel
     public class MediaTreeViewModel : ViewModelBase
     {
         #region Fields
+        private static Logger log = LogManager.GetCurrentClassLogger();
+        
         private ObservableCollection<MediaContainerTreeWrapper> items;
         private MediaContainerTreeWrapper currentItem;
         private MediaContainer currentTreeMediaContainer;
         private IQueryable<MediaContainer> childListDataSource;
         private IQueryable<MediaContainer> parentListDataSource;
+
         private ICommand commandTreeAddCategory;
+        private ICommand commandDeleteItem;
+
         #endregion
 
         #region Properties
+        public MediaDataContext DataContext { get; set; }
+
         public ObservableCollection<MediaContainerTreeWrapper> Items
         {
             get { return items; }
@@ -44,6 +53,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             set
             {
                 if (currentItem == value) return;
+                //TODO: история переходов
                 currentItem = value;
                 RaisePropertyChanged(() => CurrentItem);
                 CurrentTreeMediaContainer = CurrentItem != null ? CurrentItem.UnderlyingItem : null;
@@ -59,17 +69,17 @@ namespace Oleg_ivo.MeloManager.ViewModel
             {
                 return currentTreeMediaContainer;
             }
-            set
+            private set
             {
                 if (currentTreeMediaContainer == value) return;
 
                 currentTreeMediaContainer = value;
-                ChildListDataSource = CurrentTreeMediaContainer.Childs;
-                ParentListDataSource = CurrentTreeMediaContainer.Parents;
+                ChildListDataSource = CurrentTreeMediaContainer!=null ? CurrentTreeMediaContainer.Childs : null;
+                ParentListDataSource = CurrentTreeMediaContainer!=null ? CurrentTreeMediaContainer.Parents : null;
                 RaisePropertyChanged(() => CurrentTreeMediaContainer);
             }
         }
-        
+
         /// <summary>
         /// Источник данных для списка родителей текущего медиа-контейнера
         /// </summary>
@@ -122,25 +132,78 @@ namespace Oleg_ivo.MeloManager.ViewModel
         public ICommand CommandTreeAddCategory
         {
             get
-            { //TODO
+            {
                 return commandTreeAddCategory ??
                        (commandTreeAddCategory = new RelayCommand<object>(TreeAddCategory));
             }
         }
 
-        
+        public ICommand CommandDeleteItem
+        {
+            get
+            {
+                return commandDeleteItem ??
+                       (commandDeleteItem = new RelayCommand<MediaContainerTreeWrapper>(DeleteItem));
+            }
+        }
+
         #endregion
 
         #region Methods
+
+        public class TreeWalker
+        {
+
+        }
         public void Clear()
         {
+            //TODO:удаление различных элементов?
+            /*foreach (var wrapper in Items)
+            {
+                
+            }*/
             if (Items != null)
                 Items.Clear();
+        }
+
+        public void InitSource(IEnumerable<Category> mediaContainers)
+        {
+            Items =
+                new ObservableCollection<MediaContainerTreeWrapper>(
+                    mediaContainers.Select(mc => new MediaContainerTreeWrapper(mc, null)));
         }
 
         public void AddCategory(Category category, MediaContainerTreeWrapper parent)
         {
             Items.Add(new MediaContainerTreeWrapper(category, parent));
+            if (category.Id == 0)
+                DataContext.MediaContainers.InsertOnSubmit(category);
+        }
+
+        public void DeleteItem(MediaContainerTreeWrapper wrapper)
+        {
+            var foundWrappers = new List<MediaContainerTreeWrapper>();
+            if (wrapper.Parent != null)
+            {
+                var parentContainer = wrapper.Parent.UnderlyingItem;
+                foundWrappers.AddRange(
+                    Items.SelectMany(treeWrapper => treeWrapper.FindChildren(wrapper.UnderlyingItem, parentContainer)));
+            }
+            else
+                foundWrappers.Add(wrapper);
+            
+            if (!foundWrappers.Any()) return;
+            
+            //удаление из базы
+            foundWrappers.First().DeleteWithChildren(DataContext);
+            //удаление из родительскитх обёрток
+            foreach (var foundWrapper in foundWrappers)
+            {
+                if (foundWrapper.Parent == null)
+                    Items.Remove(foundWrapper);
+                else
+                    foundWrapper.Parent.ChildItems.Remove(foundWrapper);
+            }
         }
 
         private void TreeAddCategory(object mediaTree)

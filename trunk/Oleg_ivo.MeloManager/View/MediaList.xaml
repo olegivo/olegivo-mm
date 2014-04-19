@@ -20,7 +20,8 @@
     <telerik:RadGridView 
         AutoGenerateColumns="False"
         ItemsSource="{Binding ListDataSource}"
-        SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
+        SelectedItem="{Binding SelectedItem}"
+        MouseDoubleClick="Grid_OnMouseDoubleClick">
         <telerik:RadGridView.Columns>
             <telerik:GridViewDataColumn 
                 Header="Название" 

@@ -114,6 +114,7 @@
     <Reference Include="Telerik.Windows.Controls" />
     <Reference Include="telerik.windows.controls.gridview" />
     <Reference Include="Telerik.Windows.Controls.Input" />
+    <Reference Include="telerik.windows.controls.navigation, Version=2013.2.724.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL" />
     <Reference Include="Telerik.Windows.Data" />
     <Reference Include="UIAutomationProvider" />
     <Reference Include="UIAutomationTypes" />
