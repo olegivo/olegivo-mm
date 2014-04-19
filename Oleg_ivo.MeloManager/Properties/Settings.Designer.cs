@@ -58,5 +58,18 @@ namespace Oleg_ivo.MeloManager.Properties {
                 this["Mp3TagRenamePreviewFileName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=OLEG-A\\SQLEXPRESS;Initial Catalog=MeloManager;Integrated Security=Tru" +
+            "e")]
+        public string ConnectionString {
+            get {
+                return ((string)(this["ConnectionString"]));
+            }
+            set {
+                this["ConnectionString"] = value;
+            }
+        }
     }
 }

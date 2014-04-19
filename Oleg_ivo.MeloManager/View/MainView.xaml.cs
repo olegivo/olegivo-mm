@@ -24,26 +24,9 @@ namespace Oleg_ivo.MeloManager.View
             set { DataContext = value; }
         }
 
-        /* TODO:
-        private void bbiInit_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
-        {
-            ViewModel.InitDataSource();
-        }
-
-        private void bbiLoad_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
-        {
-            ViewModel.LoadFromDb();
-        }
-
-        private void bbiSave_ItemClick(object sender, DevExpress.Xpf.Bars.ItemClickEventArgs e)
-        {
-            ViewModel.SaveAndLoad();
-        }
-        */
-
         private void MainView_OnLoaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.InitDataSource();//LoadFromDb();
+            ViewModel.LoadFromDb();//ImportWinampPlaylists();//ViewModel.InitDataSource();//
         }
     }
 }

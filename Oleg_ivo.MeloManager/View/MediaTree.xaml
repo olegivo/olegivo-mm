@@ -3,49 +3,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" 
+    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+    xmlns:MediaObjects="clr-namespace:Oleg_ivo.MeloManager.MediaObjects;assembly=Oleg_ivo.MeloManager.MediaObjects"
     x:Class="Oleg_ivo.MeloManager.View.MediaTree"
+    x:Name="mediaTree"
     mc:Ignorable="d" 
     d:DesignHeight="326" d:DesignWidth="438">
-    <!--<dxlc:LayoutControl Padding="0">
-        <dxn:NavBarControl Name="navBarControl1" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True">
-            <dxn:NavBarControl.Groups>
-                <dxn:NavBarGroup>
-                    <dxn:NavBarItem Content="Удалить" 
-                                    Command="{Binding Path=CommandTreeAddCategory}" 
-                                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=View:MediaTree, AncestorLevel=1}, Path=CurrentMediaContainer, UpdateSourceTrigger=PropertyChanged}" />
-                </dxn:NavBarGroup>
-            </dxn:NavBarControl.Groups>
-            <dxn:NavBarControl.View>
-                <dxn:ExplorerBarView />
-            </dxn:NavBarControl.View>
-        </dxn:NavBarControl>
-        <dxg:TreeListControl HorizontalAlignment="Stretch" Name="tree" 
-                             VerticalAlignment="Stretch" 
-                             dxlc:LayoutControl.AllowHorizontalSizing="True" 
-                             dxlc:LayoutControl.AllowVerticalSizing="True" 
-                             ItemsSource="{Binding Path=TreeDataSource, UpdateSourceTrigger=PropertyChanged}" 
-                             AutoPopulateColumns="True">
-            <dxg:TreeListControl.Columns>
-                <dxg:TreeListColumn FieldName="Id" Visible="False" />
-                <dxg:TreeListColumn FieldName="Name" Header="Название" />
-            </dxg:TreeListControl.Columns>
-            <dxg:TreeListControl.View>
-                <dxg:TreeListView Name="treeListView1" 
-                                  AllowEditing="False" 
-                                  KeyFieldName="Id" 
-                                  ParentFieldName="ParentId" 
-                                  NavigationStyle="Row" 
-                                  AutoExpandAllNodes="True" 
-                                  ShowAutoFilterRow="True" 
-                                  ShowNodeImages="True" 
-                                  ShowIndicator="False" 
-                                  ImageFieldName="Image" />
-            </dxg:TreeListControl.View>
-        </dxg:TreeListControl>
-    </dxlc:LayoutControl>-->
-
-    <telerik:RadTreeListView 
+    <!--<telerik:RadTreeListView 
         Name="treeListView1"
         AutoGenerateColumns="False"
         CurrentItem="{Binding CurrentItem, Mode=TwoWay}"
@@ -58,6 +22,38 @@
             <telerik:GridViewDataColumn Header="Название" DataMemberBinding="{Binding Name}"/>
         </telerik:RadTreeListView.Columns>
 
-    </telerik:RadTreeListView>
+    </telerik:RadTreeListView>-->
 
+    <UserControl.Resources>
+        <HierarchicalDataTemplate 
+            x:Key="treeViewTemplate" 
+            ItemsSource="{Binding ChildItems}" 
+            DataType="MediaObjects:MediaContainerTreeWrapper">
+            <DockPanel 
+                Dock="Left">
+                <Image 
+                    Source="{Binding Image}" 
+                    Margin="5" />
+                <Button 
+                    DockPanel.Dock="Right"
+                    Command="{Binding ElementName=mediaTree, Path=DataContext.CommandDeleteItem}"
+                    CommandParameter="{Binding}"
+                    Margin="5">Удалить</Button>
+                <TextBlock 
+                    Text="{Binding Name}" 
+                    VerticalAlignment="Center" 
+                    Margin="5"
+                    MinWidth="300"/>
+            </DockPanel>
+            <!--<Border BorderBrush="BlueViolet" BorderThickness="1">
+            </Border>-->
+        </HierarchicalDataTemplate>
+    </UserControl.Resources>
+    <telerik:RadTreeView x:Name="tree" 
+        ItemsSource="{Binding Path=Items, UpdateSourceTrigger=PropertyChanged}"
+        ItemTemplate="{StaticResource treeViewTemplate}"
+        SelectedItem="{Binding CurrentItem, Mode=TwoWay}" SelectionChanged="RadTreeView_SelectionChanged"
+        AutoScrollToSelectedItem="True"
+        telerik:TextSearch.TextPath="Name"
+        PathSeparator="\"/>
 </UserControl>

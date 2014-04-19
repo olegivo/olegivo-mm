@@ -33,5 +33,10 @@ namespace Oleg_ivo.MeloManager.Prism
         /// 
         /// </summary>
         public string Mp3TagRenamePreviewFileName { get { return Settings.Default.Mp3TagRenamePreviewFileName; } }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ConnectionString { get { return Settings.Default.ConnectionString; } }
     }
 }

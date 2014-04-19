@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
-    [DebuggerDisplay("{FullFileName}")]
-    partial class File
+    //[DebuggerDisplay("{FullFileName}")]
+    partial class File : IEquatable<File>
     {
+        public override string ToString()
+        {
+            return FullFileName;
+        }
+
         private FileInfo fileInfo;
         private List<string> fullFileNameElements;
 
@@ -20,6 +24,36 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                     CreateFileInfoAndElements();
                 return fileInfo;
             }
+        }
+
+        public bool Equals(File other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(_FullFileName, other._FullFileName);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((File) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (_FullFileName != null ? _FullFileName.GetHashCode() : 0);
+        }
+
+        public static bool operator ==(File left, File right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(File left, File right)
+        {
+            return !Equals(left, right);
         }
 
         partial void OnFullFileNameChanged()
@@ -55,7 +89,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                 var minLength = new[] { original.Count, items.Count }.Min();
                 var i = 0;
                 for (; i < minLength; i++)
-                    if (!string.Equals(items[i],original[i], StringComparison.InvariantCultureIgnoreCase)) 
+                    if (!String.Equals(items[i],original[i], StringComparison.InvariantCultureIgnoreCase)) 
                         break;
                 return i;
             }
@@ -81,14 +115,19 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             }
         }
 
+        private static readonly Dictionary<string, File> filesCache = new Dictionary<string, File>();
+
         public static File GetFile(string fullFilename)
         {
+            if (filesCache.ContainsKey(fullFilename))
+                return filesCache[fullFilename];
+
             var fileName = System.IO.Path.GetFileName(fullFilename);
             var fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(fullFilename);
             var extension = System.IO.Path.GetExtension(fullFilename);
             var drive = System.IO.Path.GetPathRoot(fullFilename);
             var path = System.IO.Path.GetDirectoryName(fullFilename);
-            return new File
+            var file = new File
             {
                 FullFileName = fullFilename,
                 Drive = drive,
@@ -97,6 +136,8 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                 FileNameWithoutExtension = fileNameWithoutExtension,
                 Extention = extension
             };
+            filesCache.Add(fullFilename, file);
+            return file;
 
         }
     }

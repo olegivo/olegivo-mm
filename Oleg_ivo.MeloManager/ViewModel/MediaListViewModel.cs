@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using GalaSoft.MvvmLight;
 using Oleg_ivo.MeloManager.MediaObjects;
 
@@ -51,5 +52,18 @@ namespace Oleg_ivo.MeloManager.ViewModel
             base.Cleanup();
         }
         */
+
+        public void OnCellDoubleClick()
+        {
+            
+        }
+
+        public event EventHandler RowDoubleClick;
+
+        public void OnRowDoubleClick()
+        {
+            if(RowDoubleClick!=null) 
+                RowDoubleClick(this, EventArgs.Empty);
+        }
     }
 }

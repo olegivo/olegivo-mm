@@ -62,37 +62,38 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
         private List<ExtInfo> GetExtInfosFromFile_m3u(String playlistFileName)
         {
+            List<string> lines =
+                System.IO.File.ReadAllLines(playlistFileName, Encoding.UTF8)
+                    .Where(s => !string.IsNullOrEmpty(s))
+                    .ToList();
+            List<ExtInfo> extInfos = new List<ExtInfo>();
+            if (lines[0].Trim().ToUpper() == "#EXTM3U")
             {
-                List<string> lines = System.IO.File.ReadAllLines(playlistFileName, Encoding.UTF8).Where(s => !string.IsNullOrEmpty(s)).ToList();
-                List<ExtInfo> extInfos = new List<ExtInfo>();
-                if (lines[0].Trim().ToUpper() == "#EXTM3U")
+                String title = String.Empty;
+                for (int i = 0; i < lines.Count; i++)
                 {
-                    String title = String.Empty;
-                    for (int i = 0; i < lines.Count; i++)
+                    string s = lines[i];
+                    if (s.StartsWith("#EXTINF", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        string s = lines[i];
-                        if (s.StartsWith("#EXTINF", StringComparison.CurrentCultureIgnoreCase))
-                        {
-                            String[] info = s.Split(new[] { ":", "," }, StringSplitOptions.None);
-                            if (info.Length > 2)
-                                title = info[2];
-                            extInfos.Add(new ExtInfo(title, lines[++i]));
-                        }
-                        else if (s.StartsWith("# ", StringComparison.CurrentCultureIgnoreCase))
-                        {
-                            title = s.Substring(2);
-                            extInfos.Add(new ExtInfo(title, lines[++i]));
-                        }
-                        title = String.Empty;
+                        String[] info = s.Split(new[] {":", ","}, StringSplitOptions.None);
+                        if (info.Length > 2)
+                            title = info[2];
+                        extInfos.Add(new ExtInfo(title, lines[++i]));
                     }
+                    else if (s.StartsWith("# ", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        title = s.Substring(2);
+                        extInfos.Add(new ExtInfo(title, lines[++i]));
+                    }
+                    title = String.Empty;
                 }
-                else
-                {
-                    extInfos.AddRange(lines.Select(t => new ExtInfo(String.Empty, t.Trim())));
-                }
-
-                return extInfos;
             }
+            else
+            {
+                extInfos.AddRange(lines.Select(t => new ExtInfo(String.Empty, t.Trim())));
+            }
+
+            return extInfos;
         }
     }
 }

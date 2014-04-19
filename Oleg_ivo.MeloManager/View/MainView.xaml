@@ -5,61 +5,50 @@
     xmlns:View="clr-namespace:Oleg_ivo.MeloManager.View"
     ScrollViewer.CanContentScroll="True"
     Loaded="MainView_OnLoaded">
-    <!--<dxb:BarManager 
-        Name="barManager1" 
-        ScrollViewer.CanContentScroll="True">
-        <dxb:BarManager.Items>
-            <dxb:BarButtonItem Content="Init" Name="bbiInit" ItemClick="bbiInit_ItemClick" />
-            <dxb:BarButtonItem Content="Load" Name="bbiLoad" ItemClick="bbiLoad_ItemClick"/>
-            <dxb:BarButtonItem Content="Save" Name="bbiSave" ItemClick="bbiSave_ItemClick"/>
-        </dxb:BarManager.Items>
-        <dxb:BarManager.Bars>
-            <dxb:Bar Caption="Main Menu" IsMainMenu="True" Name="mainMenuBar">
-                <dxb:Bar.ItemLinks>
-                    <dxb:BarButtonItemLink BarItemName="bbiSave" />
-                </dxb:Bar.ItemLinks>
-                <dxb:Bar.DockInfo>
-                    <dxb:BarDockInfo ContainerType="Top" />
-                </dxb:Bar.DockInfo>
-            </dxb:Bar>
-            <dxb:Bar Caption="bar1" Name="bar1">
-                <dxb:Bar.ItemLinks>
-                    <dxb:BarButtonItemLink BarItemName="bbiInit" />
-                    <dxb:BarButtonItemLink BarItemName="bbiLoad" />
-                    <dxb:BarButtonItemLink BarItemName="bbiSave" />
-                </dxb:Bar.ItemLinks>
-                <dxb:Bar.DockInfo>
-                    <dxb:BarDockInfo ContainerType="Top" />
-                </dxb:Bar.DockInfo>
-            </dxb:Bar>
-            <dxb:Bar Caption="Status Bar" IsStatusBar="True" Name="statusBar">
-                <dxb:Bar.DockInfo>
-                    <dxb:BarDockInfo ContainerType="Bottom" />
-                </dxb:Bar.DockInfo>
-            </dxb:Bar>
-        </dxb:BarManager.Bars>
-    </dxb:BarManager>-->
     <Grid 
-            VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-            ScrollViewer.CanContentScroll="True">
+        VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+        ScrollViewer.CanContentScroll="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition MaxHeight="30" Height="Auto" />
             <RowDefinition MinHeight="300" Height="*" />
             <RowDefinition MinHeight="300" Height="*" />
+            <RowDefinition MaxHeight="30" Height="Auto" />
         </Grid.RowDefinitions>
+        <ToolBar
+            Grid.Row="0"
+            Grid.Column="0" Grid.ColumnSpan="2">
+            <Button Command="{Binding CommandLoadFromDb}">Load</Button>
+            <Separator />
+            <Button Command="{Binding CommandSaveAndLoad}">Save</Button>
+            <Separator />
+            <Button Command="{Binding CommandTreeAddCategory}">Новая категория</Button>
+            <Separator />
+            <Button Command="{Binding CommandImportWinampPlaylists}">Импорт из Winamp</Button>
+            <Separator />
+            <Button Command="{Binding CommandInitDataSource}">Init</Button>
+        </ToolBar>
         <View:MediaTree 
-                DataContext="{Binding Path=MediaTree}"
-                Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
+            DataContext="{Binding MediaTree}"
+            Grid.Row="1" Grid.RowSpan="2" 
+            Grid.Column="0" >
         </View:MediaTree>
         <View:MediaList 
-                Grid.Row="0" Grid.Column="1" 
-                DataContext="{Binding Path=Parents}">
+            DataContext="{Binding Parents}"
+            Grid.Row="1" 
+            Grid.Column="1" >
         </View:MediaList>
         <View:MediaList 
-                Grid.Row="1" Grid.Column="1" 
-                DataContext="{Binding Path=Childs}" />
+            DataContext="{Binding Childs}"
+            Grid.Row="2" 
+            Grid.Column="1"  />
+        <StatusBar
+            Grid.Row="3" 
+            Grid.Column="0" Grid.ColumnSpan="2">
+            <TextBlock Text="{Binding StatusText}" />
+        </StatusBar>
     </Grid>
 </UserControl>

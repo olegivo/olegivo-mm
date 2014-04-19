@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using Oleg_ivo.Base.Autofac;
@@ -10,6 +12,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// <summary>
     /// Обёртка для <see cref="MediaContainer"/>
     /// </summary>
+    [DebuggerDisplay("Wrapper: {UnderlyingItem}; Parent: {Parent!=null ? Parent.UnderlyingItem : null}")]
     public class MediaContainerTreeWrapper : INotifyPropertyChanged
     {
         private readonly Func<MediaContainerTreeWrapper, long> _getMySourceIdDelegateId;
@@ -30,6 +33,36 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             ChildItems = new ObservableCollection<MediaContainerTreeWrapper>(mediaContainerTreeWrappers);
             ChildItems.CollectionChanged += ChildItems_CollectionChanged;
         }
+
+        public void DeleteWithChildren(MediaDataContext dataContext)
+        {
+            if (Parent != null)
+            {
+                //разрыв связи между parent и текущим элементом
+                var parentContainer = Parent.UnderlyingItem;
+                var relation =
+                    parentContainer.ChildMediaContainers.Single(rel => rel.ChildMediaContainer == UnderlyingItem);
+
+                dataContext.MediaContainersParentChilds.DeleteOnSubmit(relation);
+                UnderlyingItem.ParentMediaContainers.Remove(relation);
+                parentContainer.ChildMediaContainers.Remove(relation);
+            }
+
+            //в случае сиротства удаляем сам элемент контейнера из базы
+            if (!UnderlyingItem.Parents.Any())
+            {
+                dataContext.MediaContainers.DeleteOnSubmit(UnderlyingItem);
+
+                //рекурсивное удаление дочерних элементов
+                foreach (var childItem in ChildItems.ToList())
+                {
+                    childItem.DeleteWithChildren(dataContext);
+                    ChildItems.Remove(childItem);
+                }
+            }
+        }
+
+        //public IEnumerable<MediaContainerTreeWrapper> GetAllChilds(){}
 
         /// <summary>
         /// 
@@ -95,7 +128,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <summary>
         /// 
         /// </summary>
-        internal MediaContainerTreeWrapper Parent { get; set; }
+        public MediaContainerTreeWrapper Parent { get; set; }
 
         /// <summary>
         /// 
@@ -117,6 +150,92 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         }
 
         #endregion
+
+        /// <summary>
+        /// Поиск обёртки для целевого медиа-контейнера:
+        /// target должен быть равен UnderlyingItem,
+        /// parent (если указано) должно быть равно родительской обёртке-обёртке искомого контейнера
+        /// </summary>
+        /// <param name="target">Целевой медиа-контейнер</param>
+        /// <param name="parent">Родительская обёртка искомой обёртки. Если null, не проверяется</param>
+        /// <returns></returns>
+        public MediaContainerTreeWrapper FindChild(MediaContainer target, MediaContainerTreeWrapper parent=null)
+        {
+            MediaContainerTreeWrapper result = null;
+
+            var parentIsMe = this == parent;
+
+            if (ChildItems != null)
+            {
+                if (parentIsMe)
+                {
+                    result = ChildItems.FirstOrDefault(child => child.UnderlyingItem == target);
+                }
+                else
+                {
+                    foreach (var childWrapper in ChildItems)
+                    {
+                        result = 
+                            ChildItems.FirstOrDefault(child => child.UnderlyingItem == target) 
+                            ??                                  childWrapper.FindChild(target, parent);
+                        if (result != null)
+                            break;
+                    }
+                }
+            }
+
+
+            return result;
+        }
+
+        /// <summary>
+        /// Рекурсивно найти детей, у которых (<see cref="UnderlyingItem"/> == <see cref="target"/>), 
+        /// при этом у родительского элемента (<see cref="UnderlyingItem"/> == <see cref="parent"/>)
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="parent">Опциональный фильтрующий параметр для родительского контейнера</param>
+        /// <returns></returns>
+        public List<MediaContainerTreeWrapper> FindChildren(MediaContainer target, MediaContainer parent)
+        {
+            var result = new List<MediaContainerTreeWrapper>();
+
+            var parentIsMe = parent == UnderlyingItem;
+            foreach (var childWrapper in ChildItems)
+            {
+                if (parentIsMe && childWrapper.UnderlyingItem == target)
+                    result.Add(childWrapper);
+                result.AddRange(childWrapper.FindChildren(target, parent));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Поиск обёртки для целевого медиа-контейнера:
+        /// target должен быть равен UnderlyingItem,
+        /// parent (если указано) должно быть равно родительской обёртке-обёртке искомого контейнера
+        /// child (если указано) должно содержаться в коллекции дочерних-обёрток искомого контейнера
+        /// </summary>
+        /// <param name="target">Целевой медиа-контейнер</param>
+        /// <param name="child">Дочерняя обёртка искомой обёртки</param>
+        /// <returns></returns>
+        public MediaContainerTreeWrapper FindParent(MediaContainer target, MediaContainerTreeWrapper child)
+        {
+            if(child==null)
+                throw new ArgumentNullException("child");
+
+            MediaContainerTreeWrapper result = null;
+            var childIsMe = this == child;
+
+            if (Parent != null)
+            {
+                result = childIsMe && target == Parent.UnderlyingItem
+                    ? Parent
+                    : Parent.FindParent(target, child);
+            }
+
+            return result;
+        }
 
         void UnderlyingItem_ChildsChanged(object sender, MediaListChangedEventArgs e)
         {

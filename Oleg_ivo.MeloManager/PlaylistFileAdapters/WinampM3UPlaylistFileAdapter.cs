@@ -16,6 +16,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
         public WinampM3UPlaylistFileAdapter(MeloManagerOptions options)
         {
             Options = Enforce.ArgumentNotNull(options, "options");
+            //TODO: var folderPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
             Dic = GetPlaylistsDictionary(options.PlaylistsPath);
         }
 

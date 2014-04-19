@@ -33,15 +33,15 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     partial void InsertMediaContainer(MediaContainer instance);
     partial void UpdateMediaContainer(MediaContainer instance);
     partial void DeleteMediaContainer(MediaContainer instance);
-    partial void InsertMediaContainersParentChild(MediaContainersParentChild instance);
-    partial void UpdateMediaContainersParentChild(MediaContainersParentChild instance);
-    partial void DeleteMediaContainersParentChild(MediaContainersParentChild instance);
     partial void InsertFile(File instance);
     partial void UpdateFile(File instance);
     partial void DeleteFile(File instance);
     partial void InsertMediaContainerFile(MediaContainerFile instance);
     partial void UpdateMediaContainerFile(MediaContainerFile instance);
     partial void DeleteMediaContainerFile(MediaContainerFile instance);
+    partial void InsertMediaContainersParentChild(MediaContainersParentChild instance);
+    partial void UpdateMediaContainersParentChild(MediaContainersParentChild instance);
+    partial void DeleteMediaContainersParentChild(MediaContainersParentChild instance);
     #endregion
 		
 		public MediaDataContext() : 
@@ -82,14 +82,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			}
 		}
 		
-		public System.Data.Linq.Table<MediaContainersParentChild> MediaContainersParentChilds
-		{
-			get
-			{
-				return this.GetTable<MediaContainersParentChild>();
-			}
-		}
-		
 		public System.Data.Linq.Table<File> Files
 		{
 			get
@@ -103,6 +95,14 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			get
 			{
 				return this.GetTable<MediaContainerFile>();
+			}
+		}
+		
+		public System.Data.Linq.Table<MediaContainersParentChild> MediaContainersParentChilds
+		{
+			get
+			{
+				return this.GetTable<MediaContainersParentChild>();
 			}
 		}
 	}
@@ -125,11 +125,13 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 		
 		private bool _IsRepaired;
 		
+		private bool _IsRoot;
+		
+		private EntitySet<MediaContainerFile> _MediaContainerFiles;
+		
 		private EntitySet<MediaContainersParentChild> _ParentMediaContainers;
 		
 		private EntitySet<MediaContainersParentChild> _ChildMediaContainers;
-		
-		private EntitySet<MediaContainerFile> _MediaContainerFiles;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -141,13 +143,15 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     partial void OnNameChanged();
     partial void OnIsRepairedChanging(bool value);
     partial void OnIsRepairedChanged();
+    partial void OnIsRootChanging(bool value);
+    partial void OnIsRootChanged();
     #endregion
 		
 		public MediaContainer()
 		{
+			this._MediaContainerFiles = new EntitySet<MediaContainerFile>(new Action<MediaContainerFile>(this.attach_MediaContainerFiles), new Action<MediaContainerFile>(this.detach_MediaContainerFiles));
 			this._ParentMediaContainers = new EntitySet<MediaContainersParentChild>(new Action<MediaContainersParentChild>(this.attach_ParentMediaContainers), new Action<MediaContainersParentChild>(this.detach_ParentMediaContainers));
 			this._ChildMediaContainers = new EntitySet<MediaContainersParentChild>(new Action<MediaContainersParentChild>(this.attach_ChildMediaContainers), new Action<MediaContainersParentChild>(this.detach_ChildMediaContainers));
-			this._MediaContainerFiles = new EntitySet<MediaContainerFile>(new Action<MediaContainerFile>(this.attach_MediaContainerFiles), new Action<MediaContainerFile>(this.detach_MediaContainerFiles));
 			OnCreated();
 		}
 		
@@ -220,6 +224,39 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsRoot", DbType="Bit NOT NULL")]
+		public bool IsRoot
+		{
+			get
+			{
+				return this._IsRoot;
+			}
+			set
+			{
+				if ((this._IsRoot != value))
+				{
+					this.OnIsRootChanging(value);
+					this.SendPropertyChanging();
+					this._IsRoot = value;
+					this.SendPropertyChanged("IsRoot");
+					this.OnIsRootChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MediaContainer_MediaContainerFile", Storage="_MediaContainerFiles", ThisKey="Id", OtherKey="MediaContainerId")]
+		public EntitySet<MediaContainerFile> MediaContainerFiles
+		{
+			get
+			{
+				return this._MediaContainerFiles;
+			}
+			set
+			{
+				this._MediaContainerFiles.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MediaContainer_MediaContainersParentChild", Storage="_ParentMediaContainers", ThisKey="Id", OtherKey="ChildId")]
 		public EntitySet<MediaContainersParentChild> ParentMediaContainers
 		{
@@ -246,19 +283,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MediaContainer_MediaContainerFile", Storage="_MediaContainerFiles", ThisKey="Id", OtherKey="MediaContainerId")]
-		public EntitySet<MediaContainerFile> MediaContainerFiles
-		{
-			get
-			{
-				return this._MediaContainerFiles;
-			}
-			set
-			{
-				this._MediaContainerFiles.Assign(value);
-			}
-		}
-		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -277,6 +301,18 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_MediaContainerFiles(MediaContainerFile entity)
+		{
+			this.SendPropertyChanging();
+			entity.MediaContainer = this;
+		}
+		
+		private void detach_MediaContainerFiles(MediaContainerFile entity)
+		{
+			this.SendPropertyChanging();
+			entity.MediaContainer = null;
 		}
 		
 		private void attach_ParentMediaContainers(MediaContainersParentChild entity)
@@ -301,18 +337,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 		{
 			this.SendPropertyChanging();
 			entity.ParentMediaContainer = null;
-		}
-		
-		private void attach_MediaContainerFiles(MediaContainerFile entity)
-		{
-			this.SendPropertyChanging();
-			entity.MediaContainer = this;
-		}
-		
-		private void detach_MediaContainerFiles(MediaContainerFile entity)
-		{
-			this.SendPropertyChanging();
-			entity.MediaContainer = null;
 		}
 	}
 	
@@ -361,181 +385,13 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MediaContainersParentChilds")]
-	public partial class MediaContainersParentChild : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private long _ParentId;
-		
-		private long _ChildId;
-		
-		private EntityRef<MediaContainer> _ChildMediaContainer;
-		
-		private EntityRef<MediaContainer> _ParentMediaContainer;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnParentIdChanging(long value);
-    partial void OnParentIdChanged();
-    partial void OnChildIdChanging(long value);
-    partial void OnChildIdChanged();
-    #endregion
-		
-		public MediaContainersParentChild()
-		{
-			this._ChildMediaContainer = default(EntityRef<MediaContainer>);
-			this._ParentMediaContainer = default(EntityRef<MediaContainer>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentId", DbType="BigInt NOT NULL", IsPrimaryKey=true)]
-		public long ParentId
-		{
-			get
-			{
-				return this._ParentId;
-			}
-			set
-			{
-				if ((this._ParentId != value))
-				{
-					if (this._ParentMediaContainer.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnParentIdChanging(value);
-					this.SendPropertyChanging();
-					this._ParentId = value;
-					this.SendPropertyChanged("ParentId");
-					this.OnParentIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChildId", DbType="BigInt NOT NULL", IsPrimaryKey=true)]
-		public long ChildId
-		{
-			get
-			{
-				return this._ChildId;
-			}
-			set
-			{
-				if ((this._ChildId != value))
-				{
-					if (this._ChildMediaContainer.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnChildIdChanging(value);
-					this.SendPropertyChanging();
-					this._ChildId = value;
-					this.SendPropertyChanged("ChildId");
-					this.OnChildIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MediaContainer_MediaContainersParentChild", Storage="_ChildMediaContainer", ThisKey="ChildId", OtherKey="Id", IsForeignKey=true)]
-		public MediaContainer ChildMediaContainer
-		{
-			get
-			{
-				return this._ChildMediaContainer.Entity;
-			}
-			set
-			{
-				MediaContainer previousValue = this._ChildMediaContainer.Entity;
-				if (((previousValue != value) 
-							|| (this._ChildMediaContainer.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ChildMediaContainer.Entity = null;
-						previousValue.ParentMediaContainers.Remove(this);
-					}
-					this._ChildMediaContainer.Entity = value;
-					if ((value != null))
-					{
-						value.ParentMediaContainers.Add(this);
-						this._ChildId = value.Id;
-					}
-					else
-					{
-						this._ChildId = default(long);
-					}
-					this.SendPropertyChanged("ChildMediaContainer");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MediaContainer_MediaContainersParentChild1", Storage="_ParentMediaContainer", ThisKey="ParentId", OtherKey="Id", IsForeignKey=true)]
-		public MediaContainer ParentMediaContainer
-		{
-			get
-			{
-				return this._ParentMediaContainer.Entity;
-			}
-			set
-			{
-				MediaContainer previousValue = this._ParentMediaContainer.Entity;
-				if (((previousValue != value) 
-							|| (this._ParentMediaContainer.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ParentMediaContainer.Entity = null;
-						previousValue.ChildMediaContainers.Remove(this);
-					}
-					this._ParentMediaContainer.Entity = value;
-					if ((value != null))
-					{
-						value.ChildMediaContainers.Add(this);
-						this._ParentId = value.Id;
-					}
-					else
-					{
-						this._ParentId = default(long);
-					}
-					this.SendPropertyChanged("ParentMediaContainer");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Files")]
 	public partial class File : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private long _Id;
+		private long _Id = default(long);
 		
 		private string _Drive;
 		
@@ -555,8 +411,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnIdChanging(long value);
-    partial void OnIdChanged();
     partial void OnDriveChanging(string value);
     partial void OnDriveChanged();
     partial void OnPathChanging(string value);
@@ -577,23 +431,12 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="BigInt NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
 		public long Id
 		{
 			get
 			{
 				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
 			}
 		}
 		
@@ -769,7 +612,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private long _Id;
+		private long _Id = default(long);
 		
 		private long _MediaContainerId;
 		
@@ -783,8 +626,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnIdChanging(long value);
-    partial void OnIdChanged();
     partial void OnMediaContainerIdChanging(long value);
     partial void OnMediaContainerIdChanged();
     partial void OnFileIdChanging(long value);
@@ -798,23 +639,12 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="BigInt NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
 		public long Id
 		{
 			get
 			{
 				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
 			}
 		}
 		
@@ -930,6 +760,185 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 						this._MediaContainerId = default(long);
 					}
 					this.SendPropertyChanged("MediaContainer");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MediaContainersParentChilds")]
+	public partial class MediaContainersParentChild : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private long _Id = default(long);
+		
+		private long _ParentId;
+		
+		private long _ChildId;
+		
+		private EntityRef<MediaContainer> _ChildMediaContainer;
+		
+		private EntityRef<MediaContainer> _ParentMediaContainer;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnParentIdChanging(long value);
+    partial void OnParentIdChanged();
+    partial void OnChildIdChanging(long value);
+    partial void OnChildIdChanged();
+    #endregion
+		
+		public MediaContainersParentChild()
+		{
+			this._ChildMediaContainer = default(EntityRef<MediaContainer>);
+			this._ParentMediaContainer = default(EntityRef<MediaContainer>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="BigInt NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
+		public long Id
+		{
+			get
+			{
+				return this._Id;
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentId", DbType="BigInt NOT NULL")]
+		public long ParentId
+		{
+			get
+			{
+				return this._ParentId;
+			}
+			set
+			{
+				if ((this._ParentId != value))
+				{
+					if (this._ParentMediaContainer.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnParentIdChanging(value);
+					this.SendPropertyChanging();
+					this._ParentId = value;
+					this.SendPropertyChanged("ParentId");
+					this.OnParentIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChildId", DbType="BigInt NOT NULL")]
+		public long ChildId
+		{
+			get
+			{
+				return this._ChildId;
+			}
+			set
+			{
+				if ((this._ChildId != value))
+				{
+					if (this._ChildMediaContainer.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnChildIdChanging(value);
+					this.SendPropertyChanging();
+					this._ChildId = value;
+					this.SendPropertyChanged("ChildId");
+					this.OnChildIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MediaContainer_MediaContainersParentChild", Storage="_ChildMediaContainer", ThisKey="ChildId", OtherKey="Id", IsForeignKey=true)]
+		public MediaContainer ChildMediaContainer
+		{
+			get
+			{
+				return this._ChildMediaContainer.Entity;
+			}
+			set
+			{
+				MediaContainer previousValue = this._ChildMediaContainer.Entity;
+				if (((previousValue != value) 
+							|| (this._ChildMediaContainer.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ChildMediaContainer.Entity = null;
+						previousValue.ParentMediaContainers.Remove(this);
+					}
+					this._ChildMediaContainer.Entity = value;
+					if ((value != null))
+					{
+						value.ParentMediaContainers.Add(this);
+						this._ChildId = value.Id;
+					}
+					else
+					{
+						this._ChildId = default(long);
+					}
+					this.SendPropertyChanged("ChildMediaContainer");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MediaContainer_MediaContainersParentChild1", Storage="_ParentMediaContainer", ThisKey="ParentId", OtherKey="Id", IsForeignKey=true)]
+		public MediaContainer ParentMediaContainer
+		{
+			get
+			{
+				return this._ParentMediaContainer.Entity;
+			}
+			set
+			{
+				MediaContainer previousValue = this._ParentMediaContainer.Entity;
+				if (((previousValue != value) 
+							|| (this._ParentMediaContainer.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ParentMediaContainer.Entity = null;
+						previousValue.ChildMediaContainers.Remove(this);
+					}
+					this._ParentMediaContainer.Entity = value;
+					if ((value != null))
+					{
+						value.ChildMediaContainers.Add(this);
+						this._ParentId = value.Id;
+					}
+					else
+					{
+						this._ParentId = default(long);
+					}
+					this.SendPropertyChanged("ParentMediaContainer");
 				}
 			}
 		}
