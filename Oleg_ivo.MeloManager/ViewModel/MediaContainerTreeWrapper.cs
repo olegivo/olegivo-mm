@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using Oleg_ivo.Base.Autofac;
 
@@ -16,6 +17,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     public class MediaContainerTreeWrapper : INotifyPropertyChanged
     {
         private readonly Func<MediaContainerTreeWrapper, long> _getMySourceIdDelegateId;
+        private Predicate<object> filter;
 
         /// <summary>
         /// 
@@ -147,6 +149,21 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         public BitmapImage Image
         {
             get { return ImageResourceFactory.GetImage(UnderlyingItem.GetType()); }
+        }
+
+        public Predicate<object> Filter
+        {
+            get { return filter; }
+            set
+            {
+                if(filter == value) return;
+                filter = value;
+                ICollectionView view = CollectionViewSource.GetDefaultView(ChildItems);
+                view.Filter = filter;
+                foreach (MediaContainerTreeWrapper wrapper in view)
+                    wrapper.Filter = filter;
+                OnPropertyChanged("Filter");
+            }
         }
 
         #endregion

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows.Data;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -93,6 +95,41 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 RaisePropertyChanged(() => ParentListDataSource);
                 OnParentListDataSourceChanged();
             }
+        }
+
+        public string NameFilter
+        {
+            get { return nameFilter; }
+            set
+            {
+                if (nameFilter == value) return;
+                nameFilter = value;
+                var lowerInvariant = NameFilter.ToLowerInvariant();
+                var filter = string.IsNullOrEmpty(NameFilter)
+                    ? null
+                    : RecursivePredicate(wrapper =>
+                    {
+                        var contains = wrapper.Name.ToLowerInvariant().Contains(lowerInvariant);
+                        return contains;
+                    });
+
+                ICollectionView view = CollectionViewSource.GetDefaultView(Items);
+                view.Filter = filter;
+                foreach (MediaContainerTreeWrapper wrapper in view)
+                    wrapper.Filter = filter;
+                RaisePropertyChanged(() => NameFilter);
+            }
+        }
+
+        private Predicate<object> RecursivePredicate(Predicate<MediaContainerTreeWrapper> predicate)
+        {
+            return o =>
+            {
+                var wrapper = (MediaContainerTreeWrapper) o;
+                var result = predicate(wrapper) 
+                    || wrapper.ChildItems.Any(child => RecursivePredicate(predicate)(child));
+                return result;
+            };
         }
 
         private void OnParentListDataSourceChanged()
@@ -215,6 +252,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         #region переработать!
         private MediaContainerTreeSource treeDataSource;
+        private string nameFilter;
 
         /// <summary>
         /// Источник данных для дерева

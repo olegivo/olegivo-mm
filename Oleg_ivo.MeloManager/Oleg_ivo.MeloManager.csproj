@@ -142,7 +142,10 @@
     <Compile Include="Repairers\AutoRepairer.cs" />
     <Compile Include="Repairers\Mp3TagRenameRepairer.cs" />
     <Compile Include="Repairers\RepairerBase.cs" />
+    <Compile Include="ViewModel\ImageResourceFactory.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\MediaContainerTreeSource.cs" />
+    <Compile Include="ViewModel\MediaContainerTreeWrapper.cs" />
     <Compile Include="ViewModel\MediaListViewModel.cs" />
     <Compile Include="ViewModel\MediaTreeViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
