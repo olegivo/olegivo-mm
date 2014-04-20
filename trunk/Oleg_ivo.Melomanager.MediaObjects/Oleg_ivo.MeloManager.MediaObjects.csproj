@@ -54,12 +54,9 @@
     <Compile Include="Category.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="File.cs" />
-    <Compile Include="ImageResourceFactory.cs" />
     <Compile Include="MediaContainer.cs" />
     <Compile Include="MediaContainerFile.cs" />
     <Compile Include="MediaContainersParentChild.cs" />
-    <Compile Include="MediaContainerTreeSource.cs" />
-    <Compile Include="MediaContainerTreeWrapper.cs" />
     <Compile Include="MediaDataContext.cs">
       <DependentUpon>MediaDataContext.dbml</DependentUpon>
     </Compile>
@@ -109,7 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MediaIconsResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>MediaIconsResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>

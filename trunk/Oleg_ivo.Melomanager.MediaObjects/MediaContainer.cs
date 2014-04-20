@@ -57,7 +57,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Удаляет дочерний элемент
         /// </summary>
         /// <param name="child"></param>
-        protected internal void RemoveChild(MediaContainer child)
+        public void RemoveChild(MediaContainer child)
         {
             MediaContainersParentChild found =
                 ChildMediaContainers.Where(mc => mc.ParentMediaContainer == this && mc.ChildMediaContainer == child).
@@ -86,7 +86,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Добавляет родительский элемент
         /// </summary>
         /// <param name="parent"></param>
-        protected internal void RemoveParent(MediaContainer parent)
+        public void RemoveParent(MediaContainer parent)
         {
             MediaContainersParentChild found =
                 ChildMediaContainers.Where(mc => mc.ChildMediaContainer == this && mc.ParentMediaContainer == parent).
@@ -167,7 +167,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <summary>
         /// 
         /// </summary>
-        internal event EventHandler<MediaListChangedEventArgs> ChildsChanged;
+        public event EventHandler<MediaListChangedEventArgs> ChildsChanged;
 
         /// <summary>
         /// Получить связь, 
@@ -176,7 +176,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// </summary>
         /// <param name="child"></param>
         /// <returns></returns>
-        internal MediaContainersParentChild GetChildRelation(MediaContainer child)
+        public MediaContainersParentChild GetChildRelation(MediaContainer child)
         {
             return ChildMediaContainers
                 .Where(relation => relation.ChildId == child.Id)
@@ -190,7 +190,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// </summary>
         /// <param name="parent"></param>
         /// <returns></returns>
-        internal MediaContainersParentChild GetParentRelation(MediaContainer parent)
+        public MediaContainersParentChild GetParentRelation(MediaContainer parent)
         {
             return ParentMediaContainers
                 .Where(relation => relation.ParentId == parent.Id)

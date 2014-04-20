@@ -49,11 +49,25 @@
             </Border>-->
         </HierarchicalDataTemplate>
     </UserControl.Resources>
-    <telerik:RadTreeView x:Name="tree" 
-        ItemsSource="{Binding Path=Items, UpdateSourceTrigger=PropertyChanged}"
-        ItemTemplate="{StaticResource treeViewTemplate}"
-        SelectedItem="{Binding CurrentItem, Mode=TwoWay}" SelectionChanged="RadTreeView_SelectionChanged"
-        AutoScrollToSelectedItem="True"
-        telerik:TextSearch.TextPath="Name"
-        PathSeparator="\"/>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition MaxHeight="30"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <DockPanel 
+            Dock="Left">
+            <TextBlock>Фильтр</TextBlock>
+            <TextBox Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"/>
+        </DockPanel>
+        <telerik:RadTreeView 
+            Grid.Row="1"
+            x:Name="tree"         
+            ItemsSource="{Binding Path=Items, UpdateSourceTrigger=PropertyChanged}"
+            ItemTemplate="{StaticResource treeViewTemplate}"
+            SelectedItem="{Binding CurrentItem, Mode=TwoWay}" SelectionChanged="RadTreeView_SelectionChanged"
+            AutoScrollToSelectedItem="True"
+            telerik:TextSearch.TextPath="Name"
+            PathSeparator="\"/>
+        <!--IsDragDropEnabled="True"-->
+    </Grid>
 </UserControl>
