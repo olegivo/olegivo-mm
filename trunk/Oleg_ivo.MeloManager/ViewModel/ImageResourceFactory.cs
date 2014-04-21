@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections;
-using System.Drawing;
-using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Oleg_ivo.MeloManager.MediaObjects;
 
-namespace Oleg_ivo.MeloManager.MediaObjects
+namespace Oleg_ivo.MeloManager.ViewModel
 {
     /// <summary>
     /// 
@@ -19,7 +16,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             if (images.ContainsKey(type)) return images[type] as BitmapImage;
 
             BitmapImage image =
-                new BitmapImage(new Uri(@"/Oleg_ivo.MeloManager.MediaObjects;component/Resources/" + GetResourceName(type) + ".ico",
+                new BitmapImage(new Uri(@"/Oleg_ivo.MeloManager;component/Resources/" + GetResourceName(type) + ".ico",
                                         UriKind.Relative));
             images.Add(type, image);
 /*
@@ -35,16 +32,16 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             return image;
         }
 
-        private static BitmapSource LoadBitmap(Bitmap source)
+        /*private static BitmapSource LoadBitmap(Bitmap source)
         {
             return Imaging.CreateBitmapSourceFromHBitmap(source.GetHbitmap(), IntPtr.Zero,
                                                                                 Int32Rect.Empty,
                                                                                 BitmapSizeOptions.FromEmptyOptions());
-        }
+        }*/
 
         private static Hashtable images = new Hashtable();
 
-        private static Icon GetResourceIcon(Type type)
+        /*private static Icon GetResourceIcon(Type type)
         {
             if (type == typeof (Category)) 
                 return MediaIconsResources.folder;
@@ -54,7 +51,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                 return MediaIconsResources.headphones;
 
             return null;
-        }
+        }*/
 
         private static string GetResourceName(Type type)
         {

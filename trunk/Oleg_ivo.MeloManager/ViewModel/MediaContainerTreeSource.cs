@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using Oleg_ivo.MeloManager.MediaObjects;
 
-namespace Oleg_ivo.MeloManager.MediaObjects
+namespace Oleg_ivo.MeloManager.ViewModel
 {
     /// <summary>
     /// 

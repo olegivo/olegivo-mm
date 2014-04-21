@@ -6,15 +6,17 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using GalaSoft.MvvmLight;
 using Oleg_ivo.Base.Autofac;
+using Oleg_ivo.MeloManager.MediaObjects;
 
-namespace Oleg_ivo.MeloManager.MediaObjects
+namespace Oleg_ivo.MeloManager.ViewModel
 {
     /// <summary>
     /// Обёртка для <see cref="MediaContainer"/>
     /// </summary>
     [DebuggerDisplay("Wrapper: {UnderlyingItem}; Parent: {Parent!=null ? Parent.UnderlyingItem : null}")]
-    public class MediaContainerTreeWrapper : INotifyPropertyChanged
+    public class MediaContainerTreeWrapper : ViewModelBase
     {
         private readonly Func<MediaContainerTreeWrapper, long> _getMySourceIdDelegateId;
         private Predicate<object> filter;
@@ -162,7 +164,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                 view.Filter = filter;
                 foreach (MediaContainerTreeWrapper wrapper in view)
                     wrapper.Filter = filter;
-                OnPropertyChanged("Filter");
+                RaisePropertyChanged(() => Filter);
             }
         }
 
@@ -264,26 +266,5 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// 
         /// </summary>
         internal event EventHandler<MediaListChangedEventArgs> ChildsChanged;
-
-        #region INPC
-        /// <summary>
-        /// 
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="propertyName"></param>
-        protected void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChangedEventArgs e = new PropertyChangedEventArgs(propertyName);
-                PropertyChanged(this, e);
-            }
-        }
-
-        #endregion
     }
 }
