@@ -57,6 +57,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <DockPanel 
+            Grid.Row="0"
             Dock="Left">
             <TextBlock
                 Margin="5"

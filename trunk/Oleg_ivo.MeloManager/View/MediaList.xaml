@@ -4,7 +4,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:MediaObjects="clr-namespace:Oleg_ivo.MeloManager.MediaObjects;assembly=Oleg_ivo.MeloManager.MediaObjects"
-    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
     x:Class="Oleg_ivo.MeloManager.View.MediaList" 
     mc:Ignorable="d" 
     d:DesignHeight="280" d:DesignWidth="310">
@@ -16,16 +15,47 @@
             <TextBlock>Плейлист</TextBlock>
         </DataTemplate>
     </UserControl.Resources>
-    
-    <telerik:RadGridView 
-        AutoGenerateColumns="False"
-        ItemsSource="{Binding ListDataSource}"
-        SelectedItem="{Binding SelectedItem}"
-        MouseDoubleClick="Grid_OnMouseDoubleClick">
-        <telerik:RadGridView.Columns>
-            <telerik:GridViewDataColumn 
-                Header="Название" 
-                DataMemberBinding="{Binding Name}"/>
-        </telerik:RadGridView.Columns>
-    </telerik:RadGridView>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition MaxHeight="40"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <DockPanel 
+            Grid.Row="0"
+            Dock="Left">
+            <TextBlock
+                Margin="5"
+                VerticalAlignment="Center">Фильтр</TextBlock>
+            <TextBox 
+                Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
+                VerticalContentAlignment="Center"
+                Margin="5"/>
+        </DockPanel>
+        <!--<telerik:RadGridView 
+            Grid.Row="1"
+            AutoGenerateColumns="False"
+            ItemsSource="{Binding ListDataSource, UpdateSourceTrigger=PropertyChanged}"
+            SelectedItem="{Binding SelectedItem}"
+            MouseDoubleClick="Grid_OnMouseDoubleClick">
+            <telerik:RadGridView.Columns>
+                <telerik:GridViewDataColumn 
+                    Header="Название" 
+                    DataMemberBinding="{Binding Name}"/>
+            </telerik:RadGridView.Columns>
+        </telerik:RadGridView>-->
+        <DataGrid 
+            Grid.Row="1"
+            AutoGenerateColumns="False"
+            IsReadOnly="True"
+            ItemsSource="{Binding ListDataSource, UpdateSourceTrigger=PropertyChanged}"
+            SelectedItem="{Binding SelectedItem}"
+            MouseDoubleClick="Grid_OnMouseDoubleClick">
+            <DataGrid.Columns>
+                <DataGridTextColumn 
+                    Header="Название" 
+                    Binding="{Binding Name}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
 </UserControl>
