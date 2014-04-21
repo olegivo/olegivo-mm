@@ -4,7 +4,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
-    xmlns:MediaObjects="clr-namespace:Oleg_ivo.MeloManager.MediaObjects;assembly=Oleg_ivo.MeloManager.MediaObjects"
+    xmlns:ViewModel="clr-namespace:Oleg_ivo.MeloManager.ViewModel"
     x:Class="Oleg_ivo.MeloManager.View.MediaTree"
     x:Name="mediaTree"
     mc:Ignorable="d" 
@@ -28,7 +28,7 @@
         <HierarchicalDataTemplate 
             x:Key="treeViewTemplate" 
             ItemsSource="{Binding ChildItems}" 
-            DataType="MediaObjects:MediaContainerTreeWrapper">
+            DataType="ViewModel:MediaContainerTreeWrapper">
             <DockPanel 
                 Dock="Left">
                 <Image 

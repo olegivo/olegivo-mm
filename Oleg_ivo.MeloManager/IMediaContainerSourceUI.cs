@@ -1,4 +1,5 @@
 using Oleg_ivo.MeloManager.MediaObjects;
+using Oleg_ivo.MeloManager.ViewModel;
 
 namespace Oleg_ivo.MeloManager
 {

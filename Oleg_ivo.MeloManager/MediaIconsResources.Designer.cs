@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Oleg_ivo.MeloManager.MediaObjects {
+namespace Oleg_ivo.MeloManager {
     using System;
     
     
@@ -22,7 +22,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class MediaIconsResources {
+    internal class MediaIconsResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Oleg_ivo.MeloManager.MediaObjects.MediaIconsResources", typeof(MediaIconsResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Oleg_ivo.MeloManager.MediaIconsResources", typeof(MediaIconsResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,17 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder {
+        internal static System.Drawing.Icon Category {
+            get {
+                object obj = ResourceManager.GetObject("Category", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon folder {
             get {
                 object obj = ResourceManager.GetObject("folder", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -73,7 +83,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_add {
+        internal static System.Drawing.Icon folder_add {
             get {
                 object obj = ResourceManager.GetObject("folder_add", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -83,7 +93,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_closed {
+        internal static System.Drawing.Icon folder_closed {
             get {
                 object obj = ResourceManager.GetObject("folder_closed", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -93,7 +103,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_cubes {
+        internal static System.Drawing.Icon folder_cubes {
             get {
                 object obj = ResourceManager.GetObject("folder_cubes", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -103,7 +113,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_delete {
+        internal static System.Drawing.Icon folder_delete {
             get {
                 object obj = ResourceManager.GetObject("folder_delete", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -113,7 +123,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_document {
+        internal static System.Drawing.Icon folder_document {
             get {
                 object obj = ResourceManager.GetObject("folder_document", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -123,7 +133,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_edit {
+        internal static System.Drawing.Icon folder_edit {
             get {
                 object obj = ResourceManager.GetObject("folder_edit", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -133,7 +143,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_forbidden {
+        internal static System.Drawing.Icon folder_forbidden {
             get {
                 object obj = ResourceManager.GetObject("folder_forbidden", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -143,7 +153,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_gear {
+        internal static System.Drawing.Icon folder_gear {
             get {
                 object obj = ResourceManager.GetObject("folder_gear", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -153,7 +163,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_information {
+        internal static System.Drawing.Icon folder_information {
             get {
                 object obj = ResourceManager.GetObject("folder_information", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -163,7 +173,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_into {
+        internal static System.Drawing.Icon folder_into {
             get {
                 object obj = ResourceManager.GetObject("folder_into", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -173,7 +183,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_lock {
+        internal static System.Drawing.Icon folder_lock {
             get {
                 object obj = ResourceManager.GetObject("folder_lock", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -183,7 +193,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_movie {
+        internal static System.Drawing.Icon folder_movie {
             get {
                 object obj = ResourceManager.GetObject("folder_movie", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -193,7 +203,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_music {
+        internal static System.Drawing.Icon folder_music {
             get {
                 object obj = ResourceManager.GetObject("folder_music", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -203,7 +213,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_network {
+        internal static System.Drawing.Icon folder_network {
             get {
                 object obj = ResourceManager.GetObject("folder_network", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -213,7 +223,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_new {
+        internal static System.Drawing.Icon folder_new {
             get {
                 object obj = ResourceManager.GetObject("folder_new", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -223,7 +233,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_ok {
+        internal static System.Drawing.Icon folder_ok {
             get {
                 object obj = ResourceManager.GetObject("folder_ok", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -233,7 +243,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_out {
+        internal static System.Drawing.Icon folder_out {
             get {
                 object obj = ResourceManager.GetObject("folder_out", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -243,7 +253,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_preferences {
+        internal static System.Drawing.Icon folder_preferences {
             get {
                 object obj = ResourceManager.GetObject("folder_preferences", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -253,7 +263,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_refresh {
+        internal static System.Drawing.Icon folder_refresh {
             get {
                 object obj = ResourceManager.GetObject("folder_refresh", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -263,7 +273,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_time {
+        internal static System.Drawing.Icon folder_time {
             get {
                 object obj = ResourceManager.GetObject("folder_time", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -273,7 +283,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_up {
+        internal static System.Drawing.Icon folder_up {
             get {
                 object obj = ResourceManager.GetObject("folder_up", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -283,7 +293,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_view {
+        internal static System.Drawing.Icon folder_view {
             get {
                 object obj = ResourceManager.GetObject("folder_view", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -293,7 +303,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_warning {
+        internal static System.Drawing.Icon folder_warning {
             get {
                 object obj = ResourceManager.GetObject("folder_warning", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -303,7 +313,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folder_window {
+        internal static System.Drawing.Icon folder_window {
             get {
                 object obj = ResourceManager.GetObject("folder_window", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -313,7 +323,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon folders {
+        internal static System.Drawing.Icon folders {
             get {
                 object obj = ResourceManager.GetObject("folders", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -323,7 +333,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon form_blue {
+        internal static System.Drawing.Icon form_blue {
             get {
                 object obj = ResourceManager.GetObject("form_blue", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -333,7 +343,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon form_green {
+        internal static System.Drawing.Icon form_green {
             get {
                 object obj = ResourceManager.GetObject("form_green", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -343,7 +353,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon form_red {
+        internal static System.Drawing.Icon form_red {
             get {
                 object obj = ResourceManager.GetObject("form_red", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -353,7 +363,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon form_yellow {
+        internal static System.Drawing.Icon form_yellow {
             get {
                 object obj = ResourceManager.GetObject("form_yellow", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -363,7 +373,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon headphones {
+        internal static System.Drawing.Icon headphones {
             get {
                 object obj = ResourceManager.GetObject("headphones", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
@@ -373,7 +383,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon music {
+        internal static System.Drawing.Icon music {
             get {
                 object obj = ResourceManager.GetObject("music", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
