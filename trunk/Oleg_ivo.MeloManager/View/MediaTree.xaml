@@ -8,7 +8,9 @@
     x:Class="Oleg_ivo.MeloManager.View.MediaTree"
     x:Name="mediaTree"
     mc:Ignorable="d" 
-    d:DesignHeight="326" d:DesignWidth="438">
+    d:DesignHeight="326" d:DesignWidth="438" 
+    
+    DataContextChanged="MediaTree_OnDataContextChanged">
     <!--<telerik:RadTreeListView 
         Name="treeListView1"
         AutoGenerateColumns="False"
@@ -51,13 +53,18 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition MaxHeight="30"/>
+            <RowDefinition MaxHeight="40"/>
             <RowDefinition />
         </Grid.RowDefinitions>
         <DockPanel 
             Dock="Left">
-            <TextBlock>Фильтр</TextBlock>
-            <TextBox Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock
+                Margin="5"
+                VerticalAlignment="Center">Фильтр</TextBlock>
+            <TextBox 
+                Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}"
+                VerticalContentAlignment="Center"
+                Margin="5"/>
         </DockPanel>
         <telerik:RadTreeView 
             Grid.Row="1"
@@ -66,6 +73,7 @@
             ItemTemplate="{StaticResource treeViewTemplate}"
             SelectedItem="{Binding CurrentItem, Mode=TwoWay}" SelectionChanged="RadTreeView_SelectionChanged"
             AutoScrollToSelectedItem="True"
+            IsRootLinesEnabled="True"
             telerik:TextSearch.TextPath="Name"
             PathSeparator="\"/>
         <!--IsDragDropEnabled="True"-->
