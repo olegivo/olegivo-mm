@@ -23,8 +23,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private ObservableCollection<MediaContainerTreeWrapper> items;
         private MediaContainerTreeWrapper currentItem;
         private MediaContainer currentTreeMediaContainer;
-        private IQueryable<MediaContainer> childListDataSource;
-        private IQueryable<MediaContainer> parentListDataSource;
+        private ObservableCollection<MediaContainer> childListDataSource;
+        private ObservableCollection<MediaContainer> parentListDataSource;
 
         private ICommand commandTreeAddCategory;
         private ICommand commandDeleteItem;
@@ -76,8 +76,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 if (currentTreeMediaContainer == value) return;
 
                 currentTreeMediaContainer = value;
-                ChildListDataSource = CurrentTreeMediaContainer!=null ? CurrentTreeMediaContainer.Childs : null;
-                ParentListDataSource = CurrentTreeMediaContainer!=null ? CurrentTreeMediaContainer.Parents : null;
+                ChildListDataSource = CurrentTreeMediaContainer!=null ? new ObservableCollection<MediaContainer>(CurrentTreeMediaContainer.Childs) : null;
+                ParentListDataSource = CurrentTreeMediaContainer!=null ? new ObservableCollection<MediaContainer>(CurrentTreeMediaContainer.Parents) : null;
                 RaisePropertyChanged(() => CurrentTreeMediaContainer);
             }
         }
@@ -85,7 +85,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// <summary>
         /// Источник данных для списка родителей текущего медиа-контейнера
         /// </summary>
-        public IQueryable<MediaContainer> ParentListDataSource
+        public ObservableCollection<MediaContainer> ParentListDataSource
         {
             get { return parentListDataSource; }
             set
@@ -104,16 +104,16 @@ namespace Oleg_ivo.MeloManager.ViewModel
             {
                 if (nameFilter == value) return;
                 nameFilter = value;
-                var lowerInvariant = NameFilter.ToLowerInvariant();
-                var filter = string.IsNullOrEmpty(NameFilter)
-                    ? null
-                    : RecursivePredicate(wrapper =>
-                    {
-                        var contains = wrapper.Name.ToLowerInvariant().Contains(lowerInvariant);
-                        return contains;
-                    });
+                Predicate<object> filter;
+                if (string.IsNullOrEmpty(NameFilter))
+                    filter = null;
+                else
+                {
+                    var lowerInvariant = NameFilter.ToLowerInvariant();
+                    filter = RecursivePredicate(wrapper => wrapper.Name.ToLowerInvariant().Contains(lowerInvariant));
+                }
 
-                ICollectionView view = CollectionViewSource.GetDefaultView(Items);
+                var view = CollectionViewSource.GetDefaultView(Items);
                 view.Filter = filter;
                 foreach (MediaContainerTreeWrapper wrapper in view)
                     wrapper.Filter = filter;
@@ -143,7 +143,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// <summary>
         /// Источник данных для списка детей текущего медиа-контейнера
         /// </summary>
-        public IQueryable<MediaContainer> ChildListDataSource
+        public ObservableCollection<MediaContainer> ChildListDataSource
         {
             get { return childListDataSource; }
             set

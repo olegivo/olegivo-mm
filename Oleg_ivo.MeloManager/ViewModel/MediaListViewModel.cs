@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.ObjectModel;
+using System.Windows.Data;
 using GalaSoft.MvvmLight;
 using Oleg_ivo.MeloManager.MediaObjects;
 
@@ -11,8 +12,9 @@ namespace Oleg_ivo.MeloManager.ViewModel
     public class MediaListViewModel : ViewModelBase
     {
         #region Fields
-        private IQueryable<MediaContainer> listDataSource;
+        private ObservableCollection<MediaContainer> listDataSource;
         private MediaContainer selectedItem;
+        private string nameFilter;
 
         #endregion
 
@@ -28,16 +30,39 @@ namespace Oleg_ivo.MeloManager.ViewModel
             }
         }
 
+        public string NameFilter
+        {
+            get { return nameFilter; }
+            set
+            {
+                if (nameFilter == value) return;
+                nameFilter = value;
+                Predicate<object> filter;
+                if (string.IsNullOrEmpty(NameFilter))
+                    filter = null;
+                else
+                {
+                    var lowerInvariant = (NameFilter ?? String.Empty).ToLowerInvariant();
+                    filter = mc => ((MediaContainer) mc).Name.ToLowerInvariant().Contains(lowerInvariant);
+                }
+
+                var view = CollectionViewSource.GetDefaultView(ListDataSource);
+                view.Filter = filter;
+                RaisePropertyChanged(() => NameFilter);
+            }
+        }
+
         /// <summary>
         /// Источник данных для списка родителей текущего медиа-контейнера
         /// </summary>
-        public IQueryable<MediaContainer> ListDataSource
+        public ObservableCollection<MediaContainer> ListDataSource
         {
             get { return listDataSource; }
             set
             {
                 if (listDataSource == value) return;
                 listDataSource = value;
+                NameFilter = null;
                 RaisePropertyChanged(() => ListDataSource);
             }
         }
