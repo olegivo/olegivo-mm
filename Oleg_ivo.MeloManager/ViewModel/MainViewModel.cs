@@ -33,6 +33,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private ICommand commandTreeAddCategory;
         private ICommand commandImportWinampPlaylists;
         private ICommand commandInitDataSource;
+        private ICommand commandTest;
 
         private string statusText;
         #endregion
@@ -187,6 +188,15 @@ namespace Oleg_ivo.MeloManager.ViewModel
             }
         }
 
+        public ICommand CommandTest
+        {
+            get
+            {
+                return commandTest ??
+                       (commandTest = new RelayCommand(Test));
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -227,7 +237,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             var adapter = context.ResolveUnregistered<WinampM3UPlaylistFileAdapter>();
 
             var winampCategory = new Category {Name = "Плейлисты Winamp", IsRoot = true};
-            winampCategory.AddChildren(adapter.GetPlaylists());
+            winampCategory.AddChildren(adapter.GetPlaylists());//TODO:обновление плейлистов
 
             MediaTree.AddCategory(winampCategory, null);
             DataContext.MediaContainers.InsertOnSubmit(winampCategory);
@@ -266,6 +276,23 @@ namespace Oleg_ivo.MeloManager.ViewModel
             MediaTree.AddCategory(c2, null);
             c1.AddChild(c2);
             MediaTree.AddCategory(c3, null);
+        }
+
+        private void Test()
+        {
+            /*var mediaContainer = MediaTree.Items.First().UnderlyingItem;
+            var playlistsPath = context.Resolve<MeloManagerOptions>().PlaylistsPath;
+            var adapter = context.ResolveUnregistered<WinampM3UPlaylistFileAdapter>();
+            foreach (
+                var playlist in
+                    mediaContainer.Childs.Cast<Playlist>().ToList()
+                        .Where(p => !p.MediaContainerFiles.Any()))
+            {
+                var originalFileName = System.IO.File.Exists(playlist.OriginalFileName)
+                    ? playlist.OriginalFileName
+                    : System.IO.Path.Combine(playlistsPath, adapter.Dic.FirstOrDefault(pair => pair.Value == playlist.Name).Key);
+                playlist.MediaContainerFiles.Add(new MediaContainerFile { File = File.GetFile(originalFileName) });
+            }*/
         }
 
         #endregion

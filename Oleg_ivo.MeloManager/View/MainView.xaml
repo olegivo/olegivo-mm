@@ -30,6 +30,8 @@
             <Button Command="{Binding CommandImportWinampPlaylists}">Импорт из Winamp</Button>
             <Separator />
             <Button Command="{Binding CommandInitDataSource}">Init</Button>
+            <Separator />
+            <Button Command="{Binding CommandTest}">Test</Button>
         </ToolBar>
         <View:MediaTree 
             DataContext="{Binding MediaTree}"
