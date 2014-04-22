@@ -27,6 +27,8 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             if (infos != null && infos.Count != 0)
             {
                 playlist = new Playlist {OriginalFileName = filename};
+                var file = File.GetFile(filename);
+                playlist.MediaContainerFiles.Add(new MediaContainerFile { File = file });
                 foreach (var extInfo in infos)
                 {
                     playlist.AddChildMediaFile(extInfo.GetMediaFile());
