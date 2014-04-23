@@ -7,6 +7,8 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// </summary>
     partial class Playlist
     {
+        private string originalFileName;
+
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
@@ -36,9 +38,28 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         }
 
         /// <summary>
-        /// Файл-источник плейлиста
+        /// Файл-источник плейлиста (в случае отсутствия вычисляется как первый из существующих файлов данного медиа-контейнера)
         /// </summary>
-        public string OriginalFileName { get; set; }
+        public string OriginalFileName
+        {
+            get
+            {
+                return originalFileName ??
+                       (originalFileName =
+                           MediaContainerFiles.Select(mcf => mcf.File.FullFileName)
+                               .FirstOrDefault(System.IO.File.Exists));
+            }
+            set
+            {
+                if(originalFileName == value) return;
+                originalFileName = value;
+                if (System.IO.File.Exists(OriginalFileName) && !MediaContainerFiles.Any())
+                {
+                    var file = File.GetFile(OriginalFileName);
+                    MediaContainerFiles.Add(new MediaContainerFile { File = file });
+                }
+            }
+        }
 
         /// <summary>
         /// Добавить дочерний медиа-файл
