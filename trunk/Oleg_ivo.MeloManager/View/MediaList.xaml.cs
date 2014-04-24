@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.MeloManager.ViewModel;
@@ -26,7 +27,27 @@ namespace Oleg_ivo.MeloManager.View
 
         private void Grid_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            FrameworkElement originalSender = e.OriginalSource as FrameworkElement;
+            var grid = sender as DataGrid;
+            if (grid == null || grid.SelectedItems == null || grid.SelectedItems.Count != 1) 
+                return;
+            
+            var element = e.MouseDevice.DirectlyOver as FrameworkElement;
+            if (element != null)
+            {
+                var cell = element.ParentOfType<DataGridCell>();
+                if (cell != null)
+                {
+                    ViewModel.OnCellDoubleClick();
+                }
+
+                var row = element.ParentOfType<DataGridRow>();
+                if (row != null)
+                {
+                    ViewModel.OnRowDoubleClick();
+                }
+
+            }
+            /*FrameworkElement originalSender = e.OriginalSource as FrameworkElement;
             if (originalSender != null)
             {
                 var cell = originalSender.ParentOfType<GridViewCell>();
@@ -40,7 +61,7 @@ namespace Oleg_ivo.MeloManager.View
                 {
                     ViewModel.OnRowDoubleClick();
                 }
-            }
+            }*/
         }
     }
 }

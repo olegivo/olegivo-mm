@@ -120,7 +120,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         void Parents_RowDoubleClick(object sender, System.EventArgs e)
         {
             var treeWrapper = MediaTree.Items
-                .Select(item => item.FindChild(Parents.SelectedItem))
+                .Select(item => item.UnderlyingItem==Parents.SelectedItem ? item : item.FindChild(Parents.SelectedItem))
                 .ExcludeNull()
                 .FirstOrDefault();
             MediaTree.CurrentItem = treeWrapper;
