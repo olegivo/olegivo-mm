@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using Autofac;
 using GalaSoft.MvvmLight;
@@ -51,12 +53,14 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 {
                     MediaTree.ParentListDataSourceChanged -= MediaTree_ParentListDataSourceChanged;
                     MediaTree.ChildListDataSourceChanged -= MediaTree_ChildListDataSourceChanged;
+                    MediaTree.Deleting -= MediaTree_Deleting;
                 }
                 mediaTree = value;
                 if (MediaTree != null)
                 {
                     MediaTree.ParentListDataSourceChanged += MediaTree_ParentListDataSourceChanged;
                     MediaTree.ChildListDataSourceChanged += MediaTree_ChildListDataSourceChanged;
+                    MediaTree.Deleting += MediaTree_Deleting;
                 }
                 RaisePropertyChanged(() => MediaTree);
             }
@@ -70,10 +74,16 @@ namespace Oleg_ivo.MeloManager.ViewModel
             {
                 if (parents == value) return;
                 if (Parents != null)
+                {
                     Parents.RowDoubleClick -= Parents_RowDoubleClick;
+                    Parents.Deleting -= Parents_Deleting;
+                }
                 parents = value;
                 if (Parents != null)
+                {
                     Parents.RowDoubleClick += Parents_RowDoubleClick;
+                    Parents.Deleting += Parents_Deleting;
+                }
                 RaisePropertyChanged(() => Parents);
             }
         }
@@ -86,10 +96,16 @@ namespace Oleg_ivo.MeloManager.ViewModel
             {
                 if (childs == value) return;
                 if (Childs != null)
+                {
                     Childs.RowDoubleClick -= Childs_RowDoubleClick;
+                    Childs.Deleting -= Childs_Deleting;
+                }
                 childs = value;
                 if (Childs != null)
+                {
                     Childs.RowDoubleClick += Childs_RowDoubleClick;
+                    Childs.Deleting += Childs_Deleting;
+                }
                 RaisePropertyChanged(() => Childs);
             }
         }
@@ -117,30 +133,49 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         #endregion
 
+        #region Event handlers
         void Parents_RowDoubleClick(object sender, System.EventArgs e)
         {
-            var treeWrapper = MediaTree.Items
-                .Select(item => item.UnderlyingItem==Parents.SelectedItem ? item : item.FindChild(Parents.SelectedItem))
-                .ExcludeNull()
-                .FirstOrDefault();
-            MediaTree.CurrentItem = treeWrapper;
+            GoToParent(Parents.SelectedItem);
         }
 
         void Childs_RowDoubleClick(object sender, System.EventArgs e)
         {
-            var treeWrapper = mediaTree.CurrentItem.FindChild(Childs.SelectedItem);
-            MediaTree.CurrentItem = treeWrapper;
+            GoToChild(Childs.SelectedItem);
         }
 
         void MediaTree_ParentListDataSourceChanged(object sender, System.EventArgs e)
         {
-            Parents.ListDataSource = MediaTree.ParentListDataSource;
+            Parents.ListDataSource = MediaTree.ParentListDataSource;//TODO: binding (multybinding or data trigger?)
         }
 
         void MediaTree_ChildListDataSourceChanged(object sender, System.EventArgs e)
         {
-            Childs.ListDataSource = MediaTree.ChildListDataSource;
+            Childs.ListDataSource = MediaTree.ChildListDataSource;//TODO: binding (multybinding or data trigger?)
         }
+
+        void Parents_Deleting(object sender, DeletingEventArgs<List<MediaContainer>> e)
+        {
+            e.Cancel = !DeleteParents(e.Deleting);
+        }
+
+        void Childs_Deleting(object sender, DeletingEventArgs<List<MediaContainer>> e)
+        {
+            e.Cancel = !DeleteChildren(e.Deleting);
+        }
+
+        void MediaTree_Deleting(object sender, DeletingEventArgs<List<MediaContainerTreeWrapper>> e)
+        {
+            e.Cancel =
+                MessageBox.Show(
+                    string.Format("Будут удалены следующие элементы:\n{0}",
+                        e.Deleting.JoinToString(",\n")),
+                    "Удаление",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question) == MessageBoxResult.No;
+        }
+
+        #endregion
 
         #region Commands
         public ICommand CommandLoadFromDb
@@ -236,7 +271,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             StatusText = "Импорт плейлистов из Winamp";
             var adapter = context.ResolveUnregistered<WinampM3UPlaylistFileAdapter>();
 
-            var winampCategory = new Category {Name = "Плейлисты Winamp", IsRoot = true};
+            var winampCategory = new Category { Name = "Плейлисты Winamp", IsRoot = true };
             winampCategory.AddChildren(adapter.GetPlaylists());//TODO:обновление плейлистов
 
             MediaTree.AddCategory(winampCategory, null);
@@ -293,6 +328,77 @@ namespace Oleg_ivo.MeloManager.ViewModel
                     : System.IO.Path.Combine(playlistsPath, adapter.Dic.FirstOrDefault(pair => pair.Value == playlist.Name).Key);
                 playlist.MediaContainerFiles.Add(new MediaContainerFile { File = File.GetFile(originalFileName) });
             }*/
+        }
+
+        private void GoToParent(MediaContainer parent)
+        {
+            var treeWrapper = MediaTree.Items
+                .Select(item => item.UnderlyingItem == parent ? item : item.FindChild(parent))
+                .ExcludeNull()
+                .FirstOrDefault();
+            if (treeWrapper != null)
+            {
+                MediaTree.NameFilter = null;
+                MediaTree.CurrentItem = treeWrapper;
+            }
+            //TODO: GoHistory
+        }
+
+        private void GoToChild(MediaContainer child)
+        {
+            var treeWrapper = mediaTree.CurrentItem.FindChild(child);
+            if (treeWrapper != null)
+            {
+                MediaTree.NameFilter = null;
+                MediaTree.CurrentItem = treeWrapper;
+            }
+            //TODO: GoHistory
+        }
+
+        private bool DeleteChildren(List<MediaContainer> deletingItems)
+        {
+            var needDelete = MessageBox.Show(
+                string.Format("Из {0} будут удалены:\n{1}", MediaTree.CurrentTreeMediaContainer,
+                    deletingItems.JoinToString(",\n")),
+                "Удаление",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question) == MessageBoxResult.Yes;
+            if (needDelete)
+            {
+                var list = deletingItems.Select(mc => MediaTree.CurrentItem.FindChild(mc, MediaTree.CurrentItem)).ToList();
+                foreach (var wrapper in list)
+                {
+                    MediaTree.DeleteItem(wrapper, true);
+                }
+            }
+            return needDelete;
+        }
+
+        private bool DeleteParents(List<MediaContainer> deletingItems)
+        {
+            var needDelete = MessageBox.Show(
+                string.Format("{0} будет удален из:\n{1}", MediaTree.CurrentTreeMediaContainer,
+                    deletingItems.JoinToString(",\n")),
+                "Удаление",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question) == MessageBoxResult.Yes;
+
+            if (needDelete)
+            {
+                var comparer = new MediaContainerTreeWrapper.MediaContainerTreeWrapperByUnderlyingItemComparer();
+                var list =
+                    deletingItems.SelectMany(
+                        mc => MediaTree.Items.SelectMany(w => w.FindChildren(MediaTree.CurrentItem.UnderlyingItem, mc)))
+                        .Distinct(comparer)
+                        .ToList();
+                foreach (var wrapper in list)
+                {
+                    MediaTree.DeleteItem(wrapper, true);
+                }
+
+            }
+
+            return needDelete;
         }
 
         #endregion

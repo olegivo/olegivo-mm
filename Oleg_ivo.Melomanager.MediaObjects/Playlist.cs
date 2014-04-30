@@ -1,25 +1,15 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
     /// <summary>
     /// Плейлист
     /// </summary>
+    [DebuggerDisplay("Плейлист [{Name}]")]
     partial class Playlist
     {
         private string originalFileName;
-
-        /// <summary>
-        /// Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>
-        /// A string that represents the current object.
-        /// </returns>
-        /// <filterpriority>2</filterpriority>
-        public override string ToString()
-        {
-            return string.Format("Плейлист [{0}]", Name);
-        }
 
         /// <summary>
         /// Родительские категории

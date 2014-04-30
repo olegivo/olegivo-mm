@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using NLog;
 
@@ -9,6 +10,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// <summary>
     /// Медиа-контейнер
     /// </summary>
+    [DebuggerDisplay("Медиа-контейнер [{Name}]")]
     partial class MediaContainer
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
@@ -144,6 +146,8 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             }
         }
 
+        public bool IsRepaired { get; set; }//TODO: INPC?
+
         partial void OnCreated()
         {
             ChildMediaContainers.ListChanged += ChildMediaContainers_ListChanged;
@@ -206,7 +210,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
-            return string.Format("Медиа-контейнер [{0}]", Name);
+            return Name;
         }
     }
 

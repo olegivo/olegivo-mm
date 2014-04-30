@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
@@ -7,20 +8,9 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// <summary>
     /// Медиа-файл
     /// </summary>
+    [DebuggerDisplay("Медиа-файл [{Name}]")]
     partial class MediaFile
     {
-        /// <summary>
-        /// Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>
-        /// A string that represents the current object.
-        /// </returns>
-        /// <filterpriority>2</filterpriority>
-        public override string ToString()
-        {
-            return string.Format("Медиа-файл [{0}]", Name);
-        }
-
         public override void BatchRepair(IEnumerable<string> foundFiles, bool optionRepairOnlyBadFiles)
         {
             //base.BatchRepair(foundFiles, optionRepairOnlyBadFiles);

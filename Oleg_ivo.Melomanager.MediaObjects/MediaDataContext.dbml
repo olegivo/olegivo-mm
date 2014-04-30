@@ -5,7 +5,6 @@
       <Column Name="Id" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsReadOnly="true" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Type" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" IsDiscriminator="true" />
       <Column Name="Name" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
-      <Column Name="IsRepaired" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="IsRoot" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="MediaContainer_MediaContainerFile" Member="MediaContainerFiles" ThisKey="Id" OtherKey="MediaContainerId" Type="MediaContainerFile" />
       <Association Name="MediaContainer_MediaContainersParentChild" Member="ParentMediaContainers" ThisKey="Id" OtherKey="ChildId" Type="MediaContainersParentChild" />
