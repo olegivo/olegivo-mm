@@ -123,8 +123,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 		
 		private string _Name;
 		
-		private bool _IsRepaired;
-		
 		private bool _IsRoot;
 		
 		private EntitySet<MediaContainerFile> _MediaContainerFiles;
@@ -141,8 +139,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     partial void OnTypeChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
-    partial void OnIsRepairedChanging(bool value);
-    partial void OnIsRepairedChanged();
     partial void OnIsRootChanging(bool value);
     partial void OnIsRootChanged();
     #endregion
@@ -200,26 +196,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 					this._Name = value;
 					this.SendPropertyChanged("Name");
 					this.OnNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsRepaired", DbType="Bit NOT NULL")]
-		public bool IsRepaired
-		{
-			get
-			{
-				return this._IsRepaired;
-			}
-			set
-			{
-				if ((this._IsRepaired != value))
-				{
-					this.OnIsRepairedChanging(value);
-					this.SendPropertyChanging();
-					this._IsRepaired = value;
-					this.SendPropertyChanged("IsRepaired");
-					this.OnIsRepairedChanged();
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -38,6 +39,18 @@ namespace Oleg_ivo.MeloManager.ViewModel
             ChildItems.CollectionChanged += ChildItems_CollectionChanged;
         }
 
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public override string ToString()
+        {
+            return string.Format("{0}", UnderlyingItem!=null ? UnderlyingItem.ToString() : "пустое содержимое");
+        }
+
         public void DeleteWithChildren(MediaDataContext dataContext)
         {
             if (Parent != null)
@@ -47,7 +60,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 var relation =
                     parentContainer.ChildMediaContainers.Single(rel => rel.ChildMediaContainer == UnderlyingItem);
 
-                dataContext.MediaContainersParentChilds.DeleteOnSubmit(relation);
+                if (relation.Id > 0)
+                    dataContext.MediaContainersParentChilds.DeleteOnSubmit(relation);
                 UnderlyingItem.ParentMediaContainers.Remove(relation);
                 parentContainer.ChildMediaContainers.Remove(relation);
             }
@@ -55,7 +69,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
             //в случае сиротства удаляем сам элемент контейнера из базы
             if (!UnderlyingItem.Parents.Any())
             {
-                dataContext.MediaContainers.DeleteOnSubmit(UnderlyingItem);
+                if (UnderlyingItem.Id > 0) 
+                    dataContext.MediaContainers.DeleteOnSubmit(UnderlyingItem);
 
                 //рекурсивное удаление дочерних элементов
                 foreach (var childItem in ChildItems.ToList())
@@ -90,7 +105,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             ChildItems.CollectionChanged += ChildItems_CollectionChanged;
         }
 
-        void ChildItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        void ChildItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
 
         }
@@ -158,7 +173,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             get { return filter; }
             set
             {
-                if(filter == value) return;
+                if (filter == value) return;
                 filter = value;
                 ICollectionView view = CollectionViewSource.GetDefaultView(ChildItems);
                 view.Filter = filter;
@@ -178,7 +193,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// <param name="target">Целевой медиа-контейнер</param>
         /// <param name="parent">Родительская обёртка искомой обёртки. Если null, не проверяется</param>
         /// <returns></returns>
-        public MediaContainerTreeWrapper FindChild(MediaContainer target, MediaContainerTreeWrapper parent=null)
+        public MediaContainerTreeWrapper FindChild(MediaContainer target, MediaContainerTreeWrapper parent = null)
         {
             MediaContainerTreeWrapper result = null;
 
@@ -194,9 +209,9 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 {
                     foreach (var childWrapper in ChildItems)
                     {
-                        result = 
-                            ChildItems.FirstOrDefault(child => child.UnderlyingItem == target) 
-                            ??                                  childWrapper.FindChild(target, parent);
+                        result =
+                            ChildItems.FirstOrDefault(child => child.UnderlyingItem == target)
+                            ?? childWrapper.FindChild(target, parent);
                         if (result != null)
                             break;
                     }
@@ -240,7 +255,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// <returns></returns>
         public MediaContainerTreeWrapper FindParent(MediaContainer target, MediaContainerTreeWrapper child)
         {
-            if(child==null)
+            if (child == null)
                 throw new ArgumentNullException("child");
 
             MediaContainerTreeWrapper result = null;
@@ -266,5 +281,22 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// 
         /// </summary>
         internal event EventHandler<MediaListChangedEventArgs> ChildsChanged;
+
+        /// <summary>
+        /// Класс для сравнения обёрток по подлежащему элементу
+        /// </summary>
+        internal class MediaContainerTreeWrapperByUnderlyingItemComparer : IEqualityComparer<MediaContainerTreeWrapper>
+        {
+            public bool Equals(MediaContainerTreeWrapper x, MediaContainerTreeWrapper y)
+            {
+                if (x == y) return true;
+                return GetHashCode(x)==GetHashCode(y);
+            }
+
+            public int GetHashCode(MediaContainerTreeWrapper obj)
+            {
+                return obj!=null && obj.UnderlyingItem != null ? obj.UnderlyingItem.GetHashCode() : 0;
+            }
+        }
     }
 }

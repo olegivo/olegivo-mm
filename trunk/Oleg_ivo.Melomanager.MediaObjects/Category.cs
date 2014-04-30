@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
@@ -6,6 +7,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// <summary>
     /// Категория
     /// </summary>
+    [DebuggerDisplay("Категория [{Name}]")]
     partial class Category
     {
         /// <summary>
@@ -19,18 +21,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                 if (ParentMediaContainers.Count > 0) ParentMediaContainers.Clear();//у категории не может быть несколько родителей
                 AddParent(value);
             }
-        }
-
-        /// <summary>
-        /// Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>
-        /// A string that represents the current object.
-        /// </returns>
-        /// <filterpriority>2</filterpriority>
-        public override string ToString()
-        {
-            return string.Format("Категория [{0}]", Name);
         }
 
         /// <summary>

@@ -5,14 +5,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:MediaObjects="clr-namespace:Oleg_ivo.MeloManager.MediaObjects;assembly=Oleg_ivo.MeloManager.MediaObjects"
     x:Class="Oleg_ivo.MeloManager.View.MediaList" 
+    x:Name="mediaList"
     mc:Ignorable="d" 
     d:DesignHeight="280" d:DesignWidth="310">
     <UserControl.Resources>
-        <DataTemplate DataType="MediaObjects:Category">
-            <TextBlock>Категория</TextBlock>
+        <DataTemplate DataType="{x:Type MediaObjects:Category}">
+            <Image Source="../Resources/folder.ico"></Image>
         </DataTemplate>
-        <DataTemplate DataType="MediaObjects:Playlist">
-            <TextBlock>Плейлист</TextBlock>
+        <DataTemplate DataType="{x:Type MediaObjects:Playlist}">
+            <Image Source="../Resources/form_yellow.ico"></Image>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type MediaObjects:MediaFile}">
+            <Image Source="../Resources/headphones.ico"></Image>
         </DataTemplate>
     </UserControl.Resources>
 
@@ -44,17 +48,50 @@
                     DataMemberBinding="{Binding Name}"/>
             </telerik:RadGridView.Columns>
         </telerik:RadGridView>-->
+        
         <DataGrid 
             Grid.Row="1"
             AutoGenerateColumns="False"
+            GridLinesVisibility="None"
             IsReadOnly="True"
             ItemsSource="{Binding ListDataSource, UpdateSourceTrigger=PropertyChanged}"
             SelectedItem="{Binding SelectedItem}"
             MouseDoubleClick="Grid_OnMouseDoubleClick">
             <DataGrid.Columns>
-                <DataGridTextColumn 
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ContentPresenter Content="{Binding}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Название">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="MediaObjects:MediaContainer">
+                            <TextBlock 
+                                Text="{Binding Name}" 
+                                VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button 
+                                Command="{Binding ElementName=mediaList, Path=DataContext.CommandDeleteItem}"
+                                CommandParameter="{Binding}"
+                                Margin="5">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="/Oleg_ivo.MeloManager;component/Resources/delete2.ico"  />
+                                    <!--<TextBlock VerticalAlignment="Center">Удалить</TextBlock>-->
+                                </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <!--<DataGridTextColumn 
                     Header="Название" 
-                    Binding="{Binding Name}"/>
+                    Binding="{Binding Name}"/>-->
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

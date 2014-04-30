@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using Oleg_ivo.MeloManager.MediaObjects;
 
 namespace Oleg_ivo.MeloManager.ViewModel
@@ -15,6 +18,19 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private ObservableCollection<MediaContainer> listDataSource;
         private MediaContainer selectedItem;
         private string nameFilter;
+
+        private ICommand commandDeleteItem;
+        #endregion
+
+        #region Commands
+        public ICommand CommandDeleteItem
+        {
+            get
+            {
+                return commandDeleteItem ??
+                       (commandDeleteItem = new RelayCommand<MediaContainer>(DeleteItem));
+            }
+        }
 
         #endregion
 
@@ -68,6 +84,22 @@ namespace Oleg_ivo.MeloManager.ViewModel
         }
 
         #endregion
+
+        public event EventHandler<DeletingEventArgs<List<MediaContainer>>> Deleting;
+
+        private void DeleteItem(MediaContainer mediaContainer)
+        {
+            if (Deleting != null)
+            {
+                var eventArgs = new DeletingEventArgs<List<MediaContainer>>(new List<MediaContainer> { mediaContainer });
+                Deleting(this, eventArgs);
+                if (eventArgs.Cancel)
+                    return;
+            }
+
+            if(ListDataSource!=null) 
+                ListDataSource.Remove(mediaContainer);
+        }
 
         /*
         public override void Cleanup()

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -217,8 +216,23 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 DataContext.MediaContainers.InsertOnSubmit(category);
         }
 
-        public void DeleteItem(MediaContainerTreeWrapper wrapper)
+        public event EventHandler<DeletingEventArgs<List<MediaContainerTreeWrapper>>> Deleting;
+
+        private void DeleteItem(MediaContainerTreeWrapper wrapper)
         {
+            DeleteItem(wrapper, false);
+        }
+
+        public void DeleteItem(MediaContainerTreeWrapper wrapper, bool silent)
+        {
+            if (!silent && Deleting != null)
+            {
+                var eventArgs = new DeletingEventArgs<List<MediaContainerTreeWrapper>>(new List<MediaContainerTreeWrapper> {wrapper});
+                Deleting(this, eventArgs);
+                if (eventArgs.Cancel)
+                    return;
+            }
+
             var foundWrappers = new List<MediaContainerTreeWrapper>();
             if (wrapper.Parent != null)
             {

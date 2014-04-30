@@ -13,7 +13,7 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition MaxHeight="30" Height="Auto" />
+            <RowDefinition MaxHeight="70" Height="Auto" />
             <RowDefinition MinHeight="300" Height="*" />
             <RowDefinition MinHeight="300" Height="*" />
             <RowDefinition MaxHeight="30" Height="Auto" />
@@ -21,13 +21,33 @@
         <ToolBar
             Grid.Row="0"
             Grid.Column="0" Grid.ColumnSpan="2">
-            <Button Command="{Binding CommandLoadFromDb}">Load</Button>
+            <Button Command="{Binding CommandLoadFromDb}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Oleg_ivo.MeloManager;component/Resources/folder_refresh.ico"  />
+                    <TextBlock VerticalAlignment="Center">Load</TextBlock>
+                </StackPanel>
+            </Button>
             <Separator />
-            <Button Command="{Binding CommandSaveAndLoad}">Save</Button>
+            <Button Command="{Binding CommandSaveAndLoad}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Oleg_ivo.MeloManager;component/Resources/save.ico"  />
+                    <TextBlock VerticalAlignment="Center">Save</TextBlock>
+                </StackPanel>
+            </Button>
             <Separator />
-            <Button Command="{Binding CommandTreeAddCategory}">Новая категория</Button>
+            <Button Command="{Binding CommandTreeAddCategory}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Oleg_ivo.MeloManager;component/Resources/folder_add.ico"  />
+                    <TextBlock VerticalAlignment="Center">Add</TextBlock>
+                </StackPanel>
+            </Button>
             <Separator />
-            <Button Command="{Binding CommandImportWinampPlaylists}">Импорт из Winamp</Button>
+            <Button Command="{Binding CommandImportWinampPlaylists}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Oleg_ivo.MeloManager;component/Resources/folder_into.ico"  />
+                    <TextBlock VerticalAlignment="Center">Импорт из Winamp</TextBlock>
+                </StackPanel>
+            </Button>
             <Separator />
             <Button Command="{Binding CommandInitDataSource}">Init</Button>
             <Separator />
