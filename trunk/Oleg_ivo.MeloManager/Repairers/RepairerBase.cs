@@ -12,7 +12,7 @@ namespace Oleg_ivo.MeloManager.Repairers
     {
         public abstract void Repair();
 
-        protected static readonly string[] MusicFilesSearchPatterns = { "*.mp3", "*.wma", "*.ogg" };
+        protected static readonly string[] MusicFilesSearchPatterns = { "*.mp3", "*.wma", "*.ogg", "*.flac", "*.aac" };
 
         protected readonly MeloManagerOptions Options;
         protected string BackupPath;
