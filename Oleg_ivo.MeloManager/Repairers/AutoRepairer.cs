@@ -93,14 +93,14 @@ namespace Oleg_ivo.MeloManager.Repairers
                             {
                                 Dir = fi.FileInfo.Directory.FullName,
                                 FileName = fi.FileInfo.FullName,
-                                Name = fi.MediaContainerFiles.Single().MediaContainer.Parents.Single().ToString()
+                                Playlists = fi.MediaContainerFiles.Single().MediaContainer.Parents
                             })
                     .GroupBy(s => s.Dir, EqualityComparer<string>.Default)
                     .OrderBy(dir => dir.Key)
                     .Select(
                         group =>
                             string.Format("{0}: {1}\n{2}", group.Key, group.Count(),
-                                group.Select(item => string.Format("{0}: {1}", item.Name, item.FileName))
+                                group.Select(item => string.Format("{0}\nв плейлистах \n{1}", item.FileName, item.Playlists.Select(mc => mc.ToString()).JoinToString("\n")))
                                     .JoinToStringFormat("\n", "\t{0}")))
                     .ToList();
 
