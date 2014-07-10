@@ -42,22 +42,21 @@ namespace Oleg_ivo.MeloManager.Repairers
                 .Select(arr => new {Old = GetString(arr[0]), New = GetString(arr[1])})
                 .ToList();
             log.Debug("Получено замен: {0}", replacements.Count);
-            if(!replacements.Any())
+            if (!replacements.Any())
                 return;
 
             var playlistFiles =
                 WinampM3UPlaylistFileAdapter.GetPlaylistsFiles(PlaylistFileAdapter.PlaylistFilesSearchPatterns);
 
-            foreach (var playlistFile in playlistFiles)
+            var items = playlistFiles.Select(playlistFile =>
             {
                 var fileName = Path.GetFileName(playlistFile);
-                log.Debug("Замена в файле [{0}] ({1})", playlistFile, WinampM3UPlaylistFileAdapter.Dic[fileName]);
                 var replacedPlaylistContent =
                     replacements.Aggregate(new
-                        {
-                            Content = File.ReadAllText(playlistFile),
-                            Replaces = 0
-                        },
+                    {
+                        Content = File.ReadAllText(playlistFile),
+                        Replaces = 0
+                    },
                         (current, replacement) =>
                         {
                             var content = current.Content.Replace(replacement.Old, replacement.New);
@@ -68,13 +67,15 @@ namespace Oleg_ivo.MeloManager.Repairers
                             };
                             return foo;
                         });
-                if (replacedPlaylistContent.Replaces > 0)
-                {
-                    log.Debug("Сделано замен: {0}", replacedPlaylistContent.Replaces);
-                    EnsureBackupPath("Mp3TagRename");
-                    File.Copy(playlistFile, Path.Combine(BackupPath, fileName));
-                    File.WriteAllText(playlistFile, replacedPlaylistContent.Content);
-                }
+                return new {playlistFile, replacedPlaylistContent, fileName};
+            }).Where(item => item.replacedPlaylistContent.Replaces > 0).ToList();
+            foreach (var item in items)
+            {
+                log.Debug("Замена в файле [{0}] ({1})", item.playlistFile, WinampM3UPlaylistFileAdapter.Dic[item.fileName]);
+                log.Debug("Сделано замен: {0}", item.replacedPlaylistContent.Replaces);
+                EnsureBackupPath("Mp3TagRename");
+                File.Copy(item.playlistFile, Path.Combine(BackupPath, item.fileName));
+                File.WriteAllText(item.playlistFile, item.replacedPlaylistContent.Content);
             }
             log.Info("Замена имён файлов завершена");
         }

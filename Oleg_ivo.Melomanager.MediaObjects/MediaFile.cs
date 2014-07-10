@@ -11,26 +11,32 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     [DebuggerDisplay("Медиа-файл [{Name}]")]
     partial class MediaFile
     {
+        private bool isProcessed;
         public override void BatchRepair(IEnumerable<string> foundFiles, bool optionRepairOnlyBadFiles)
         {
             //base.BatchRepair(foundFiles, optionRepairOnlyBadFiles);
-            IsRepaired = false;
+            //lock (this)
+            //{
+                if (isProcessed) return;
+                IsRepaired = false;
 
+                var repairedFiles =
+                    (optionRepairOnlyBadFiles
+                        ? MediaContainerFiles.Where(mcf => !mcf.File.FileInfo.Exists)
+                        : MediaContainerFiles)
+                        .Select(mcf => new { old = mcf, repairedFile = mcf.File.Repair(foundFiles) })
+                        .Where(rf => rf.repairedFile != null);
 
-            var repairedFiles =
-                (optionRepairOnlyBadFiles
-                    ? MediaContainerFiles.Where(mcf => !mcf.File.FileInfo.Exists)
-                    : MediaContainerFiles)
-                    .Select(mcf => new {old=mcf, repairedFile=mcf.File.Repair(foundFiles)});
+                foreach (var rf in repairedFiles.ToList())
+                {
+                    MediaContainerFiles.Remove(rf.old);
+                    MediaContainerFiles.Add(new MediaContainerFile { File = rf.repairedFile });
+                }
 
-            foreach (var rf in repairedFiles.Where(rf=>rf.repairedFile != null).ToList())
-            {
-                MediaContainerFiles.Remove(rf.old);
-                MediaContainerFiles.Add(new MediaContainerFile { File = rf.repairedFile });
-            }
-
-            IsRepaired = true;
-/*
+                IsRepaired = repairedFiles.Any();
+                isProcessed = true;
+            //}
+            /*
             //InnerElements.Clear();
             //AddRepairedFromHistory();
             

@@ -53,11 +53,11 @@ namespace Oleg_ivo.MeloManager.Repairers
                                 .SelectMany(mediaFile => mediaFile.MediaContainerFiles.Select(mcf => mcf.File.FileInfo))).ToList();
 
             var count1 = fileInfos.Count();
-            var distinctFilesCpount = fileInfos.Select(fi => fi.FullName).Distinct().Count();
+            var distinctFilesCount = fileInfos.Select(fi => fi.FullName).Distinct().Count();
             //var existsCount1 = fileInfos.Count(fi => fi.Exists);
             var notExistsCount1 = fileInfos.Count(fi => !fi.Exists);
 
-            log.Info("Всего файлов: {0} (уникальных {1}), сломано: {2}", count1, distinctFilesCpount, notExistsCount1);
+            log.Info("Всего файлов: {0} (уникальных {1}), сломано: {2}", count1, distinctFilesCount, notExistsCount1);
             if (notExistsCount1 > 0)
             {
                 log.Debug("Получение списка файлов, используемых для починки");
@@ -69,7 +69,7 @@ namespace Oleg_ivo.MeloManager.Repairers
                                 MusicFilesSearchPatterns.SelectMany(
                                     searchPattern => Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories)))
                         .ToList();
-                log.Debug("Полчено файлов: {0}", files.Count);
+                log.Debug("Получено файлов: {0}", files.Count);
 
                 categoryToRepair.BatchRepair(files, true);
                 var files2 =
@@ -107,9 +107,9 @@ namespace Oleg_ivo.MeloManager.Repairers
                 log.Info("Всего файлов: {0}, было сломано: {1}, осталось сломано: {2}", count2, notExistsCount1, notExistsCount2);
                 log.Debug(notExistsDirs.JoinToString("\n"));
 
-                log.Info("Сохраненеи плейлистов");
+                log.Info("Сохранение плейлистов");
                 EnsureBackupPath("AutoRepair");
-                foreach (var playlist in categoryToRepair.Childs.Cast<Playlist>())
+                foreach (var playlist in categoryToRepair.Childs.Cast<Playlist>().Where(playlist => playlist.IsRepaired))
                 {
                     File.Copy(playlist.OriginalFileName, Path.Combine(BackupPath, Path.GetFileName(playlist.OriginalFileName)));
                     WinampM3UPlaylistFileAdapter.PlaylistToFile(playlist, playlist.OriginalFileName);
