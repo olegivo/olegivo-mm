@@ -120,7 +120,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         {
             if (_main == null)
             {
-                _main = new MainViewModel();
+                //_main = new MainViewModel();
             }
         }
 
