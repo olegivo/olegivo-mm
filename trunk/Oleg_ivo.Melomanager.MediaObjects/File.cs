@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NLog;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
     //[DebuggerDisplay("{FullFileName}")]
     partial class File : IEquatable<File>
     {
+        private static readonly Logger log = LogManager.GetCurrentClassLogger();
+
         public override string ToString()
         {
             return FullFileName;
@@ -102,16 +105,21 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                 (foundFiles.Where(file => file.ToLower().Contains(Filename.ToLower()))
                             .Select(GetFile)).ToList();
 
+            File repairedFile;
             switch (repairedFiles.Count)
             {
                 case 0:
                     return null;
                 case 1:
-                    return repairedFiles.Single();
+                    repairedFile = repairedFiles.Single();
+                    log.Trace("При починке файла {0} найдено единственное соответствие {1}", FullFileName, repairedFile.FullFileName);
+                    return repairedFile;
                 default:
                     var comparer = new FullFileNameElementsComparer(this.fullFileNameElements);
                     var list = repairedFiles.OrderBy(f => f.fullFileNameElements, comparer).ToList();
-                    return list.First();
+                    repairedFile = list.First();
+                    log.Trace("При починке файла {0} найдено несколько соответствий ({1}) но будет использовано только одно: {2}", FullFileName, repairedFiles.Count, repairedFile.FullFileName);
+                    return repairedFile;
             }
         }
 
