@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using NLog;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
@@ -11,6 +12,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     [DebuggerDisplay("Медиа-файл [{Name}]")]
     partial class MediaFile
     {
+        private static readonly Logger log = LogManager.GetCurrentClassLogger();
         private bool isProcessed;
         public override void BatchRepair(IEnumerable<string> foundFiles, bool optionRepairOnlyBadFiles)
         {
@@ -25,9 +27,9 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                         ? MediaContainerFiles.Where(mcf => !mcf.File.FileInfo.Exists)
                         : MediaContainerFiles)
                         .Select(mcf => new { old = mcf, repairedFile = mcf.File.Repair(foundFiles) })
-                        .Where(rf => rf.repairedFile != null);
+                        .Where(rf => rf.repairedFile != null).ToList();
 
-                foreach (var rf in repairedFiles.ToList())
+                foreach (var rf in repairedFiles)
                 {
                     MediaContainerFiles.Remove(rf.old);
                     MediaContainerFiles.Add(new MediaContainerFile { File = rf.repairedFile });

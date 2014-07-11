@@ -55,11 +55,16 @@ namespace Oleg_ivo.MeloManager.Repairers
             var count1 = fileInfos.Count();
             var distinctFilesCount = fileInfos.Select(fi => fi.FullName).Distinct().Count();
             //var existsCount1 = fileInfos.Count(fi => fi.Exists);
-            var notExistsCount1 = fileInfos.Count(fi => !fi.Exists);
+
+            var notExists = fileInfos.Where(fi => !fi.Exists).ToList();
+            var notExistsCount1 = notExists.Count;
 
             log.Info("Всего файлов: {0} (уникальных {1}), сломано: {2}", count1, distinctFilesCount, notExistsCount1);
             if (notExistsCount1 > 0)
             {
+                for (int i = 0; i < notExistsCount1; i++)
+                    log.Trace(notExists[i].FullName);
+
                 log.Debug("Получение списка файлов, используемых для починки");
                 string musicFilesSource = Options.MusicFilesSource;
                 var files =
@@ -107,9 +112,10 @@ namespace Oleg_ivo.MeloManager.Repairers
                 log.Info("Всего файлов: {0}, было сломано: {1}, осталось сломано: {2}", count2, notExistsCount1, notExistsCount2);
                 log.Debug(notExistsDirs.JoinToString("\n"));
 
-                log.Info("Сохранение плейлистов");
+                var playlists = categoryToRepair.Childs.Cast<Playlist>().Where(playlist => playlist.IsRepaired).ToList();
+                log.Info("Сохранение плейлистов {0}", playlists.Count);
                 EnsureBackupPath("AutoRepair");
-                foreach (var playlist in categoryToRepair.Childs.Cast<Playlist>().Where(playlist => playlist.IsRepaired))
+                foreach (var playlist in playlists)
                 {
                     File.Copy(playlist.OriginalFileName, Path.Combine(BackupPath, Path.GetFileName(playlist.OriginalFileName)));
                     WinampM3UPlaylistFileAdapter.PlaylistToFile(playlist, playlist.OriginalFileName);
