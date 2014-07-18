@@ -31,10 +31,10 @@ namespace Oleg_ivo.MeloManager.ViewModel
         public new void Add(MediaContainerTreeWrapper item)
         {
             base.Add(item);
-            item.ChildsChanged += item_ChildsChanged;
+            item.ChildrenChanged += item_ChildrenChanged;
 
             //рекурсивное добавление дочерних элементов
-            foreach (var child in item.UnderlyingItem.Childs)
+            foreach (var child in item.UnderlyingItem.Children)
             {
                 Add(new MediaContainerTreeWrapper(GetSourceId, child, item));
             }
@@ -62,7 +62,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             MediaContainer underlyingItem = item.UnderlyingItem;
 
             //рекурсивное удаление дочерних элементов
-            foreach (var child in underlyingItem.Childs.ToList())
+            foreach (var child in underlyingItem.Children.ToList())
             {
                 var childWrapper = FindItem(item, child);
                 Remove(childWrapper);
@@ -76,11 +76,11 @@ namespace Oleg_ivo.MeloManager.ViewModel
             MediaContainerTreeWrapper parentWrapper = item.Parent;
             if (parentWrapper != null)
             {
-                parentWrapper.ChildsChanged -= item_ChildsChanged;
+                parentWrapper.ChildrenChanged -= item_ChildrenChanged;
                 RemoveRelation(parentWrapper.UnderlyingItem, underlyingItem);
-                parentWrapper.ChildsChanged += item_ChildsChanged;
+                parentWrapper.ChildrenChanged += item_ChildrenChanged;
             }
-            item.ChildsChanged -= item_ChildsChanged;
+            item.ChildrenChanged -= item_ChildrenChanged;
 
             //удаление родительского медиа-контейнера, если у него нет больше родителей
             RemoveIfNoParent(underlyingItem);
@@ -121,7 +121,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             Add(item);
         }
 
-        void item_ChildsChanged(object sender, MediaListChangedEventArgs e)
+        void item_ChildrenChanged(object sender, MediaListChangedEventArgs e)
         {
             MediaContainerTreeWrapper parent = sender as MediaContainerTreeWrapper;
             MediaContainerTreeWrapper child;

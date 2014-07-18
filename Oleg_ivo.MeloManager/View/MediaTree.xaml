@@ -40,7 +40,12 @@
                     DockPanel.Dock="Right"
                     Command="{Binding ElementName=mediaTree, Path=DataContext.CommandDeleteItem}"
                     CommandParameter="{Binding}"
-                    Margin="5">Удалить</Button>
+                    Margin="5">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Oleg_ivo.MeloManager;component/Resources/delete2.ico"  />
+                        <!--<TextBlock VerticalAlignment="Center">Удалить</TextBlock>-->
+                    </StackPanel>
+                </Button>
                 <TextBlock 
                     Text="{Binding Name}" 
                     VerticalAlignment="Center" 
@@ -76,7 +81,9 @@
             AutoScrollToSelectedItem="True"
             IsRootLinesEnabled="True"
             telerik:TextSearch.TextPath="Name"
-            PathSeparator="\"/>
+            IsDragDropEnabled="True"
+            IsDragPreviewEnabled="False"
+            PathSeparator="\" />
         <!--IsDragDropEnabled="True"-->
     </Grid>
 </UserControl>

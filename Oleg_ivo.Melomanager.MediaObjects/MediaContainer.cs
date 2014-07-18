@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using NLog;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
@@ -18,7 +19,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <summary>
         /// Дочерние элементы
         /// </summary>
-        public IQueryable<MediaContainer> Childs
+        public IQueryable<MediaContainer> Children
         {
             get
             {
@@ -74,7 +75,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 
         private void EndRemoveChild(MediaContainersParentChild child)
         {
-            InvokeChildsChanged(ListChangedType.ItemDeleted, child.ChildMediaContainer);
+            InvokeChildrenChanged(ListChangedType.ItemDeleted, child.ChildMediaContainer);
         }
 
 /*
@@ -113,7 +114,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// </summary>
         /// <param name="oldChild"></param>
         /// <param name="newChild"></param>
-        protected void MoveBetweenChilds(MediaContainer oldChild, MediaContainer newChild)
+        protected void MoveBetweenChildren(MediaContainer oldChild, MediaContainer newChild)
         {
             newChild.AddParent(this);
             oldChild.RemoveParent(this);
@@ -136,14 +137,29 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         {
             IsRepaired = false;
             var foundFilesList = foundFiles as IList<string> ?? foundFiles.ToList();
-            foreach (MediaContainer mediaContainer in Childs)
+            foreach (var mediaContainer in Children)
             {
-                if(mediaContainer is Category || mediaContainer is Playlist)
+                if (mediaContainer is Category || mediaContainer is Playlist)
                     log.Trace("Починка {0}", mediaContainer);
                 mediaContainer.BatchRepair(foundFilesList, optionRepairOnlyBadFiles);
                 if (!IsRepaired)
                     IsRepaired = mediaContainer.IsRepaired;
             }
+/*
+            var result = Parallel.ForEach(Children, mediaContainer =>
+            {
+                if (mediaContainer is Category || mediaContainer is Playlist)
+                    log.Trace("Починка {0}", mediaContainer);
+                mediaContainer.BatchRepair(foundFilesList, optionRepairOnlyBadFiles);
+                if (!IsRepaired)
+                    IsRepaired = mediaContainer.IsRepaired;
+
+            });
+            if (!result.IsCompleted)
+            {
+                
+            }
+*/
         }
 
         public bool IsRepaired { get; set; }//TODO: INPC?
@@ -158,20 +174,20 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             if (e.ListChangedType == ListChangedType.ItemAdded)
             {
                 MediaContainer child = ChildMediaContainers[e.NewIndex].ChildMediaContainer;
-                InvokeChildsChanged(e.ListChangedType, child);
+                InvokeChildrenChanged(e.ListChangedType, child);
             }                      
         }
 
-        private void InvokeChildsChanged(ListChangedType listChangedType, MediaContainer child)
+        private void InvokeChildrenChanged(ListChangedType listChangedType, MediaContainer child)
         {
-            if (ChildsChanged != null)
-                ChildsChanged(this, new MediaListChangedEventArgs(listChangedType, child));
+            if (ChildrenChanged != null)
+                ChildrenChanged(this, new MediaListChangedEventArgs(listChangedType, child));
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public event EventHandler<MediaListChangedEventArgs> ChildsChanged;
+        public event EventHandler<MediaListChangedEventArgs> ChildrenChanged;
 
         /// <summary>
         /// Получить связь, 
