@@ -24,7 +24,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// </summary>
         public IQueryable<MediaFile> MediaFiles
         {
-            get { return Childs != null ? Childs.Cast<MediaFile>() : null; }
+            get { return Children != null ? Children.Cast<MediaFile>() : null; }
         }
 
         /// <summary>

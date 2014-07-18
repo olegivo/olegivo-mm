@@ -31,10 +31,10 @@ namespace Oleg_ivo.MeloManager.ViewModel
         {
             //Обёртка не может быть пустой
             UnderlyingItem = Enforce.ArgumentNotNull(underlyingItem, "underlyingItem");
-            UnderlyingItem.ChildsChanged += UnderlyingItem_ChildsChanged;
+            UnderlyingItem.ChildrenChanged += UnderlyingItem_ChildrenChanged;
             Parent = parent;
 
-            var mediaContainerTreeWrappers = UnderlyingItem.Childs.Select(mc => new MediaContainerTreeWrapper(mc, this));
+            var mediaContainerTreeWrappers = UnderlyingItem.Children.Select(mc => new MediaContainerTreeWrapper(mc, this));
             ChildItems = new ObservableCollection<MediaContainerTreeWrapper>(mediaContainerTreeWrappers);
             ChildItems.CollectionChanged += ChildItems_CollectionChanged;
         }
@@ -95,11 +95,11 @@ namespace Oleg_ivo.MeloManager.ViewModel
             _getMySourceIdDelegateId = Enforce.ArgumentNotNull(sourceIdDelegate, "sourceIdDelegate");
             //Обёртка не может быть пустой
             UnderlyingItem = Enforce.ArgumentNotNull(underlyingItem, "underlyingItem");
-            UnderlyingItem.ChildsChanged += UnderlyingItem_ChildsChanged;
+            UnderlyingItem.ChildrenChanged += UnderlyingItem_ChildrenChanged;
             Parent = parent;
 
             var mediaContainerTreeWrappers =
-                UnderlyingItem.Childs.Select(
+                UnderlyingItem.Children.Select(
                     mc => new MediaContainerTreeWrapper(sourceIdDelegate, mc, this));
             ChildItems = new ObservableCollection<MediaContainerTreeWrapper>(mediaContainerTreeWrappers);
             ChildItems.CollectionChanged += ChildItems_CollectionChanged;
@@ -271,16 +271,16 @@ namespace Oleg_ivo.MeloManager.ViewModel
             return result;
         }
 
-        void UnderlyingItem_ChildsChanged(object sender, MediaListChangedEventArgs e)
+        void UnderlyingItem_ChildrenChanged(object sender, MediaListChangedEventArgs e)
         {
-            if (ChildsChanged != null)
-                ChildsChanged(this, e);
+            if (ChildrenChanged != null)
+                ChildrenChanged(this, e);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        internal event EventHandler<MediaListChangedEventArgs> ChildsChanged;
+        internal event EventHandler<MediaListChangedEventArgs> ChildrenChanged;
 
         /// <summary>
         /// Класс для сравнения обёрток по подлежащему элементу

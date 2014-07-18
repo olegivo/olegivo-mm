@@ -26,9 +26,9 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <summary>
         /// Дочерние элементы
         /// </summary>
-        public new IQueryable<MediaContainer> Childs
+        public new IQueryable<MediaContainer> Children
         {
-            get { return base.Childs; }
+            get { return base.Children; }
         }
 
         /// <summary>

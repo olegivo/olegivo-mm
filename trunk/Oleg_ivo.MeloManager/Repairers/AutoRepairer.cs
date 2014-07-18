@@ -46,10 +46,10 @@ namespace Oleg_ivo.MeloManager.Repairers
             }*/
 
             var fileInfos =
-                categoryToRepair.Childs.Cast<Playlist>()
+                categoryToRepair.Children.Cast<Playlist>()
                     .SelectMany(
                         playlist =>
-                            playlist.Childs.Cast<MediaFile>()
+                            playlist.Children.Cast<MediaFile>()
                                 .SelectMany(mediaFile => mediaFile.MediaContainerFiles.Select(mcf => mcf.File.FileInfo))).ToList();
 
             var count1 = fileInfos.Count();
@@ -78,10 +78,10 @@ namespace Oleg_ivo.MeloManager.Repairers
 
                 categoryToRepair.BatchRepair(files, true);
                 var files2 =
-                    categoryToRepair.Childs.Cast<Playlist>()
+                    categoryToRepair.Children.Cast<Playlist>()
                         .SelectMany(
                             playlist =>
-                                playlist.Childs.Cast<MediaFile>()
+                                playlist.Children.Cast<MediaFile>()
                                     .SelectMany(
                                         mediaFile =>
                                             mediaFile.MediaContainerFiles.Where(mcf => mcf.File != null)
@@ -112,7 +112,7 @@ namespace Oleg_ivo.MeloManager.Repairers
                 log.Info("Всего файлов: {0}, было сломано: {1}, осталось сломано: {2}", count2, notExistsCount1, notExistsCount2);
                 log.Debug(notExistsDirs.JoinToString("\n"));
 
-                var playlists = categoryToRepair.Childs.Cast<Playlist>().Where(playlist => playlist.IsRepaired).ToList();
+                var playlists = categoryToRepair.Children.Cast<Playlist>().Where(playlist => playlist.IsRepaired).ToList();
                 log.Info("Сохранение плейлистов {0}", playlists.Count);
                 EnsureBackupPath("AutoRepair");
                 foreach (var playlist in playlists)

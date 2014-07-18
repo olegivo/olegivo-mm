@@ -75,7 +75,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 if (currentTreeMediaContainer == value) return;
 
                 currentTreeMediaContainer = value;
-                ChildListDataSource = CurrentTreeMediaContainer!=null ? new ObservableCollection<MediaContainer>(CurrentTreeMediaContainer.Childs) : null;
+                ChildListDataSource = CurrentTreeMediaContainer!=null ? new ObservableCollection<MediaContainer>(CurrentTreeMediaContainer.Children) : null;
                 ParentListDataSource = CurrentTreeMediaContainer!=null ? new ObservableCollection<MediaContainer>(CurrentTreeMediaContainer.Parents) : null;
                 RaisePropertyChanged(() => CurrentTreeMediaContainer);
             }

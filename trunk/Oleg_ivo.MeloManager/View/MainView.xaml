@@ -3,6 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:View="clr-namespace:Oleg_ivo.MeloManager.View"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:viewModel="clr-namespace:Oleg_ivo.MeloManager.ViewModel"
+    d:DataContext="{d:DesignInstance Type=viewModel:MainViewModel}"
     ScrollViewer.CanContentScroll="True"
     Loaded="MainView_OnLoaded">
     <Grid 
@@ -21,37 +26,19 @@
         <ToolBar
             Grid.Row="0"
             Grid.Column="0" Grid.ColumnSpan="2">
-            <Button Command="{Binding CommandLoadFromDb}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/Oleg_ivo.MeloManager;component/Resources/folder_refresh.ico"  />
-                    <TextBlock VerticalAlignment="Center">Load</TextBlock>
-                </StackPanel>
-            </Button>
+            <ToolBar.Resources>
+                <Image x:Key="IconRefresh" Source="/Oleg_ivo.MeloManager;component/Resources/folder_refresh.ico" />
+                <Image x:Key="IconSave" Source="/Oleg_ivo.MeloManager;component/Resources/save.ico" />
+                <Image x:Key="IconAddFolder" Source="/Oleg_ivo.MeloManager;component/Resources/folder_add.ico" />
+                <Image x:Key="IconIntoFolder" Source="/Oleg_ivo.MeloManager;component/Resources/folder_into.ico" />
+            </ToolBar.Resources>
+            <MenuItem Header="Load" Icon="{StaticResource IconRefresh}" Command="{Binding CommandLoadFromDb}" />
+            <MenuItem Header="Save" Icon="{StaticResource IconSave}" Command="{Binding CommandSaveAndLoad}" />
+            <MenuItem Header="Add category" Icon="{StaticResource IconAddFolder}" Command="{Binding CommandTreeAddCategory}" />
+            <MenuItem Header="Import from Winamp" Icon="{StaticResource IconIntoFolder}" Command="{Binding CommandImportWinampPlaylists}" />
             <Separator />
-            <Button Command="{Binding CommandSaveAndLoad}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/Oleg_ivo.MeloManager;component/Resources/save.ico"  />
-                    <TextBlock VerticalAlignment="Center">Save</TextBlock>
-                </StackPanel>
-            </Button>
-            <Separator />
-            <Button Command="{Binding CommandTreeAddCategory}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/Oleg_ivo.MeloManager;component/Resources/folder_add.ico"  />
-                    <TextBlock VerticalAlignment="Center">Add</TextBlock>
-                </StackPanel>
-            </Button>
-            <Separator />
-            <Button Command="{Binding CommandImportWinampPlaylists}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/Oleg_ivo.MeloManager;component/Resources/folder_into.ico"  />
-                    <TextBlock VerticalAlignment="Center">Импорт из Winamp</TextBlock>
-                </StackPanel>
-            </Button>
-            <Separator />
-            <Button Command="{Binding CommandInitDataSource}">Init</Button>
-            <Separator />
-            <Button Command="{Binding CommandTest}">Test</Button>
+            <MenuItem Header="Init" Command="{Binding CommandInitDataSource}" />
+            <MenuItem Header="Test" Command="{Binding CommandTest}" />
         </ToolBar>
         <View:MediaTree 
             DataContext="{Binding MediaTree}"
@@ -64,7 +51,7 @@
             Grid.Column="1" >
         </View:MediaList>
         <View:MediaList 
-            DataContext="{Binding Childs}"
+            DataContext="{Binding Children}"
             Grid.Row="2" 
             Grid.Column="1"  />
         <StatusBar

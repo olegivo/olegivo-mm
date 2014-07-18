@@ -28,7 +28,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private MediaTreeViewModel mediaTree;
         private MediaListViewModel parents;
-        private MediaListViewModel childs;
+        private MediaListViewModel children;
 
         private ICommand commandLoadFromDb;
         private ICommand commandSaveAndLoad;
@@ -89,24 +89,24 @@ namespace Oleg_ivo.MeloManager.ViewModel
         }
 
         [Dependency(Required = true)]
-        public MediaListViewModel Childs
+        public MediaListViewModel Children
         {
-            get { return childs; }
+            get { return children; }
             set
             {
-                if (childs == value) return;
-                if (Childs != null)
+                if (children == value) return;
+                if (Children != null)
                 {
-                    Childs.RowDoubleClick -= Childs_RowDoubleClick;
-                    Childs.Deleting -= Childs_Deleting;
+                    Children.RowDoubleClick -= Children_RowDoubleClick;
+                    Children.Deleting -= Children_Deleting;
                 }
-                childs = value;
-                if (Childs != null)
+                children = value;
+                if (Children != null)
                 {
-                    Childs.RowDoubleClick += Childs_RowDoubleClick;
-                    Childs.Deleting += Childs_Deleting;
+                    Children.RowDoubleClick += Children_RowDoubleClick;
+                    Children.Deleting += Children_Deleting;
                 }
-                RaisePropertyChanged(() => Childs);
+                RaisePropertyChanged(() => Children);
             }
         }
 
@@ -139,9 +139,9 @@ namespace Oleg_ivo.MeloManager.ViewModel
             GoToParent(Parents.SelectedItem);
         }
 
-        void Childs_RowDoubleClick(object sender, System.EventArgs e)
+        void Children_RowDoubleClick(object sender, System.EventArgs e)
         {
-            GoToChild(Childs.SelectedItem);
+            GoToChild(Children.SelectedItem);
         }
 
         void MediaTree_ParentListDataSourceChanged(object sender, System.EventArgs e)
@@ -151,7 +151,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         void MediaTree_ChildListDataSourceChanged(object sender, System.EventArgs e)
         {
-            Childs.ListDataSource = MediaTree.ChildListDataSource;//TODO: binding (multybinding or data trigger?)
+            Children.ListDataSource = MediaTree.ChildListDataSource;//TODO: binding (multybinding or data trigger?)
         }
 
         void Parents_Deleting(object sender, DeletingEventArgs<List<MediaContainer>> e)
@@ -159,7 +159,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             e.Cancel = !DeleteParents(e.Deleting);
         }
 
-        void Childs_Deleting(object sender, DeletingEventArgs<List<MediaContainer>> e)
+        void Children_Deleting(object sender, DeletingEventArgs<List<MediaContainer>> e)
         {
             e.Cancel = !DeleteChildren(e.Deleting);
         }
@@ -320,7 +320,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             var adapter = context.ResolveUnregistered<WinampM3UPlaylistFileAdapter>();
             foreach (
                 var playlist in
-                    mediaContainer.Childs.Cast<Playlist>().ToList()
+                    mediaContainer.Children.Cast<Playlist>().ToList()
                         .Where(p => !p.MediaContainerFiles.Any()))
             {
                 var originalFileName = System.IO.File.Exists(playlist.OriginalFileName)

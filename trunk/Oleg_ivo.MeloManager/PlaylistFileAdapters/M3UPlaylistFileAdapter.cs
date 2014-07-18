@@ -42,7 +42,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             try
             {
                 var files =
-                    playlist.Childs.Cast<MediaFile>()
+                    playlist.Children.Cast<MediaFile>()
                         .Select(
                             mf =>
                                 mf.MediaContainerFiles.Select(mcf => mcf.File)
