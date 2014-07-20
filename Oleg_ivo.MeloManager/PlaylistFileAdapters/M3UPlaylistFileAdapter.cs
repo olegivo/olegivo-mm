@@ -36,28 +36,18 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             return playlist;
         }
 
-        public override void PlaylistToFile(Playlist playlist, string filename)
+        public override void MediaFilesToFile(string filename, IEnumerable<MediaFile> mediaFiles)
         {
-            log.Info("Запись плейлиста [{0}] в файл [{1}]", playlist, filename);
-            try
-            {
-                var files =
-                    playlist.Children.Cast<MediaFile>()
-                        .Select(
-                            mf =>
-                                mf.MediaContainerFiles.Select(mcf => mcf.File)
-                                    .OrderBy(file => file.FileInfo.Exists)
-                                    .FirstOrDefault())
-                        .Select(file => string.Format("#EXTINF:-1,{0}\n{1}", file.FileNameWithoutExtension, file.FullFileName))
-                        .Distinct()
-                        .ToList();
-                files.Insert(0, "#EXTM3U");
-                System.IO.File.WriteAllLines(filename, files, Encoding.UTF8);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            var files = mediaFiles
+                .Select(mf =>
+                    mf.MediaContainerFiles.Select(mcf => mcf.File)
+                        .OrderBy(file => file.FileInfo.Exists)
+                        .FirstOrDefault())
+                .Select(file => string.Format("#EXTINF:-1,{0}\n{1}", file.FileNameWithoutExtension, file.FullFileName))
+                .Distinct()
+                .ToList();
+            files.Insert(0, "#EXTM3U");
+            System.IO.File.WriteAllLines(filename, files, Encoding.UTF8);
         }
 
         private List<ExtInfo> GetExtInfosFromFile_m3u(String playlistFileName)

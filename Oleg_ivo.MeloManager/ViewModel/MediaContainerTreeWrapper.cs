@@ -6,10 +6,15 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using Autofac;
 using GalaSoft.MvvmLight;
+using Microsoft.Expression.Interactivity.Core;
 using Oleg_ivo.Base.Autofac;
+using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.MeloManager.MediaObjects;
+using Oleg_ivo.MeloManager.PlaylistFileAdapters;
 
 namespace Oleg_ivo.MeloManager.ViewModel
 {
@@ -19,22 +24,25 @@ namespace Oleg_ivo.MeloManager.ViewModel
     [DebuggerDisplay("Wrapper: {UnderlyingItem}; Parent: {Parent!=null ? Parent.UnderlyingItem : null}")]
     public class MediaContainerTreeWrapper : ViewModelBase
     {
+        private readonly IComponentContext context;
         private readonly Func<MediaContainerTreeWrapper, long> _getMySourceIdDelegateId;
         private Predicate<object> filter;
+        private ICommand commandPlay;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="underlyingItem"></param>
         /// <param name="parent"></param>
-        public MediaContainerTreeWrapper(MediaContainer underlyingItem, MediaContainerTreeWrapper parent)
+        /// <param name="context"></param>
+        public MediaContainerTreeWrapper(MediaContainer underlyingItem, MediaContainerTreeWrapper parent, IComponentContext context)
         {
-            //ќбЄртка не может быть пустой
+            this.context = Enforce.ArgumentNotNull(context, "context");
             UnderlyingItem = Enforce.ArgumentNotNull(underlyingItem, "underlyingItem");
             UnderlyingItem.ChildrenChanged += UnderlyingItem_ChildrenChanged;
             Parent = parent;
 
-            var mediaContainerTreeWrappers = UnderlyingItem.Children.Select(mc => new MediaContainerTreeWrapper(mc, this));
+            var mediaContainerTreeWrappers = UnderlyingItem.Children.Select(mc => new MediaContainerTreeWrapper(mc, this, context));
             ChildItems = new ObservableCollection<MediaContainerTreeWrapper>(mediaContainerTreeWrappers);
             ChildItems.CollectionChanged += ChildItems_CollectionChanged;
         }
@@ -297,6 +305,28 @@ namespace Oleg_ivo.MeloManager.ViewModel
             {
                 return obj!=null && obj.UnderlyingItem != null ? obj.UnderlyingItem.GetHashCode() : 0;
             }
+        }
+
+        public ICommand CommandPlay
+        {
+            get { return commandPlay ?? (commandPlay = new ActionCommand(Play)); }
+        }
+
+        private void Play()
+        {
+            var mediaFiles = FindChildrenOfType<MediaFile>().Select(wrapper => (MediaFile)wrapper.UnderlyingItem);
+            var adapter = context.ResolveUnregistered<WinampM3UPlaylistFileAdapter>();
+            var filename = @"playlist.m3u";
+            adapter.MediaFilesToFile(filename, mediaFiles);
+            Process.Start(filename);
+        }
+
+        public IEnumerable<MediaContainerTreeWrapper> FindChildrenOfType<T>() where T: MediaContainer
+        {
+            if(UnderlyingItem is T)  yield return this;
+            foreach (var childItem in ChildItems)
+                foreach (var subChildItem in childItem.FindChildrenOfType<T>())
+                    yield return subChildItem;
         }
     }
 }

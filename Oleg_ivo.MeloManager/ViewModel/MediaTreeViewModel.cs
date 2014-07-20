@@ -4,9 +4,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
+using Autofac;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using NLog;
+using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.MeloManager.MediaObjects;
 
 namespace Oleg_ivo.MeloManager.ViewModel
@@ -16,6 +18,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
     /// </summary>
     public class MediaTreeViewModel : ViewModelBase
     {
+        private readonly IComponentContext context;
+
         #region Fields
         private static Logger log = LogManager.GetCurrentClassLogger();
         
@@ -206,12 +210,12 @@ namespace Oleg_ivo.MeloManager.ViewModel
         {
             Items =
                 new ObservableCollection<MediaContainerTreeWrapper>(
-                    mediaContainers.Select(mc => new MediaContainerTreeWrapper(mc, null)));
+                    mediaContainers.Select(mc => new MediaContainerTreeWrapper(mc, null, context)));
         }
 
         public void AddCategory(Category category, MediaContainerTreeWrapper parent)
         {
-            Items.Add(new MediaContainerTreeWrapper(category, parent));
+            Items.Add(new MediaContainerTreeWrapper(category, parent, context));
             if (category.Id == 0)
                 DataContext.MediaContainers.InsertOnSubmit(category);
         }
@@ -293,8 +297,9 @@ namespace Oleg_ivo.MeloManager.ViewModel
         }
         */
 
-        public MediaTreeViewModel()
+        public MediaTreeViewModel(IComponentContext context)
         {
+            this.context = Enforce.ArgumentNotNull(context, "context");
             items = new ObservableCollection<MediaContainerTreeWrapper>();
             items.CollectionChanged += items_CollectionChanged;
         }

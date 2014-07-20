@@ -350,6 +350,10 @@
   <ItemGroup>
     <Resource Include="Resources\delete2.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\media_play.ico" />
+    <Resource Include="Resources\media_play_green.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
