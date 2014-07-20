@@ -8,6 +8,7 @@
     x:Class="Oleg_ivo.MeloManager.View.MediaTree"
     x:Name="mediaTree"
     mc:Ignorable="d" 
+    d:DataContext="d:DesignInstance Type=viewModel:MediaTreeViewModel"
     d:DesignHeight="326" d:DesignWidth="438" 
     
     DataContextChanged="MediaTree_OnDataContextChanged">
@@ -28,24 +29,39 @@
 
     <UserControl.Resources>
         <HierarchicalDataTemplate 
-            x:Key="treeViewTemplate" 
+            x:Key="TreeViewTemplate" 
             ItemsSource="{Binding ChildItems}" 
             DataType="ViewModel:MediaContainerTreeWrapper">
+            <HierarchicalDataTemplate.Resources>
+            </HierarchicalDataTemplate.Resources>
             <DockPanel 
                 Dock="Left">
                 <Image 
                     Source="{Binding Image}" 
-                    Margin="5" />
-                <Button 
-                    DockPanel.Dock="Right"
-                    Command="{Binding ElementName=mediaTree, Path=DataContext.CommandDeleteItem}"
-                    CommandParameter="{Binding}"
-                    Margin="5">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Oleg_ivo.MeloManager;component/Resources/delete2.ico"  />
-                        <!--<TextBlock VerticalAlignment="Center">Удалить</TextBlock>-->
-                    </StackPanel>
-                </Button>
+                    MaxHeight="26"
+                    Margin="2"/>
+                <ToolBarPanel DockPanel.Dock="Right" VerticalAlignment="Center" Orientation="Horizontal">
+                    <ToolBarPanel.Resources>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="MaxWidth" Value="24" />
+                        </Style>
+                    </ToolBarPanel.Resources>
+                    <MenuItem 
+                        ToolTip="Воспроизвести"
+                        Command="{Binding CommandPlay}">
+                        <MenuItem.Icon>
+                            <Image Source="/Oleg_ivo.MeloManager;component/Resources/media_play.ico"   />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem 
+                        ToolTip="Удалить"
+                        Command="{Binding ElementName=mediaTree, Path=DataContext.CommandDeleteItem}" 
+                        CommandParameter="{Binding}">
+                        <MenuItem.Icon>
+                            <Image Source="/Oleg_ivo.MeloManager;component/Resources/delete2.ico"   />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ToolBarPanel>
                 <TextBlock 
                     Text="{Binding Name}" 
                     VerticalAlignment="Center" 
@@ -76,8 +92,9 @@
             Grid.Row="1"
             x:Name="tree"         
             ItemsSource="{Binding Path=Items, UpdateSourceTrigger=PropertyChanged}"
-            ItemTemplate="{StaticResource treeViewTemplate}"
-            SelectedItem="{Binding CurrentItem, Mode=TwoWay}" SelectionChanged="RadTreeView_SelectionChanged"
+            ItemTemplate="{StaticResource TreeViewTemplate}"
+            SelectedItem="{Binding CurrentItem, Mode=TwoWay}" 
+            SelectionChanged="RadTreeView_SelectionChanged"
             AutoScrollToSelectedItem="True"
             IsRootLinesEnabled="True"
             telerik:TextSearch.TextPath="Name"
