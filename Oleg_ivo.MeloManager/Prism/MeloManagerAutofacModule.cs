@@ -5,6 +5,7 @@ using Oleg_ivo.Base.Autofac.Modules;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.View;
 using Oleg_ivo.MeloManager.ViewModel;
+using Oleg_ivo.MeloManager.Winamp;
 
 namespace Oleg_ivo.MeloManager.Prism
 {
@@ -29,6 +30,8 @@ namespace Oleg_ivo.MeloManager.Prism
                 //mediaDataContext.ObjectTrackingEnabled = true;
                 return mediaDataContext;
             });
+
+            builder.RegisterType<WinampControl>().SingleInstance();
 
             //MVVM registration:
             builder.RegisterType<MainViewModel>();
