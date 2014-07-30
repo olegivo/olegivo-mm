@@ -17,20 +17,29 @@ namespace Oleg_ivo.MeloManager.Winamp
 
         public void LaunchBind()
         {
+            var endpointAddress = new EndpointAddress("net.tcp://localhost:9000/winamp_wcf");
+            var netTcpBinding = new NetTcpBinding { OpenTimeout = TimeSpan.FromSeconds(1) };
+            var winampServiceCallback = new WinampServiceCallback();
             disposable = Observable.Interval(TimeSpan.FromSeconds(1))
                 .Where(l => client==null || client.State != CommunicationState.Opened)
                 .Subscribe(l =>
                 {
                     try
                     {
-                        var winampServiceCallback = new WinampServiceCallback();
-                        var callbackInstance = new InstanceContext(winampServiceCallback);
-                        client = new WinampServiceClient(callbackInstance, new NetTcpBinding { OpenTimeout = TimeSpan.FromSeconds(1) },
-                            new EndpointAddress("net.tcp://localhost:9000/winamp_wcf"));
-                        client.Open();
-                        client.Ping();
-                        log.Debug("Winamp на связи");
-                        winampServiceCallback.CurrentSongSubject.Subscribe(filename => log.Debug("Now playing: {0}", filename));
+                        //var discoveryClient = new DiscoveryClient(new DiscoveryEndpoint(netTcpBinding, endpointAddress));
+                        //var findResponse = discoveryClient.Resolve(new ResolveCriteria(){Duration = TimeSpan.FromMilliseconds(500)});
+                        client = new WinampServiceClient(new InstanceContext(winampServiceCallback), netTcpBinding, endpointAddress);
+                        try
+                        {
+                            client.Open();
+                            client.Ping();
+                            log.Debug("Winamp на связи");
+                            winampServiceCallback.CurrentSongSubject.Subscribe(filename => log.Debug("Now playing: {0}", filename));
+                        }
+                        catch (TimeoutException)
+                        {
+                            client = null;
+                        }
                     }
                     catch (Exception ex)
                     {
