@@ -12,6 +12,7 @@ using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.PlaylistFileAdapters;
+using Oleg_ivo.MeloManager.Winamp;
 
 namespace Oleg_ivo.MeloManager.ViewModel
 {
@@ -20,6 +21,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
+        private readonly WinampControl winampControl;
 
         #region Fields
         private static Logger log = LogManager.GetCurrentClassLogger();
@@ -315,6 +317,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private void Test()
         {
+            winampControl.LoadPlaylist(@"f:\Subversion\MM\Oleg_ivo.MeloManager\bin\Debug\playlist.m3u");
             /*var mediaContainer = MediaTree.Items.First().UnderlyingItem;
             var playlistsPath = context.Resolve<MeloManagerOptions>().PlaylistsPath;
             var adapter = context.ResolveUnregistered<WinampM3UPlaylistFileAdapter>();
@@ -406,9 +409,11 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel(IComponentContext context)
+        public MainViewModel(IComponentContext context, WinampControl winampControl)
         {
+            this.winampControl = winampControl;
             this.context = Enforce.ArgumentNotNull(context, "context");
+            winampControl.LaunchBind();
             //InitializeComponents();
             ////if (IsInDesignMode)
             ////{

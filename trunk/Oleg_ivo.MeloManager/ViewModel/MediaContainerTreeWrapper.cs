@@ -15,6 +15,7 @@ using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.PlaylistFileAdapters;
+using Oleg_ivo.MeloManager.Winamp;
 
 namespace Oleg_ivo.MeloManager.ViewModel
 {
@@ -24,6 +25,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
     [DebuggerDisplay("Wrapper: {UnderlyingItem}; Parent: {Parent!=null ? Parent.UnderlyingItem : null}")]
     public class MediaContainerTreeWrapper : ViewModelBase
     {
+        private readonly WinampControl winampControl;
         private readonly IComponentContext context;
         private readonly Func<MediaContainerTreeWrapper, long> _getMySourceIdDelegateId;
         private Predicate<object> filter;
@@ -35,14 +37,16 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// <param name="underlyingItem"></param>
         /// <param name="parent"></param>
         /// <param name="context"></param>
-        public MediaContainerTreeWrapper(MediaContainer underlyingItem, MediaContainerTreeWrapper parent, IComponentContext context)
+        /// <param name="winampControl"></param>
+        public MediaContainerTreeWrapper(MediaContainer underlyingItem, MediaContainerTreeWrapper parent, IComponentContext context, WinampControl winampControl)//TODO: вынести вызов конструктора в метод-фабрику
         {
+            this.winampControl = winampControl;
             this.context = Enforce.ArgumentNotNull(context, "context");
             UnderlyingItem = Enforce.ArgumentNotNull(underlyingItem, "underlyingItem");
             UnderlyingItem.ChildrenChanged += UnderlyingItem_ChildrenChanged;
             Parent = parent;
 
-            var mediaContainerTreeWrappers = UnderlyingItem.Children.Select(mc => new MediaContainerTreeWrapper(mc, this, context));
+            var mediaContainerTreeWrappers = UnderlyingItem.Children.Select(mc => new MediaContainerTreeWrapper(mc, this, context, winampControl));
             ChildItems = new ObservableCollection<MediaContainerTreeWrapper>(mediaContainerTreeWrappers);
             ChildItems.CollectionChanged += ChildItems_CollectionChanged;
         }
@@ -317,8 +321,10 @@ namespace Oleg_ivo.MeloManager.ViewModel
             var mediaFiles = FindChildrenOfType<MediaFile>().Select(wrapper => (MediaFile)wrapper.UnderlyingItem);
             var adapter = context.ResolveUnregistered<WinampM3UPlaylistFileAdapter>();
             var filename = @"playlist.m3u";
+            //Environment.CurrentDirectory
             adapter.MediaFilesToFile(filename, mediaFiles);
-            Process.Start(filename);
+            winampControl.LoadPlaylist(filename);
+            //Process.Start(filename);
         }
 
         public IEnumerable<MediaContainerTreeWrapper> FindChildrenOfType<T>() where T: MediaContainer

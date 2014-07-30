@@ -10,6 +10,7 @@ using GalaSoft.MvvmLight.Command;
 using NLog;
 using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.MeloManager.MediaObjects;
+using Oleg_ivo.MeloManager.Winamp;
 
 namespace Oleg_ivo.MeloManager.ViewModel
 {
@@ -210,12 +211,12 @@ namespace Oleg_ivo.MeloManager.ViewModel
         {
             Items =
                 new ObservableCollection<MediaContainerTreeWrapper>(
-                    mediaContainers.Select(mc => new MediaContainerTreeWrapper(mc, null, context)));
+                    mediaContainers.Select(mc => new MediaContainerTreeWrapper(mc, null, context, winampControl)));
         }
 
         public void AddCategory(Category category, MediaContainerTreeWrapper parent)
         {
-            Items.Add(new MediaContainerTreeWrapper(category, parent, context));
+            Items.Add(new MediaContainerTreeWrapper(category, parent, context, winampControl));
             if (category.Id == 0)
                 DataContext.MediaContainers.InsertOnSubmit(category);
         }
@@ -271,6 +272,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         #region переработать!
         private MediaContainerTreeSource treeDataSource;
         private string nameFilter;
+        private readonly WinampControl winampControl;
 
         /// <summary>
         /// Источник данных для дерева
@@ -297,9 +299,10 @@ namespace Oleg_ivo.MeloManager.ViewModel
         }
         */
 
-        public MediaTreeViewModel(IComponentContext context)
+        public MediaTreeViewModel(IComponentContext context, WinampControl winampControl)
         {
             this.context = Enforce.ArgumentNotNull(context, "context");
+            this.winampControl = Enforce.ArgumentNotNull(winampControl, "winampControl");
             items = new ObservableCollection<MediaContainerTreeWrapper>();
             items.CollectionChanged += items_CollectionChanged;
         }
