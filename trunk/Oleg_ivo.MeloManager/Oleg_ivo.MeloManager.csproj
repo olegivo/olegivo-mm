@@ -95,9 +95,9 @@
     <Reference Include="NLog">
       <HintPath>..\packages\NLog.3.1.0.0\lib\net40\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="Prism.AutofacExtension, Version=1.0.44.0, Culture=neutral, PublicKeyToken=151cd86bf24ad997, processorArchitecture=MSIL">
+    <Reference Include="Prism.AutofacExtension, Version=1.0.40.0, Culture=neutral, PublicKeyToken=151cd86bf24ad997, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Prism.AutofacExtension.1.0.44.0\lib\net40\Prism.AutofacExtension.dll</HintPath>
+      <HintPath>..\packages\Prism.AutofacExtension.1.0.40.0\lib\net40\Prism.AutofacExtension.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -268,6 +268,10 @@
     <ProjectReference Include="..\External\Oleg_ivo.Tools\Oleg_ivo.Base\Oleg_ivo.Base.csproj">
       <Project>{AC7D7F53-A330-45B0-A6B3-498BE85B9739}</Project>
       <Name>Oleg_ivo.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\External\Oleg_ivo.Tools\Oleg_ivo.Prism\Oleg_ivo.Prism.csproj">
+      <Project>{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}</Project>
+      <Name>Oleg_ivo.Prism</Name>
     </ProjectReference>
     <ProjectReference Include="..\External\Sharpamp\Sharpamp.csproj">
       <Project>{09460e2b-da70-4667-b592-2c971019e9f2}</Project>
