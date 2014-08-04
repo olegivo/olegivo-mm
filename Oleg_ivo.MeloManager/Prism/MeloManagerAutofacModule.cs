@@ -15,10 +15,6 @@ namespace Oleg_ivo.MeloManager.Prism
         {
             base.Load(builder);
 
-            //Prism registration
-            builder.RegisterType<MeloManagerPrismModule>();
-            builder.RegisterType<MainWindow>();
-
             //Services
             builder.Register(context =>
             {

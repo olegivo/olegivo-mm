@@ -44,6 +44,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gen_Winamp.Wcf.Plugin", "ge
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Winamp.WcfPlugin.SelfHosting", "Winamp.WcfPlugin.SelfHosting\Winamp.WcfPlugin.SelfHosting.csproj", "{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oleg_ivo.Prism", "External\Oleg_ivo.Tools\Oleg_ivo.Prism\Oleg_ivo.Prism.csproj", "{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -216,6 +218,18 @@ Global
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Release|Win32.ActiveCfg = Release|Any CPU
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Release|x86.ActiveCfg = Release|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Release|Win32.ActiveCfg = Release|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
