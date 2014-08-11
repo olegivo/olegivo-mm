@@ -32,8 +32,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oleg_ivo.Base", "External\O
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Oleg_ivo.MeloManager.Database", "Oleg_ivo.MeloManager.Database\Oleg_ivo.MeloManager.Database.sqlproj", "{C61D90AE-2808-4ECF-928D-430C9784D996}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Winamp Proxy", "External\Winamp Proxy\Winamp Proxy.csproj", "{0FA619A7-6266-4677-A439-43A7E0316353}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharpamp", "External\Sharpamp\Sharpamp.csproj", "{09460E2B-DA70-4667-B592-2C971019E9F2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Winamp.Wcf", "Winamp.Wcf\Winamp.Wcf.csproj", "{F9B78D31-2294-48B3-8740-5B4F514B3EAF}"
@@ -144,18 +142,6 @@ Global
 		{C61D90AE-2808-4ECF-928D-430C9784D996}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
 		{C61D90AE-2808-4ECF-928D-430C9784D996}.Release|Win32.ActiveCfg = Release|Any CPU
 		{C61D90AE-2808-4ECF-928D-430C9784D996}.Release|x86.ActiveCfg = Release|Any CPU
-		{0FA619A7-6266-4677-A439-43A7E0316353}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0FA619A7-6266-4677-A439-43A7E0316353}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0FA619A7-6266-4677-A439-43A7E0316353}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{0FA619A7-6266-4677-A439-43A7E0316353}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{0FA619A7-6266-4677-A439-43A7E0316353}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{0FA619A7-6266-4677-A439-43A7E0316353}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0FA619A7-6266-4677-A439-43A7E0316353}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0FA619A7-6266-4677-A439-43A7E0316353}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0FA619A7-6266-4677-A439-43A7E0316353}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{0FA619A7-6266-4677-A439-43A7E0316353}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{0FA619A7-6266-4677-A439-43A7E0316353}.Release|Win32.ActiveCfg = Release|Any CPU
-		{0FA619A7-6266-4677-A439-43A7E0316353}.Release|x86.ActiveCfg = Release|Any CPU
 		{09460E2B-DA70-4667-B592-2C971019E9F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{09460E2B-DA70-4667-B592-2C971019E9F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09460E2B-DA70-4667-B592-2C971019E9F2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -183,7 +169,6 @@ Global
 		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.Debug|Win32.ActiveCfg = Debug|Any CPU
 		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -194,7 +179,6 @@ Global
 		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.Release|x86.ActiveCfg = Release|Any CPU
 		{F1C69AEC-4089-4404-B485-86C9B72C138A}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{F1C69AEC-4089-4404-B485-86C9B72C138A}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{F1C69AEC-4089-4404-B485-86C9B72C138A}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{F1C69AEC-4089-4404-B485-86C9B72C138A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{F1C69AEC-4089-4404-B485-86C9B72C138A}.Debug|Win32.Build.0 = Debug|Win32
 		{F1C69AEC-4089-4404-B485-86C9B72C138A}.Debug|x86.ActiveCfg = Debug|Win32
@@ -209,7 +193,6 @@ Global
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Debug|Win32.ActiveCfg = Debug|Any CPU
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Release|Any CPU.ActiveCfg = Release|Any CPU
