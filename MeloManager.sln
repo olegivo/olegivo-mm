@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{37A5A35A-5C84-4021-9EDA-58DAD90B43AF}"
 	ProjectSection(SolutionItems) = preProject
@@ -54,6 +54,10 @@ Global
 		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|Win32 = Release|Win32
 		Release|x86 = Release|x86
+		WinampPlugin|Any CPU = WinampPlugin|Any CPU
+		WinampPlugin|Mixed Platforms = WinampPlugin|Mixed Platforms
+		WinampPlugin|Win32 = WinampPlugin|Win32
+		WinampPlugin|x86 = WinampPlugin|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6A996E0A-E930-41F1-B1CC-2E8E0E6E33A5}.Debug|Any CPU.ActiveCfg = Debug|x86
@@ -70,6 +74,12 @@ Global
 		{6A996E0A-E930-41F1-B1CC-2E8E0E6E33A5}.Release|Win32.Build.0 = Release|x86
 		{6A996E0A-E930-41F1-B1CC-2E8E0E6E33A5}.Release|x86.ActiveCfg = Release|x86
 		{6A996E0A-E930-41F1-B1CC-2E8E0E6E33A5}.Release|x86.Build.0 = Release|x86
+		{6A996E0A-E930-41F1-B1CC-2E8E0E6E33A5}.WinampPlugin|Any CPU.ActiveCfg = Debug|x86
+		{6A996E0A-E930-41F1-B1CC-2E8E0E6E33A5}.WinampPlugin|Mixed Platforms.ActiveCfg = Debug|x86
+		{6A996E0A-E930-41F1-B1CC-2E8E0E6E33A5}.WinampPlugin|Win32.ActiveCfg = Debug|x86
+		{6A996E0A-E930-41F1-B1CC-2E8E0E6E33A5}.WinampPlugin|Win32.Build.0 = Debug|x86
+		{6A996E0A-E930-41F1-B1CC-2E8E0E6E33A5}.WinampPlugin|x86.ActiveCfg = Debug|x86
+		{6A996E0A-E930-41F1-B1CC-2E8E0E6E33A5}.WinampPlugin|x86.Build.0 = Debug|x86
 		{38C1B790-53EA-4BCB-AFF2-D9F9D084500D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{38C1B790-53EA-4BCB-AFF2-D9F9D084500D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38C1B790-53EA-4BCB-AFF2-D9F9D084500D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -82,6 +92,12 @@ Global
 		{38C1B790-53EA-4BCB-AFF2-D9F9D084500D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{38C1B790-53EA-4BCB-AFF2-D9F9D084500D}.Release|Win32.ActiveCfg = Release|Any CPU
 		{38C1B790-53EA-4BCB-AFF2-D9F9D084500D}.Release|x86.ActiveCfg = Release|Any CPU
+		{38C1B790-53EA-4BCB-AFF2-D9F9D084500D}.WinampPlugin|Any CPU.ActiveCfg = Debug|Any CPU
+		{38C1B790-53EA-4BCB-AFF2-D9F9D084500D}.WinampPlugin|Any CPU.Build.0 = Debug|Any CPU
+		{38C1B790-53EA-4BCB-AFF2-D9F9D084500D}.WinampPlugin|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{38C1B790-53EA-4BCB-AFF2-D9F9D084500D}.WinampPlugin|Mixed Platforms.Build.0 = Debug|Any CPU
+		{38C1B790-53EA-4BCB-AFF2-D9F9D084500D}.WinampPlugin|Win32.ActiveCfg = Debug|Any CPU
+		{38C1B790-53EA-4BCB-AFF2-D9F9D084500D}.WinampPlugin|x86.ActiveCfg = Debug|Any CPU
 		{988AEBCA-984D-4E0D-A8BA-119DAF572B12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{988AEBCA-984D-4E0D-A8BA-119DAF572B12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{988AEBCA-984D-4E0D-A8BA-119DAF572B12}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -94,6 +110,11 @@ Global
 		{988AEBCA-984D-4E0D-A8BA-119DAF572B12}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{988AEBCA-984D-4E0D-A8BA-119DAF572B12}.Release|Win32.ActiveCfg = Release|Any CPU
 		{988AEBCA-984D-4E0D-A8BA-119DAF572B12}.Release|x86.ActiveCfg = Release|Any CPU
+		{988AEBCA-984D-4E0D-A8BA-119DAF572B12}.WinampPlugin|Any CPU.ActiveCfg = Debug|Any CPU
+		{988AEBCA-984D-4E0D-A8BA-119DAF572B12}.WinampPlugin|Any CPU.Build.0 = Debug|Any CPU
+		{988AEBCA-984D-4E0D-A8BA-119DAF572B12}.WinampPlugin|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{988AEBCA-984D-4E0D-A8BA-119DAF572B12}.WinampPlugin|Win32.ActiveCfg = Debug|Any CPU
+		{988AEBCA-984D-4E0D-A8BA-119DAF572B12}.WinampPlugin|x86.ActiveCfg = Debug|Any CPU
 		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
@@ -110,6 +131,13 @@ Global
 		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Release|Win32.Build.0 = Release|x86
 		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Release|x86.ActiveCfg = Release|x86
 		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.Release|x86.Build.0 = Release|x86
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.WinampPlugin|Any CPU.ActiveCfg = Debug|Any CPU
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.WinampPlugin|Any CPU.Build.0 = Debug|Any CPU
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.WinampPlugin|Mixed Platforms.ActiveCfg = Debug|x86
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.WinampPlugin|Win32.ActiveCfg = Debug|x86
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.WinampPlugin|Win32.Build.0 = Debug|x86
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.WinampPlugin|x86.ActiveCfg = Debug|x86
+		{332A1894-922F-49A1-BD6A-E4E981FA2FEC}.WinampPlugin|x86.Build.0 = Debug|x86
 		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
@@ -126,6 +154,13 @@ Global
 		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Release|Win32.Build.0 = Release|x86
 		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Release|x86.ActiveCfg = Release|x86
 		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.Release|x86.Build.0 = Release|x86
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.WinampPlugin|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.WinampPlugin|Any CPU.Build.0 = Debug|Any CPU
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.WinampPlugin|Mixed Platforms.ActiveCfg = Debug|x86
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.WinampPlugin|Win32.ActiveCfg = Debug|x86
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.WinampPlugin|Win32.Build.0 = Debug|x86
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.WinampPlugin|x86.ActiveCfg = Debug|x86
+		{AC7D7F53-A330-45B0-A6B3-498BE85B9739}.WinampPlugin|x86.Build.0 = Debug|x86
 		{C61D90AE-2808-4ECF-928D-430C9784D996}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C61D90AE-2808-4ECF-928D-430C9784D996}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C61D90AE-2808-4ECF-928D-430C9784D996}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -142,6 +177,14 @@ Global
 		{C61D90AE-2808-4ECF-928D-430C9784D996}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
 		{C61D90AE-2808-4ECF-928D-430C9784D996}.Release|Win32.ActiveCfg = Release|Any CPU
 		{C61D90AE-2808-4ECF-928D-430C9784D996}.Release|x86.ActiveCfg = Release|Any CPU
+		{C61D90AE-2808-4ECF-928D-430C9784D996}.WinampPlugin|Any CPU.ActiveCfg = Debug|Any CPU
+		{C61D90AE-2808-4ECF-928D-430C9784D996}.WinampPlugin|Any CPU.Build.0 = Debug|Any CPU
+		{C61D90AE-2808-4ECF-928D-430C9784D996}.WinampPlugin|Any CPU.Deploy.0 = Debug|Any CPU
+		{C61D90AE-2808-4ECF-928D-430C9784D996}.WinampPlugin|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C61D90AE-2808-4ECF-928D-430C9784D996}.WinampPlugin|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C61D90AE-2808-4ECF-928D-430C9784D996}.WinampPlugin|Mixed Platforms.Deploy.0 = Debug|Any CPU
+		{C61D90AE-2808-4ECF-928D-430C9784D996}.WinampPlugin|Win32.ActiveCfg = Debug|Any CPU
+		{C61D90AE-2808-4ECF-928D-430C9784D996}.WinampPlugin|x86.ActiveCfg = Debug|Any CPU
 		{09460E2B-DA70-4667-B592-2C971019E9F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{09460E2B-DA70-4667-B592-2C971019E9F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09460E2B-DA70-4667-B592-2C971019E9F2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -154,6 +197,12 @@ Global
 		{09460E2B-DA70-4667-B592-2C971019E9F2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{09460E2B-DA70-4667-B592-2C971019E9F2}.Release|Win32.ActiveCfg = Release|Any CPU
 		{09460E2B-DA70-4667-B592-2C971019E9F2}.Release|x86.ActiveCfg = Release|Any CPU
+		{09460E2B-DA70-4667-B592-2C971019E9F2}.WinampPlugin|Any CPU.ActiveCfg = Debug|Any CPU
+		{09460E2B-DA70-4667-B592-2C971019E9F2}.WinampPlugin|Any CPU.Build.0 = Debug|Any CPU
+		{09460E2B-DA70-4667-B592-2C971019E9F2}.WinampPlugin|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{09460E2B-DA70-4667-B592-2C971019E9F2}.WinampPlugin|Mixed Platforms.Build.0 = Debug|Any CPU
+		{09460E2B-DA70-4667-B592-2C971019E9F2}.WinampPlugin|Win32.ActiveCfg = Debug|Any CPU
+		{09460E2B-DA70-4667-B592-2C971019E9F2}.WinampPlugin|x86.ActiveCfg = Debug|Any CPU
 		{F9B78D31-2294-48B3-8740-5B4F514B3EAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F9B78D31-2294-48B3-8740-5B4F514B3EAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9B78D31-2294-48B3-8740-5B4F514B3EAF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -166,6 +215,12 @@ Global
 		{F9B78D31-2294-48B3-8740-5B4F514B3EAF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F9B78D31-2294-48B3-8740-5B4F514B3EAF}.Release|Win32.ActiveCfg = Release|Any CPU
 		{F9B78D31-2294-48B3-8740-5B4F514B3EAF}.Release|x86.ActiveCfg = Release|Any CPU
+		{F9B78D31-2294-48B3-8740-5B4F514B3EAF}.WinampPlugin|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9B78D31-2294-48B3-8740-5B4F514B3EAF}.WinampPlugin|Any CPU.Build.0 = Debug|Any CPU
+		{F9B78D31-2294-48B3-8740-5B4F514B3EAF}.WinampPlugin|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F9B78D31-2294-48B3-8740-5B4F514B3EAF}.WinampPlugin|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F9B78D31-2294-48B3-8740-5B4F514B3EAF}.WinampPlugin|Win32.ActiveCfg = Debug|Any CPU
+		{F9B78D31-2294-48B3-8740-5B4F514B3EAF}.WinampPlugin|x86.ActiveCfg = Debug|Any CPU
 		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -177,6 +232,12 @@ Global
 		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.Release|Win32.ActiveCfg = Release|Any CPU
 		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.Release|x86.ActiveCfg = Release|Any CPU
+		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.WinampPlugin|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.WinampPlugin|Any CPU.Build.0 = Debug|Any CPU
+		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.WinampPlugin|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.WinampPlugin|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.WinampPlugin|Win32.ActiveCfg = Debug|Any CPU
+		{0E4C4B91-9E54-47A0-939A-E1B7C44DFE30}.WinampPlugin|x86.ActiveCfg = Debug|Any CPU
 		{F1C69AEC-4089-4404-B485-86C9B72C138A}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{F1C69AEC-4089-4404-B485-86C9B72C138A}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{F1C69AEC-4089-4404-B485-86C9B72C138A}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -190,6 +251,13 @@ Global
 		{F1C69AEC-4089-4404-B485-86C9B72C138A}.Release|Win32.Build.0 = Release|Win32
 		{F1C69AEC-4089-4404-B485-86C9B72C138A}.Release|x86.ActiveCfg = Release|Win32
 		{F1C69AEC-4089-4404-B485-86C9B72C138A}.Release|x86.Build.0 = Release|Win32
+		{F1C69AEC-4089-4404-B485-86C9B72C138A}.WinampPlugin|Any CPU.ActiveCfg = Debug|Win32
+		{F1C69AEC-4089-4404-B485-86C9B72C138A}.WinampPlugin|Mixed Platforms.ActiveCfg = Debug|Win32
+		{F1C69AEC-4089-4404-B485-86C9B72C138A}.WinampPlugin|Mixed Platforms.Build.0 = Debug|Win32
+		{F1C69AEC-4089-4404-B485-86C9B72C138A}.WinampPlugin|Win32.ActiveCfg = Debug|Win32
+		{F1C69AEC-4089-4404-B485-86C9B72C138A}.WinampPlugin|Win32.Build.0 = Debug|Win32
+		{F1C69AEC-4089-4404-B485-86C9B72C138A}.WinampPlugin|x86.ActiveCfg = Debug|Win32
+		{F1C69AEC-4089-4404-B485-86C9B72C138A}.WinampPlugin|x86.Build.0 = Debug|Win32
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -201,6 +269,11 @@ Global
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Release|Win32.ActiveCfg = Release|Any CPU
 		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.Release|x86.ActiveCfg = Release|Any CPU
+		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.WinampPlugin|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.WinampPlugin|Any CPU.Build.0 = Debug|Any CPU
+		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.WinampPlugin|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.WinampPlugin|Win32.ActiveCfg = Debug|Any CPU
+		{EF651E2B-0C76-407B-AE96-3DA0A3F4823E}.WinampPlugin|x86.ActiveCfg = Debug|Any CPU
 		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -213,6 +286,11 @@ Global
 		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Release|Win32.ActiveCfg = Release|Any CPU
 		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.Release|x86.ActiveCfg = Release|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.WinampPlugin|Any CPU.ActiveCfg = Debug|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.WinampPlugin|Any CPU.Build.0 = Debug|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.WinampPlugin|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.WinampPlugin|Win32.ActiveCfg = Debug|Any CPU
+		{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}.WinampPlugin|x86.ActiveCfg = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
