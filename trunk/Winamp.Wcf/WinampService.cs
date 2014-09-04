@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Subjects;
 using System.ServiceModel;
+using System.Threading;
 using NLog;
 
 namespace Winamp.Wcf
@@ -19,9 +21,13 @@ namespace Winamp.Wcf
         public WinampService()
         {
             LoadPlaylistSubject = new Subject<string>();
+            ActionSubject = new Subject<ActionType>();
+            disposer = new CompositeDisposable(LoadPlaylistSubject, ActionSubject);
         }
 
         public Subject<string> LoadPlaylistSubject { get; private set; }
+
+        public Subject<ActionType> ActionSubject { get; private set; }
 
         public IObservable<string> CurrentFileChanges
         {
@@ -32,11 +38,15 @@ namespace Winamp.Wcf
                 currentFileChanges = value;
                 if (CurrentFileChanges == null) return;
                 if (currentFileChangesObserver != null)
+                {
+                    disposer.Remove(currentFileChangesObserver);
                     currentFileChangesObserver.Dispose();
+                }
                 currentFileChangesObserver =
                     CurrentFileChanges.Subscribe(
                         filename => IterateCallbacks(callback => callback.OnCurrentSongChanged(filename)),
                         exception => log.Error(exception));
+                disposer.Add(currentFileChangesObserver);
             }
         }
 
@@ -74,6 +84,71 @@ namespace Winamp.Wcf
             AddCurrentCallback();
         }
 
+        private static CompletedAsyncResult<object> CreateAsyncResult()
+        {
+            return CreateAsyncResult((object)null);
+        }
+
+        private static CompletedAsyncResult<T> CreateAsyncResult<T>(T data)
+        {
+            return new CompletedAsyncResult<T>(data);
+        }
+
+        public IAsyncResult BeginPlay(AsyncCallback callback, object asyncState)
+        {
+            AddCurrentCallback();
+            ActionSubject.OnNext(ActionType.Play);
+            return CreateAsyncResult();
+        }
+
+        public void EndPlay(IAsyncResult result)
+        {
+        }
+
+        public IAsyncResult BeginPlayPause(AsyncCallback callback, object asyncState)
+        {
+            AddCurrentCallback();
+            ActionSubject.OnNext(ActionType.PlayPause);
+            return CreateAsyncResult();
+        }
+
+        public void EndPlayPause(IAsyncResult result)
+        {
+        }
+
+        public IAsyncResult BeginStop(AsyncCallback callback, object asyncState)
+        {
+            AddCurrentCallback();
+            ActionSubject.OnNext(ActionType.Stop);
+            return CreateAsyncResult();
+        }
+
+        public void EndStop(IAsyncResult result)
+        {
+        }
+
+        public IAsyncResult BeginPreviousTrack(AsyncCallback callback, object asyncState)
+        {
+            AddCurrentCallback();
+            ActionSubject.OnNext(ActionType.PreviousTrack);
+            return CreateAsyncResult();
+        }
+
+        public void EndPreviousTrack(IAsyncResult result)
+        {
+        }
+
+        public IAsyncResult BeginNextTrack(AsyncCallback callback, object asyncState)
+        {
+            AddCurrentCallback();
+            ActionSubject.OnNext(ActionType.NextTrack);
+            return CreateAsyncResult();
+        }
+
+        public void EndNextTrack(IAsyncResult result)
+        {
+        }
+
         private readonly List<IWinampServiceCallback> callbacks = new List<IWinampServiceCallback>();
 
         /// <summary>
@@ -107,7 +182,7 @@ namespace Winamp.Wcf
         /// Удалить обратный вызов клиента
         /// </summary>
         /// <param name="callback"></param>
-        public void RemoveCallback(IWinampServiceCallback callback)
+        protected void RemoveCallback(IWinampServiceCallback callback)
         {
             lock (callbacks)
             {
@@ -124,25 +199,52 @@ namespace Winamp.Wcf
                     {
                         callbackAction(callback);
                     }
-                    catch (CommunicationObjectFaultedException ex)
+                    catch (CommunicationException ex)
                     {
                         log.Error("Обратный вызов с клиентом нарушен. Удаляем обратный вызов и ждём повторной регистрации клиента.", (Exception)ex);
                         callbacks.Remove(callback);
                     }
         }
 
-        private bool disposed;
         private IObservable<string> currentFileChanges;
+        private readonly CompositeDisposable disposer;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
         {
-            if(disposed) return;
-            LoadPlaylistSubject.Dispose();
-            currentFileChangesObserver.Dispose();
-            disposed = true;
+            disposer.Dispose();
         }
+    }
+
+    class CompletedAsyncResult<T> : IAsyncResult
+    {
+        public static CompletedAsyncResult<T> Create(T data)
+        {
+            return new CompletedAsyncResult<T>(data);
+        }
+
+        readonly T data;
+
+        public CompletedAsyncResult(T data)
+        { this.data = data; }
+
+        public T Data
+        { get { return data; } }
+
+        #region IAsyncResult Members
+        public object AsyncState
+        { get { return data; } }
+
+        public WaitHandle AsyncWaitHandle
+        { get { throw new Exception("The method or operation is not implemented."); } }
+
+        public bool CompletedSynchronously
+        { get { return true; } }
+
+        public bool IsCompleted
+        { get { return true; } }
+        #endregion
     }
 }

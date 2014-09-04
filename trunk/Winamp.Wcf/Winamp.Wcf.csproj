@@ -85,6 +85,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionType.cs" />
     <Compile Include="CompositeType.cs" />
     <Compile Include="IWinampService.cs" />
     <Compile Include="IWinampServiceCallback.cs" />
