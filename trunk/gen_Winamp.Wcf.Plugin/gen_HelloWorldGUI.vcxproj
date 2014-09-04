@@ -133,4 +133,16 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="AfterBuild" DependsOnTargets="WinampDeploy" />
+  <Target Name="WinampDeploy">
+    <!--TODO: копировать если файл отсутствует или старой версии (не по времени, а именно по версии) -->
+	<Copy SourceFiles="$(OutDir)gen_Winamp.Wcf.Plugin.dll" DestinationFiles="C:\Program Files (x86)\Winamp\Plugins\gen_Winamp.Wcf.Plugin.dll" /><!--Condition="!Exists('App.config')" -->
+    <Copy SourceFiles="$(OutDir)Daniel15.Sharpamp.dll" DestinationFiles="C:\Program Files (x86)\Winamp\Daniel15.Sharpamp.dll" /><!--Condition="!Exists('App.config')" -->
+    <Copy SourceFiles="$(OutDir)Winamp.Wcf.dll" DestinationFiles="C:\Program Files (x86)\Winamp\Winamp.Wcf.dll" /><!--Condition="!Exists('App.config')" -->
+    <Copy SourceFiles="$(OutDir)Winamp.Wcf.Plugin.dll" DestinationFiles="C:\Program Files (x86)\Winamp\Winamp.Wcf.Plugin.dll" /><!--Condition="!Exists('App.config')" -->
+    <Copy SourceFiles="$(OutDir)NLog.dll" DestinationFiles="C:\Program Files (x86)\Winamp\NLog.dll" /><!--Condition="!Exists('App.config')" -->
+    <Copy SourceFiles="$(OutDir)System.Reactive.Linq.dll" DestinationFiles="C:\Program Files (x86)\Winamp\System.Reactive.Linq.dll" /><!--Condition="!Exists('App.config')" -->
+    <Copy SourceFiles="$(OutDir)System.Reactive.Interfaces.dll" DestinationFiles="C:\Program Files (x86)\Winamp\System.Reactive.Interfaces.dll" /><!--Condition="!Exists('App.config')" -->
+    <Copy SourceFiles="$(OutDir)System.Reactive.Core.dll" DestinationFiles="C:\Program Files (x86)\Winamp\System.Reactive.Core.dll" /><!--Condition="!Exists('App.config')" -->
+  </Target>
 </Project>
