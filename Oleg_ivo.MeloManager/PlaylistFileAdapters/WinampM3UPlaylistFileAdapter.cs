@@ -1,9 +1,12 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using NLog;
 using Oleg_ivo.Base.Autofac;
+using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.Prism;
 using File = System.IO.File;
@@ -17,8 +20,39 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
         public WinampM3UPlaylistFileAdapter(MeloManagerOptions options)
         {
             Options = Enforce.ArgumentNotNull(options, "options");
+            RefreshDic();
+        }
+
+        public void RefreshDic()
+        {
             //TODO: var folderPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
-            Dic = GetPlaylistsDictionary(options.PlaylistsPath);
+            var newDic = GetPlaylistsDictionary(Options.PlaylistsPath);
+            if (Dic == null)
+                Dic = newDic;
+            else
+            {
+                var foj = Dic.Keys.FullOuterJoin(newDic.Keys).ToList();
+                int added = 0, deleted = 0, updated = 0;
+                foreach (var item in foj)
+                {
+                    if (item.Item1 == null)
+                    {
+                        Dic.Add(item.Item2, newDic[item.Item2]);
+                        added++;
+                    }
+                    else if (item.Item2 == null)
+                    {
+                        Dic.Remove(item.Item1);
+                        deleted++;
+                    }
+                    else
+                    {
+                        Dic[item.Item1] = newDic[item.Item1];
+                        updated++;
+                    }
+                }
+                log.Debug("Добавлено: {0}, удалено: {1}, обновлено: {2}", added, deleted, updated);
+            }
         }
 
         public Dictionary<string, string> Dic { get; private set; }
@@ -34,20 +68,21 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
         private MeloManagerOptions Options { get; set; }
 
+        public override Playlist FileToPlaylist(string filename)
+        {
+            var playlist = base.FileToPlaylist(filename);
+            playlist.Name = Dic[Path.GetFileName(playlist.OriginalFileName)];
+            return playlist;
+        }
+
         public List<Playlist> GetPlaylists()
         {
             var playlistFiles = GetPlaylistsFiles(PlaylistFilesSearchPatterns);
             log.Debug("Найдено файлов: {0}", playlistFiles.Count);
 
             log.Debug("Создание плейлистов из файлов");
-            List<Playlist> playlists = new List<Playlist>();
-            foreach (var playlist in playlistFiles.Select(FileToPlaylist))
-            {
-                playlist.Name = Dic[Path.GetFileName(playlist.OriginalFileName)];
-                playlists.Add(playlist);
-            }
 
-            return playlists;
+            return playlistFiles.Select(FileToPlaylist).ToList();
         }
 
         public List<string> GetPlaylistsFiles(string[] playlistFilesSearchPatterns)
