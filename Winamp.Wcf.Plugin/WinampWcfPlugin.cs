@@ -1,8 +1,8 @@
 using System;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using System.Windows;
 using Daniel15.Sharpamp;
 using NLog;
 
@@ -13,7 +13,7 @@ namespace Winamp.Wcf.Plugin
         private readonly Logger log = LogManager.GetCurrentClassLogger();
         private ServiceHost host;
         private WinampService winampService;
-        private IDisposable loadPlaylistObserver;
+        private readonly CompositeDisposable disposer = new CompositeDisposable();
 
         /// <summary>
         /// Name of the plugin
@@ -40,9 +40,34 @@ namespace Winamp.Wcf.Plugin
             winampService.CurrentFileChanges = 
                 Observable.FromEventPattern<SongChangedEventArgs>(h => Winamp.SongChanged += h, h => Winamp.SongChanged -= h)
                             .Select(e => e.EventArgs.Song.Filename);
-            loadPlaylistObserver = 
-                winampService.LoadPlaylistSubject.Subscribe(filename => Winamp.LoadPlaylist(filename), 
-                                                            exception => log.Error(exception));
+            disposer.Add(winampService.LoadPlaylistSubject.Subscribe(filename => Winamp.LoadPlaylist(filename), 
+                exception => log.Error("Ошибка при попытке загрузить плейлист", exception)));
+            disposer.Add(winampService.ActionSubject.Subscribe(DoAction, 
+                exception => log.Error("Ошибка при попытке выполнить действие", exception)));
+        }
+
+        private void DoAction(ActionType actionType)
+        {
+            switch (actionType)
+            {
+                case ActionType.Play:
+                    Winamp.Play();
+                    break;
+                case ActionType.PlayPause:
+                    Winamp.PlayPause();
+                    break;
+                case ActionType.Stop:
+                    Winamp.Stop();
+                    break;
+                case ActionType.PreviousTrack:
+                    Winamp.PrevTrack();
+                    break;
+                case ActionType.NextTrack:
+                    Winamp.NextTrack();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("actionType");
+            }
         }
 
         /// <summary>
@@ -59,7 +84,7 @@ namespace Winamp.Wcf.Plugin
         /// </summary>
         public void Dispose()
         {
-            loadPlaylistObserver.Dispose();
+            disposer.Dispose();
             if (host != null)
             {
                 if (host.State != CommunicationState.Opened)
