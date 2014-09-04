@@ -1,115 +1,133 @@
 ﻿using System;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
+using System.Threading.Tasks;
+using Codeplex.Reactive;
 using NLog;
 using Oleg_ivo.MeloManager.ServiceReference1;
-using WinampProxyNS;
 
 namespace Oleg_ivo.MeloManager.Winamp
 {
     public class WinampControl: IDisposable
     {
         private readonly Logger log = LogManager.GetCurrentClassLogger();
-        private WinampProxy wp;
-        //private WinampPlugin winamp;
-        private IDisposable disposable;
+        private readonly CompositeDisposable disposer = new CompositeDisposable();
         private WinampServiceClient client;
+        private IDisposable currentSongChangedSubscription;
 
         public void LaunchBind()
         {
             var endpointAddress = new EndpointAddress("net.tcp://localhost:9000/winamp_wcf");
-            var netTcpBinding = new NetTcpBinding { OpenTimeout = TimeSpan.FromSeconds(1) };
+            var netTcpBinding = new NetTcpBinding {OpenTimeout = TimeSpan.FromSeconds(1)};
             var winampServiceCallback = new WinampServiceCallback();
-            disposable = Observable.Interval(TimeSpan.FromSeconds(1))
-                .Where(l => client==null || client.State != CommunicationState.Opened)
-                .Subscribe(l =>
+            CurrentSongSubject = winampServiceCallback.CurrentSongSubject;
+            IsConnected =
+                Observable.Interval(TimeSpan.FromSeconds(1))
+                    .Select(l => !(client != null && client.State == CommunicationState.Opened))
+                    .DistinctUntilChanged()
+                    .ToReactiveProperty();
+
+            var observableClient = IsConnected.Select(isConnected =>
+            {
+                if (!isConnected)
                 {
-                    try
-                    {
-                        //var discoveryClient = new DiscoveryClient(new DiscoveryEndpoint(netTcpBinding, endpointAddress));
-                        //var findResponse = discoveryClient.Resolve(new ResolveCriteria(){Duration = TimeSpan.FromMilliseconds(500)});
-                        client = new WinampServiceClient(new InstanceContext(winampServiceCallback), netTcpBinding, endpointAddress);
-                        try
-                        {
-                            client.Open();
-                            client.Ping();
-                            log.Debug("Winamp на связи");
-                            winampServiceCallback.CurrentSongSubject.Subscribe(filename => log.Debug("Now playing: {0}", filename));
-                        }
-                        catch (TimeoutException)
-                        {
-                            client = null;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        log.Error(ex);
-                    }
-                });
-            //SetupWinampProxy();
+                    client = Connect(winampServiceCallback, netTcpBinding, endpointAddress);
+                    DisposeSubscription();
+                }
+                return client;
+            }).ToReactiveProperty();
+        }
+
+        private WinampServiceClient Connect(WinampServiceCallback winampServiceCallback, Binding binding, EndpointAddress endpointAddress)
+        {
+            WinampServiceClient winampServiceClient = null;
+            try
+            {
+                //var discoveryClient = new DiscoveryClient(new DiscoveryEndpoint(netTcpBinding, endpointAddress));
+                //var findResponse = discoveryClient.Resolve(new ResolveCriteria(){Duration = TimeSpan.FromMilliseconds(500)});
+                winampServiceClient = new WinampServiceClient(new InstanceContext(winampServiceCallback), binding, endpointAddress);
+                try
+                {
+                    winampServiceClient.Open();
+                    winampServiceClient.Ping();
+                    log.Debug("Winamp на связи");
+                    currentSongChangedSubscription =
+                        winampServiceCallback.CurrentSongSubject.Subscribe(OnCurrentSongChanged);
+                }
+                catch (TimeoutException)
+                {
+                    winampServiceClient = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+            }
+            return winampServiceClient;
+        }
+
+        public ReactiveProperty<bool> IsConnected { get; private set; }
+
+        public Subject<string> CurrentSongSubject { get; private set; }
+
+        private void DisposeSubscription()
+        {
+            if (client == null && currentSongChangedSubscription != null)
+            {
+                currentSongChangedSubscription.Dispose();
+                currentSongChangedSubscription = null;
+            }
+        }
+
+        private void OnCurrentSongChanged(string filename)
+        {
+            log.Debug("Now playing: {0}", filename);
         }
 
         public void LoadPlaylist(string playlistFilename)
         {
             client.LoadPlaylist(playlistFilename);
         }
-/*
-        private void SetupWinampProxy()
+
+        public Task PreviousTrack()
         {
-            wp = new WinampProxy();
-            wp.SetPollingFrequency(1000); //TODO: 2 Rx
-            wp.eventWinampInstanceCreated += wp_WinampInstanceCreated;
-            wp.eventWinampInstanceClosed += wp_WinampInstanceClosed;
-            wp.eventPlayStarted += wp_PlayStarted;
-            wp.eventPlayStopped += wp_PlayStopped;
-            wp.eventTrackChanged += wp_TrackChanged;
-            wp.eventEnqueuePrompt += wp_EnqueuePrompt;
+            return client.PreviousTrackAsync();
         }
 
-        private void wp_WinampInstanceCreated()
+        public Task NextTrack()
         {
-            log.Debug("Winamp instance created");
+            return client.NextTrackAsync();
         }
 
-        private void wp_WinampInstanceClosed()
+        public Task Play()
         {
-            log.Debug("Winamp instance closed");
+            return client.PlayAsync();
         }
 
-        private void wp_PlayStarted()
+        public Task PlayPause()
         {
-            log.Debug("Winamp is now playing");
+            return client.PlayPauseAsync();
         }
-
-        private void wp_PlayStopped()
+        public Task Stop()
         {
-            log.Debug("Winamp has stopped playing");
+            return client.StopAsync();
         }
-
-        private void wp_TrackChanged()
-        {
-            log.Debug("Now playing track {0}: {1}", (wp.iPlaylistTrackNumber + 1), wp.GetTrackFilename());
-        }
-
-        private void wp_EnqueuePrompt()
-        {
-            log.Debug("Enqueue prompt: Queue has {0} milliseconds left", wp.iEnqueuePromptMilliseconds);
-        }
-*/
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
         {
-            if (disposable == null) return;
-            disposable.Dispose();
-            disposable = null;
+            disposer.Dispose();
             if (client != null)
             {
                 client.Close();
                 client = null;
             }
+            DisposeSubscription();
         }
     }
 }

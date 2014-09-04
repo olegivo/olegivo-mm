@@ -163,6 +163,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Extensions\ReactiveExtensions.cs" />
     <Compile Include="MediaIconsResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -195,6 +196,11 @@
     <Compile Include="ViewModel\MediaListViewModel.cs" />
     <Compile Include="ViewModel\MediaTreeViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="Winamp\Tracking\TrackingViewModel.cs" />
+    <Compile Include="Winamp\Tracking\WinampTrackingView.xaml.cs">
+      <DependentUpon>WinampTrackingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Winamp\WinampFilesMonitor.cs" />
     <Compile Include="Winamp\WinampServiceCallback.cs" />
     <Compile Include="Winamp\WinampControl.cs" />
     <Page Include="MainWindow.xaml">
@@ -221,6 +227,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\MediaTree.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Winamp\Tracking\WinampTrackingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
