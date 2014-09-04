@@ -6,6 +6,7 @@ using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.View;
 using Oleg_ivo.MeloManager.ViewModel;
 using Oleg_ivo.MeloManager.Winamp;
+using Oleg_ivo.MeloManager.Winamp.Tracking;
 
 namespace Oleg_ivo.MeloManager.Prism
 {
@@ -38,6 +39,8 @@ namespace Oleg_ivo.MeloManager.Prism
 
             builder.RegisterType<MediaTreeViewModel>();
             builder.RegisterType<MediaTree>();
+
+            builder.RegisterType<TrackingViewModel>();
         }
     }
 }

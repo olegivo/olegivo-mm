@@ -45,6 +45,21 @@
   <wsdl:message name="IWinampService_Ping_InputMessage">
     <wsdl:part name="parameters" element="tns:Ping" />
   </wsdl:message>
+  <wsdl:message name="IWinampService_Play_InputMessage">
+    <wsdl:part name="parameters" element="tns:Play" />
+  </wsdl:message>
+  <wsdl:message name="IWinampService_PlayPause_InputMessage">
+    <wsdl:part name="parameters" element="tns:PlayPause" />
+  </wsdl:message>
+  <wsdl:message name="IWinampService_Stop_InputMessage">
+    <wsdl:part name="parameters" element="tns:Stop" />
+  </wsdl:message>
+  <wsdl:message name="IWinampService_PreviousTrack_InputMessage">
+    <wsdl:part name="parameters" element="tns:PreviousTrack" />
+  </wsdl:message>
+  <wsdl:message name="IWinampService_NextTrack_InputMessage">
+    <wsdl:part name="parameters" element="tns:NextTrack" />
+  </wsdl:message>
   <wsdl:message name="IWinampService_OnCurrentSongChanged_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:OnCurrentSongChanged" />
   </wsdl:message>
@@ -54,6 +69,21 @@
     </wsdl:operation>
     <wsdl:operation name="Ping">
       <wsdl:input wsaw:Action="http://tempuri.org/IWinampService/Ping" message="tns:IWinampService_Ping_InputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Play">
+      <wsdl:input wsaw:Action="http://tempuri.org/IWinampService/Play" message="tns:IWinampService_Play_InputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PlayPause">
+      <wsdl:input wsaw:Action="http://tempuri.org/IWinampService/PlayPause" message="tns:IWinampService_PlayPause_InputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Stop">
+      <wsdl:input wsaw:Action="http://tempuri.org/IWinampService/Stop" message="tns:IWinampService_Stop_InputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PreviousTrack">
+      <wsdl:input wsaw:Action="http://tempuri.org/IWinampService/PreviousTrack" message="tns:IWinampService_PreviousTrack_InputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="NextTrack">
+      <wsdl:input wsaw:Action="http://tempuri.org/IWinampService/NextTrack" message="tns:IWinampService_NextTrack_InputMessage" />
     </wsdl:operation>
     <wsdl:operation name="OnCurrentSongChanged">
       <wsdl:output wsaw:Action="http://tempuri.org/IWinampService/OnCurrentSongChanged" message="tns:IWinampService_OnCurrentSongChanged_OutputCallbackMessage" />
@@ -71,6 +101,36 @@
     </wsdl:operation>
     <wsdl:operation name="Ping">
       <soap12:operation soapAction="http://tempuri.org/IWinampService/Ping" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="Play">
+      <soap12:operation soapAction="http://tempuri.org/IWinampService/Play" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="PlayPause">
+      <soap12:operation soapAction="http://tempuri.org/IWinampService/PlayPause" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="Stop">
+      <soap12:operation soapAction="http://tempuri.org/IWinampService/Stop" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="PreviousTrack">
+      <soap12:operation soapAction="http://tempuri.org/IWinampService/PreviousTrack" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="NextTrack">
+      <soap12:operation soapAction="http://tempuri.org/IWinampService/NextTrack" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

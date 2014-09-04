@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -13,20 +14,20 @@ using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.PlaylistFileAdapters;
 using Oleg_ivo.MeloManager.Winamp;
+using Oleg_ivo.MeloManager.Winamp.Tracking;
 
 namespace Oleg_ivo.MeloManager.ViewModel
 {
     /// <summary>
     /// 
     /// </summary>
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase, IDisposable/*TODO: IDisposable реализовать в промежуточном базовом классе (+virtual)*/
     {
-        private readonly WinampControl winampControl;
-
         #region Fields
-        private static Logger log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
         private readonly IComponentContext context;
+        private readonly WinampControl winampControl;
 
         private MediaTreeViewModel mediaTree;
         private MediaListViewModel parents;
@@ -40,8 +41,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private ICommand commandTest;
 
         private string statusText;
-        #endregion
 
+        #endregion
 
         #region Properties
         [Dependency(Required = true)]
@@ -136,22 +137,22 @@ namespace Oleg_ivo.MeloManager.ViewModel
         #endregion
 
         #region Event handlers
-        void Parents_RowDoubleClick(object sender, System.EventArgs e)
+        void Parents_RowDoubleClick(object sender, EventArgs e)
         {
             GoToParent(Parents.SelectedItem);
         }
 
-        void Children_RowDoubleClick(object sender, System.EventArgs e)
+        void Children_RowDoubleClick(object sender, EventArgs e)
         {
             GoToChild(Children.SelectedItem);
         }
 
-        void MediaTree_ParentListDataSourceChanged(object sender, System.EventArgs e)
+        void MediaTree_ParentListDataSourceChanged(object sender, EventArgs e)
         {
             Parents.ListDataSource = MediaTree.ParentListDataSource;//TODO: binding (multybinding or data trigger?)
         }
 
-        void MediaTree_ChildListDataSourceChanged(object sender, System.EventArgs e)
+        void MediaTree_ChildListDataSourceChanged(object sender, EventArgs e)
         {
             Children.ListDataSource = MediaTree.ChildListDataSource;//TODO: binding (multybinding or data trigger?)
         }
@@ -317,7 +318,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private void Test()
         {
-            winampControl.LoadPlaylist(@"f:\Subversion\MM\Oleg_ivo.MeloManager\bin\Debug\playlist.m3u");
+            var winampTrackingView = context.ResolveUnregistered<WinampTrackingView>();
+            winampTrackingView.ShowDialog();
             /*var mediaContainer = MediaTree.Items.First().UnderlyingItem;
             var playlistsPath = context.Resolve<MeloManagerOptions>().PlaylistsPath;
             var adapter = context.ResolveUnregistered<WinampM3UPlaylistFileAdapter>();
@@ -411,18 +413,40 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// </summary>
         public MainViewModel(IComponentContext context, WinampControl winampControl)
         {
-            this.winampControl = winampControl;
             this.context = Enforce.ArgumentNotNull(context, "context");
-            winampControl.LaunchBind();
+            this.winampControl = Enforce.ArgumentNotNull(winampControl, "winampControl");
             //InitializeComponents();
-            ////if (IsInDesignMode)
-            ////{
-            ////    // Code runs in Blend --> create design time data.
-            ////}
-            ////else
-            ////{
-            ////    // Code runs "for real"
-            ////}
+            if (IsInDesignMode)
+            {
+                // Code runs in Blend --> create design time data.
+            }
+            else
+            {
+                // Code runs "for real"
+                RunServices();
+            }
         }
+
+        private void RunServices()
+        {
+            winampControl.LaunchBind();
+        }
+
+        #region IDisposable
+        private bool isDisposed;
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            if (isDisposed) return;
+
+            winampControl.Dispose();
+
+            isDisposed = true;
+        }
+
+        #endregion
     }
 }

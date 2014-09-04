@@ -26,6 +26,36 @@ namespace Oleg_ivo.MeloManager.ServiceReference1 {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IWinampService/Ping")]
         System.Threading.Tasks.Task PingAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IWinampService/Play")]
+        void Play();
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IWinampService/Play")]
+        System.Threading.Tasks.Task PlayAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IWinampService/PlayPause")]
+        void PlayPause();
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IWinampService/PlayPause")]
+        System.Threading.Tasks.Task PlayPauseAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IWinampService/Stop")]
+        void Stop();
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IWinampService/Stop")]
+        System.Threading.Tasks.Task StopAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IWinampService/PreviousTrack")]
+        void PreviousTrack();
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IWinampService/PreviousTrack")]
+        System.Threading.Tasks.Task PreviousTrackAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IWinampService/NextTrack")]
+        void NextTrack();
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IWinampService/NextTrack")]
+        System.Threading.Tasks.Task NextTrackAsync();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -77,6 +107,46 @@ namespace Oleg_ivo.MeloManager.ServiceReference1 {
         
         public System.Threading.Tasks.Task PingAsync() {
             return base.Channel.PingAsync();
+        }
+        
+        public void Play() {
+            base.Channel.Play();
+        }
+        
+        public System.Threading.Tasks.Task PlayAsync() {
+            return base.Channel.PlayAsync();
+        }
+        
+        public void PlayPause() {
+            base.Channel.PlayPause();
+        }
+        
+        public System.Threading.Tasks.Task PlayPauseAsync() {
+            return base.Channel.PlayPauseAsync();
+        }
+        
+        public void Stop() {
+            base.Channel.Stop();
+        }
+        
+        public System.Threading.Tasks.Task StopAsync() {
+            return base.Channel.StopAsync();
+        }
+        
+        public void PreviousTrack() {
+            base.Channel.PreviousTrack();
+        }
+        
+        public System.Threading.Tasks.Task PreviousTrackAsync() {
+            return base.Channel.PreviousTrackAsync();
+        }
+        
+        public void NextTrack() {
+            base.Channel.NextTrack();
+        }
+        
+        public System.Threading.Tasks.Task NextTrackAsync() {
+            return base.Channel.NextTrackAsync();
         }
     }
 }
