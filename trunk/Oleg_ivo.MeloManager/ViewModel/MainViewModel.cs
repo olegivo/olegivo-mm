@@ -28,6 +28,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private readonly IComponentContext context;
         private readonly WinampControl winampControl;
+        private readonly WinampFilesMonitor winampFilesMonitor;
 
         private MediaTreeViewModel mediaTree;
         private MediaListViewModel parents;
@@ -320,6 +321,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         {
             var winampTrackingView = context.ResolveUnregistered<WinampTrackingView>();
             winampTrackingView.ShowDialog();
+            //winampControl.LoadPlaylist(@"f:\Subversion\MM\Oleg_ivo.MeloManager\bin\Debug\playlist.m3u");
             /*var mediaContainer = MediaTree.Items.First().UnderlyingItem;
             var playlistsPath = context.Resolve<MeloManagerOptions>().PlaylistsPath;
             var adapter = context.ResolveUnregistered<WinampM3UPlaylistFileAdapter>();
@@ -411,10 +413,11 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel(IComponentContext context, WinampControl winampControl)
+        public MainViewModel(IComponentContext context, WinampControl winampControl, WinampFilesMonitor winampFilesMonitor)//TODO: сделать для классов Winamp фасад
         {
             this.context = Enforce.ArgumentNotNull(context, "context");
             this.winampControl = Enforce.ArgumentNotNull(winampControl, "winampControl");
+            this.winampFilesMonitor = Enforce.ArgumentNotNull(winampFilesMonitor, "winampFilesMonitor");
             //InitializeComponents();
             if (IsInDesignMode)
             {
@@ -430,6 +433,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private void RunServices()
         {
             winampControl.LaunchBind();
+            winampFilesMonitor.MonitorFilesChanges();
         }
 
         #region IDisposable
@@ -443,6 +447,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             if (isDisposed) return;
 
             winampControl.Dispose();
+            winampFilesMonitor.Dispose();
 
             isDisposed = true;
         }
