@@ -26,19 +26,16 @@ namespace Oleg_ivo.MeloManager.Winamp
             CurrentSongSubject = winampServiceCallback.CurrentSongSubject;
             IsConnected =
                 Observable.Interval(TimeSpan.FromSeconds(1))
-                    .Select(l => !(client != null && client.State == CommunicationState.Opened))
-                    .DistinctUntilChanged()
+                    .Select(l => client != null && client.State == CommunicationState.Opened)
+                    //.DistinctUntilChanged()
                     .ToReactiveProperty();
 
-            var observableClient = IsConnected.Select(isConnected =>
-            {
-                if (!isConnected)
+            disposer.Add(IsConnected.Where(isConnected => !isConnected)
+                .Subscribe(_ =>
                 {
                     client = Connect(winampServiceCallback, netTcpBinding, endpointAddress);
                     DisposeSubscription();
-                }
-                return client;
-            }).ToReactiveProperty();
+                }));
         }
 
         private WinampServiceClient Connect(WinampServiceCallback winampServiceCallback, Binding binding, EndpointAddress endpointAddress)
