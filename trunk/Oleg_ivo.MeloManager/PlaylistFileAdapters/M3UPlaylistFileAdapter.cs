@@ -24,7 +24,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
             List<ExtInfo> infos = GetExtInfosFromFile_m3u(filename);
             Playlist playlist = null;
-            if (infos != null && infos.Count != 0)
+            if (infos != null)
             {
                 playlist = new Playlist {OriginalFileName = filename};
                 foreach (var extInfo in infos)

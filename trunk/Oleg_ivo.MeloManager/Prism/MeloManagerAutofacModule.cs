@@ -29,6 +29,7 @@ namespace Oleg_ivo.MeloManager.Prism
             });
 
             builder.RegisterType<WinampControl>().SingleInstance();
+            builder.RegisterType<WinampFilesMonitor>().SingleInstance();
 
             //MVVM registration:
             builder.RegisterType<MainViewModel>();

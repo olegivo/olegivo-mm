@@ -164,6 +164,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Extensions\ReactiveExtensions.cs" />
+    <Compile Include="Extensions\FileSystemWatcherExtensions.cs" />
     <Compile Include="MediaIconsResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
