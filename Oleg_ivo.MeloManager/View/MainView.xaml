@@ -7,6 +7,8 @@
     mc:Ignorable="d"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:viewModel="clr-namespace:Oleg_ivo.MeloManager.ViewModel"
+    xmlns:tb="http://www.hardcodet.net/taskbar"
+    xmlns:tracking="clr-namespace:Oleg_ivo.MeloManager.Winamp.Tracking"
     d:DataContext="{d:DesignInstance Type=viewModel:MainViewModel}"
     ScrollViewer.CanContentScroll="True"
     Loaded="MainView_OnLoaded">
@@ -23,6 +25,20 @@
             <RowDefinition MinHeight="300" Height="*" />
             <RowDefinition MaxHeight="30" Height="Auto" />
         </Grid.RowDefinitions>
+        <tb:TaskbarIcon 
+            IconSource="/Resources/headphones.ico" 
+            ToolTipText="MeloManager" 
+            DoubleClickCommand="{Binding CommandTrayDoubleClick}">
+            <tb:TaskbarIcon.TrayPopup>
+                <Border
+                    Background="White"
+                    BorderBrush="Orange"
+                    BorderThickness="2"
+                    CornerRadius="4">
+                    <tracking:WinampTrackingView DataContext="{Binding Tracking}"/>
+                </Border>
+            </tb:TaskbarIcon.TrayPopup>
+        </tb:TaskbarIcon>
         <ToolBar
             Grid.Row="0"
             Grid.Column="0" Grid.ColumnSpan="2">

@@ -7,6 +7,9 @@
     
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
+    ShowInTaskbar="False"
+    
+    
     Title="MeloManager"
     Background="#FFD8F3FF" 
     OpacityMask="#F0000000" 

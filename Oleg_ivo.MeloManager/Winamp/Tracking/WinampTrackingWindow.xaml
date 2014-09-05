@@ -1,0 +1,9 @@
+﻿<Window x:Class="Oleg_ivo.MeloManager.Winamp.Tracking.WinampTrackingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:tracking="clr-namespace:Oleg_ivo.MeloManager.Winamp.Tracking"
+        Title="Winamp Tracking" Height="300" Width="300">
+    <Grid>
+        <tracking:WinampTrackingView/>
+    </Grid>
+</Window>

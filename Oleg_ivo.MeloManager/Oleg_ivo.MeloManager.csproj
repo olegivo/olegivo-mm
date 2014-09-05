@@ -69,13 +69,16 @@
     </Reference>
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Autofac.3.5.0\lib\net40\Autofac.dll</HintPath>
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight">
       <HintPath>..\packages\MvvmLightLibs.4.4.32.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight.Extras">
       <HintPath>..\packages\MvvmLightLibs.4.4.32.1\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    </Reference>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification">
+      <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.5\lib\net45\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.4.1.0.0\lib\NET40\Microsoft.Expression.Interactions.dll</HintPath>
@@ -100,13 +103,13 @@
       <HintPath>..\packages\Prism.AutofacExtension.1.0.40.0\lib\net40\Prism.AutofacExtension.dll</HintPath>
     </Reference>
     <Reference Include="ReactiveProperty">
-      <HintPath>..\packages\ReactiveProperty.0.4.5.1\lib\net45\ReactiveProperty.dll</HintPath>
+      <HintPath>..\packages\ReactiveProperty.1.0.0.1\lib\net45\ReactiveProperty.dll</HintPath>
     </Reference>
     <Reference Include="ReactiveProperty.DataAnnotations">
-      <HintPath>..\packages\ReactiveProperty.0.4.5.1\lib\net45\ReactiveProperty.DataAnnotations.dll</HintPath>
+      <HintPath>..\packages\ReactiveProperty.1.0.0.1\lib\net45\ReactiveProperty.DataAnnotations.dll</HintPath>
     </Reference>
     <Reference Include="ReactiveProperty.NET45">
-      <HintPath>..\packages\ReactiveProperty.0.4.5.1\lib\net45\ReactiveProperty.NET45.dll</HintPath>
+      <HintPath>..\packages\ReactiveProperty.1.0.0.1\lib\net45\ReactiveProperty.NET45.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -201,6 +204,9 @@
     <Compile Include="Winamp\Tracking\WinampTrackingView.xaml.cs">
       <DependentUpon>WinampTrackingView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Winamp\Tracking\WinampTrackingWindow.xaml.cs">
+      <DependentUpon>WinampTrackingWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Winamp\WinampFilesMonitor.cs" />
     <Compile Include="Winamp\WinampServiceCallback.cs" />
     <Compile Include="Winamp\WinampControl.cs" />
@@ -232,6 +238,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Winamp\Tracking\WinampTrackingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Winamp\Tracking\WinampTrackingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
