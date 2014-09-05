@@ -5,12 +5,13 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Autofac;
+using Codeplex.Reactive;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
 using NLog;
 using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.Extensions;
+using Oleg_ivo.MeloManager.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.PlaylistFileAdapters;
 using Oleg_ivo.MeloManager.Winamp;
@@ -33,13 +34,6 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private MediaTreeViewModel mediaTree;
         private MediaListViewModel parents;
         private MediaListViewModel children;
-
-        private ICommand commandLoadFromDb;
-        private ICommand commandSaveAndLoad;
-        private ICommand commandTreeAddCategory;
-        private ICommand commandImportWinampPlaylists;
-        private ICommand commandInitDataSource;
-        private ICommand commandTest;
 
         private string statusText;
 
@@ -121,6 +115,10 @@ namespace Oleg_ivo.MeloManager.ViewModel
             set { MediaTree.DataContext = value; }
         }
 
+        [Dependency(Required = true)]
+        public TrackingViewModel Tracking { get; set; }
+
+
         /// <summary>
         /// Статусная строка
         /// </summary>
@@ -182,59 +180,45 @@ namespace Oleg_ivo.MeloManager.ViewModel
         #endregion
 
         #region Commands
-        public ICommand CommandLoadFromDb
+
+        private void InitCommands()
         {
-            get
+            CommandTest = new ReactiveCommand().AddHandler(Test);
+            CommandLoadFromDb = new ReactiveCommand().AddHandler(LoadFromDb);
+            CommandSaveAndLoad = new ReactiveCommand().AddHandler(SaveAndLoad);
+            CommandTreeAddCategory = new ReactiveCommand().AddHandler(TreeAddCategory);
+            CommandImportWinampPlaylists = new ReactiveCommand().AddHandler(ImportWinampPlaylists);
+            CommandInitDataSource = new ReactiveCommand().AddHandler(InitDataSource);
+            CommandTrayDoubleClick = new ReactiveCommand().AddHandler(SwitchHideShow);
+        }
+
+        private void SwitchHideShow()
+        {
+            if (mainWindow.WindowState == WindowState.Minimized)
             {
-                return commandLoadFromDb ??
-                       (commandLoadFromDb = new RelayCommand(LoadFromDb));
+                mainWindow.WindowState = WindowState.Maximized;
+                mainWindow.Show();
+                mainWindow.Activate();
+            }
+            else
+            {
+                mainWindow.WindowState = WindowState.Minimized;
             }
         }
 
-        public ICommand CommandSaveAndLoad
-        {
-            get
-            {
-                return commandSaveAndLoad ??
-                       (commandSaveAndLoad = new RelayCommand(SaveAndLoad));
-            }
-        }
+        public ICommand CommandTest { get; private set; }
+        
+        public ICommand CommandLoadFromDb { get; private set; }
 
-        public ICommand CommandTreeAddCategory
-        {
-            get
-            {
-                return commandTreeAddCategory ??
-                       (commandTreeAddCategory = new RelayCommand(TreeAddCategory));
-            }
-        }
+        public ICommand CommandSaveAndLoad { get; private set; }
 
-        public ICommand CommandImportWinampPlaylists
-        {
-            get
-            {
-                return commandImportWinampPlaylists ??
-                       (commandImportWinampPlaylists = new RelayCommand(ImportWinampPlaylists));
-            }
-        }
+        public ICommand CommandTreeAddCategory { get; private set; }
 
-        public ICommand CommandInitDataSource
-        {
-            get
-            {
-                return commandInitDataSource ??
-                       (commandInitDataSource = new RelayCommand(InitDataSource));
-            }
-        }
+        public ICommand CommandImportWinampPlaylists { get; private set; }
 
-        public ICommand CommandTest
-        {
-            get
-            {
-                return commandTest ??
-                       (commandTest = new RelayCommand(Test));
-            }
-        }
+        public ICommand CommandInitDataSource { get; private set; }
+
+        public ICommand CommandTrayDoubleClick { get; private set; }
 
         #endregion
 
@@ -319,8 +303,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private void Test()
         {
-            var winampTrackingView = context.ResolveUnregistered<WinampTrackingView>();
-            winampTrackingView.ShowDialog();
+            var winampTrackingWindow = context.ResolveUnregistered<WinampTrackingWindow>();
+            winampTrackingWindow.ShowDialog();
             //winampControl.LoadPlaylist(@"f:\Subversion\MM\Oleg_ivo.MeloManager\bin\Debug\playlist.m3u");
             /*var mediaContainer = MediaTree.Items.First().UnderlyingItem;
             var playlistsPath = context.Resolve<MeloManagerOptions>().PlaylistsPath;
@@ -426,7 +410,9 @@ namespace Oleg_ivo.MeloManager.ViewModel
             else
             {
                 // Code runs "for real"
+                mainWindow = Application.Current.MainWindow;
                 RunServices();
+                InitCommands();
             }
         }
 
@@ -438,6 +424,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         #region IDisposable
         private bool isDisposed;
+        private readonly Window mainWindow;
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

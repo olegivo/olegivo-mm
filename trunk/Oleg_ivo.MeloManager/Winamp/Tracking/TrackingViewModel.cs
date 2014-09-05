@@ -45,8 +45,9 @@ namespace Oleg_ivo.MeloManager.Winamp.Tracking
             get { return filename; }
             set
             {
+                if(filename == value) return;
                 filename = value;
-                RaisePropertyChanged("Filename");
+                RaisePropertyChanged(() => Filename);
             }
         }
 
