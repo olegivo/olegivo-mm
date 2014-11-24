@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reactive.Disposables;
 using Autofac;
 using NLog;
+using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.MeloManager.Extensions;
+using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.PlaylistFileAdapters;
 using Oleg_ivo.MeloManager.Prism;
 
@@ -13,11 +18,34 @@ namespace Oleg_ivo.MeloManager.Winamp
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
         private readonly MeloManagerOptions options;
-        private readonly IComponentContext context;
+        private readonly PlaylistImporter<WinampM3UPlaylistFileAdapter> importer;
+        private readonly CompositeDisposable disposer = new CompositeDisposable();
+
+        public WinampFilesMonitor(MeloManagerOptions options, IComponentContext context)
+        {
+            importer = context.ResolveUnregistered<PlaylistImporter<WinampM3UPlaylistFileAdapter>>();
+            this.options = Enforce.ArgumentNotNull(options, "options");
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            disposer.Dispose();
+        }
+
+        public IEnumerable<Playlist> RunImportAll(Category winampCategory)
+        {
+            lock (importer)
+            {
+                var playlistFilenames = importer.Adapter.Dic.Keys.Select(f => Path.Combine(options.PlaylistsPath, f));
+                return importer.RunImportAll(playlistFilenames, winampCategory);
+            }
+        }
 
         public void MonitorFilesChanges()
         {
-            adapter = context.ResolveUnregistered<WinampM3UPlaylistFileAdapter>();
             var playlistsPath = options.PlaylistsPath;
             var fileWatcherPlaylistsContainer = new FileSystemWatcher(playlistsPath, "playlists.xml")
             {
@@ -37,31 +65,26 @@ namespace Oleg_ivo.MeloManager.Winamp
              * При удалении плейлиста: удаление файла плейлиста, после закрытия Winamp происходит изменение playlists.xml (также можно отследить после того, как произошли любые другие изменения, затрагивающие playlists.xml)
              * Вывод - основной мониторинг - это мониторинг файлов плейлистов, при удалении плейлиста можно не мониторить playlists.xml
             */
-            var playlistsContainerThrottleTime = TimeSpan.FromSeconds(0.5);
+            var playlistsContainerThrottleTime = TimeSpan.FromSeconds(0.3);
             var playlistFileThrottleTime = TimeSpan.FromSeconds(1);
-            ObservablePlaylistsContainer = fileWatcherPlaylistsContainer.ToObservable(WatcherChangeTypes.Changed, playlistsContainerThrottleTime);
-            ObservablePlaylistAdd = fileWatcherPlaylists.ToObservable(WatcherChangeTypes.Created, playlistFileThrottleTime)/*.Select(filename => )*/;//TODO: для того, чтобы взять актуальное значение название плейлиста из словаря, нужно, чтобы сначала сработал ObservablePlaylistsContainer, нужно его ждать
-            ObservablePlaylistChange = fileWatcherPlaylists.ToObservable(WatcherChangeTypes.Changed, playlistFileThrottleTime);
-            ObservablePlaylistDelete = fileWatcherPlaylists.ToObservable(WatcherChangeTypes.Deleted, playlistFileThrottleTime);
+            var observablePlaylistsContainer = fileWatcherPlaylistsContainer.ToObservable(WatcherChangeTypes.Changed, playlistsContainerThrottleTime);
+            var observablePlaylistAdd = fileWatcherPlaylists.ToObservable(WatcherChangeTypes.Created, playlistFileThrottleTime)/*.Select(filename => )*/;//TODO: для того, чтобы взять актуальное значение название плейлиста из словаря, нужно, чтобы сначала сработал ObservablePlaylistsContainer, нужно его ждать
+            var observablePlaylistChange = fileWatcherPlaylists.ToObservable(WatcherChangeTypes.Changed, playlistFileThrottleTime);
+            var observablePlaylistDelete = fileWatcherPlaylists.ToObservable(WatcherChangeTypes.Deleted, playlistFileThrottleTime);
 
-            playlistsContainerChanges = ObservablePlaylistsContainer.Subscribe(OnPlaylistXmlChanged);
-            playlistAdding = ObservablePlaylistAdd.Subscribe(OnAdded);
-            playlistChanging = ObservablePlaylistChange.Subscribe(OnChanged);
-            playlistDeleting = ObservablePlaylistDelete.Subscribe(OnDeleted);
+            disposer.Add(observablePlaylistsContainer.Subscribe(OnPlaylistXmlChanged));
+            disposer.Add(observablePlaylistAdd.Subscribe(OnAdded));
+            disposer.Add(observablePlaylistChange.Subscribe(OnChanged));
+            disposer.Add(observablePlaylistDelete.Subscribe(OnDeleted));
         }
-
-        public IObservable<string> ObservablePlaylistsContainer { get; set; }
-
-        public IObservable<string> ObservablePlaylistAdd { get; set; }
-        
-        public IObservable<string> ObservablePlaylistChange { get; set; }
-
-        public IObservable<string> ObservablePlaylistDelete { get; set; }
 
         private void OnPlaylistXmlChanged(string f)
         {
-            log.Debug("{0} changed", f);
-            adapter.RefreshDic();
+            lock (importer)
+            {
+                log.Debug("{0} changed", f);
+                importer.Adapter.RefreshDic();
+            }
         }
 
         private void OnDeleted(string filename)
@@ -69,47 +92,27 @@ namespace Oleg_ivo.MeloManager.Winamp
             log.Debug("{0} deleted", filename);
         }
 
+
+
         private void OnChanged(string filename)
         {
-            log.Debug("{0} changed", filename);
+            lock (importer)
+            {
+                log.Debug("{0} changed", filename);
+                importer.Import(filename);
+                importer.DataContext.SubmitChanges();
+            }
         }
 
         private void OnAdded(string filename)
         {
-            log.Debug("{0} added", filename);
-        }
-
-        private bool isDisposed;
-        private IDisposable playlistsContainerChanges;
-        private IDisposable playlistAdding;
-        private IDisposable playlistChanging;
-        private IDisposable playlistDeleting;
-        private WinampM3UPlaylistFileAdapter adapter;
-
-        public WinampFilesMonitor(IComponentContext context, MeloManagerOptions options)
-        {
-            this.options = options;
-            this.context = context;
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            if (isDisposed) return;
-
-            if (adapter != null)
+            lock (importer)
             {
-                adapter = null;
-                playlistsContainerChanges.Dispose();
-                playlistAdding.Dispose();
-                playlistChanging.Dispose();
-                playlistDeleting.Dispose();
+                log.Debug("{0} added", filename);
+                //TODO: импорт нового плейлиста, но перед этим нужно разобраться с ожиданием обновления словаря их xml (см. метод MonitorFilesChanges)
+                //importer.Import(filename);
+                //importer.DataContext.SubmitChanges();
             }
-
-            isDisposed = true;
         }
-
     }
 }
