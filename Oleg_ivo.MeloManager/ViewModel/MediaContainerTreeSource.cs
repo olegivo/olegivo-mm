@@ -91,16 +91,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private void RemoveRelation(MediaContainer parent, MediaContainer child)
         {
-            var parentRelation = parent.GetChildRelation(child);
-            var childRelation = child.GetParentRelation(parent);
-            parent.RemoveChild(child);
-            child.RemoveParent(parent);
-                
-            //удаление связи, т.к. она сама себя не удаляет
-            parent.ChildMediaContainers.Remove(parentRelation);
-            child.ParentMediaContainers.Remove(childRelation);
-            MediaDataContext.MediaContainersParentChilds.DeleteOnSubmit(parentRelation);
-            MediaDataContext.MediaContainersParentChilds.DeleteOnSubmit(childRelation);
+            MediaDataContext.RemoveRelation(parent, child);
         }
 
         private void RemoveIfNoParent(MediaContainer mediaContainer)

@@ -1,4 +1,3 @@
-using System;
 using Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.Autofac.Modules;
@@ -26,7 +25,8 @@ namespace Oleg_ivo.MeloManager.Prism
                 //mediaDataContext.Log = Console.Out;
                 //mediaDataContext.ObjectTrackingEnabled = true;
                 return mediaDataContext;
-            });
+            }).SingleInstance();
+            builder.Register(context => context.Resolve<MediaDataContext>()).As<IMediaCache>();
 
             builder.RegisterType<WinampControl>().SingleInstance();
             builder.RegisterType<WinampFilesMonitor>().SingleInstance();

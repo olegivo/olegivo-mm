@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(SolutionPath).build.config" Condition="Exists('$(SolutionPath).build.config')"/>
+  <Import Project="$(SolutionPath).build.config" Condition="Exists('$(SolutionPath).build.config')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -58,6 +58,7 @@
     <Compile Include="Category.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="File.cs" />
+    <Compile Include="IMediaCache.cs" />
     <Compile Include="MediaContainer.cs" />
     <Compile Include="MediaContainerFile.cs" />
     <Compile Include="MediaContainersParentChild.cs" />
@@ -105,11 +106,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\External\Oleg_ivo.Tools\Oleg_ivo.Base\Oleg_ivo.Base.csproj">
-      <Project>{AC7D7F53-A330-45B0-A6B3-498BE85B9739}</Project>
+      <Project>{ac7d7f53-a330-45b0-a6b3-498be85b9739}</Project>
       <Name>Oleg_ivo.Base</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

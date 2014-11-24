@@ -14,7 +14,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
         private bool isProcessed;
-        public override void BatchRepair(IEnumerable<string> foundFiles, bool optionRepairOnlyBadFiles)
+        public override void BatchRepair(IEnumerable<string> foundFiles, bool optionRepairOnlyBadFiles, IMediaCache mediaCache)
         {
             //base.BatchRepair(foundFiles, optionRepairOnlyBadFiles);
             //lock (this)
@@ -26,7 +26,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                     (optionRepairOnlyBadFiles
                         ? MediaContainerFiles.Where(mcf => !mcf.File.FileInfo.Exists)
                         : MediaContainerFiles)
-                        .Select(mcf => new { old = mcf, repairedFile = mcf.File.Repair(foundFiles) })
+                        .Select(mcf => new { old = mcf, repairedFile = mcf.File.Repair(foundFiles, mediaCache) })
                         .Where(rf => rf.repairedFile != null).ToList();
 
                 foreach (var rf in repairedFiles)

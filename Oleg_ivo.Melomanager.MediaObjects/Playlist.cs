@@ -45,11 +45,13 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                 originalFileName = value;
                 if (System.IO.File.Exists(OriginalFileName) && !MediaContainerFiles.Any())
                 {
-                    var file = File.GetFile(OriginalFileName);
+                    var file = MediaCache.GetOrAddCachedFile(OriginalFileName);
                     MediaContainerFiles.Add(new MediaContainerFile { File = file });
                 }
             }
         }
+
+        public IMediaCache MediaCache { get; set; }
 
         /// <summary>
         /// Добавить дочерний медиа-файл

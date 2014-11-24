@@ -14,10 +14,12 @@ namespace Oleg_ivo.MeloManager.Repairers
     public class AutoRepairer : RepairerBase
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
+        private readonly IMediaCache mediaCache;
 
-        public AutoRepairer(MeloManagerOptions options, IComponentContext context)
+        public AutoRepairer(MeloManagerOptions options, IComponentContext context, IMediaCache mediaCache)
             : base(options, context)
         {
+            this.mediaCache = mediaCache;
         }
 
         public override void Repair()
@@ -76,7 +78,7 @@ namespace Oleg_ivo.MeloManager.Repairers
                         .ToList();
                 log.Debug("Получено файлов: {0}", files.Count);
 
-                categoryToRepair.BatchRepair(files, true);
+                categoryToRepair.BatchRepair(files, true, mediaCache);
                 var files2 =
                     categoryToRepair.Children.Cast<Playlist>()
                         .SelectMany(
