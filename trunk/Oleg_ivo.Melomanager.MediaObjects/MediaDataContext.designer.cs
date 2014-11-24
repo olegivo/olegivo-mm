@@ -416,7 +416,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Drive", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Drive", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
 		public string Drive
 		{
 			get
@@ -436,7 +436,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Path", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Path", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
 		public string Path
 		{
 			get
@@ -456,7 +456,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Filename", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Filename", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
 		public string Filename
 		{
 			get
@@ -476,7 +476,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Extention", DbType="VarChar(10) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Extention", DbType="NVarChar(10) NOT NULL", CanBeNull=false)]
 		public string Extention
 		{
 			get
@@ -496,7 +496,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FullFileName", AutoSync=AutoSync.Always, DbType="VarChar(162) NOT NULL", CanBeNull=false, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FullFileName", AutoSync=AutoSync.Always, DbType="NVarChar(521) NOT NULL", CanBeNull=false, IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
 		public string FullFileName
 		{
 			get
@@ -516,7 +516,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FileNameWithoutExtension", DbType="VarChar(40) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FileNameWithoutExtension", DbType="NVarChar(40) NOT NULL", CanBeNull=false)]
 		public string FileNameWithoutExtension
 		{
 			get
