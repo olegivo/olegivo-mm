@@ -1,11 +1,20 @@
 ﻿CREATE TABLE [dbo].[Files] (
-    [Id]                       BIGINT        IDENTITY (1, 1) NOT NULL,
-    [Drive]                    VARCHAR (50)  NOT NULL,
-    [Path]                     VARCHAR (255) NOT NULL,
-    [Filename]                 VARCHAR (255) NOT NULL,
-    [Extention]                VARCHAR (10)  NOT NULL,
-    [FullFileName]             AS            ((([Path]+'\')+[FileNameWithoutExtension])+[Extention]),
-    [FileNameWithoutExtension] VARCHAR (255) NOT NULL,
+    [Id]                       BIGINT         IDENTITY (1, 1) NOT NULL,
+    [Drive]                    NVARCHAR (50)  NOT NULL,
+    [Path]                     NVARCHAR (255) NOT NULL,
+    [Filename]                 NVARCHAR (255) NOT NULL,
+    [Extention]                NVARCHAR (50)  NOT NULL,
+    [FullFileName]             AS             ([dbo].[GetFullFulename]([Path],[FileNameWithoutExtension],[Extention])) PERSISTED,
+    [FileNameWithoutExtension] NVARCHAR (255) NOT NULL,
     CONSTRAINT [PK_Files] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
+
+
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [UK_Files_FullFileName]
+    ON [dbo].[Files]([FullFileName] ASC);
 

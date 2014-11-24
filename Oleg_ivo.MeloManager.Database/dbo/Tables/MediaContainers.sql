@@ -1,11 +1,13 @@
 ﻿CREATE TABLE [dbo].[MediaContainers] (
-    [Id]         BIGINT        IDENTITY (1, 1) NOT NULL,
-    [Type]       VARCHAR (255) NOT NULL,
-    [Name]       VARCHAR (255) NOT NULL,
-    [IsRepaired] BIT           NOT NULL,
-    [IsRoot]     BIT           CONSTRAINT [DF_MediaContainers_IsRoot] DEFAULT ((1)) NOT NULL,
-    CONSTRAINT [PK_MediaContainer] PRIMARY KEY CLUSTERED ([Id] ASC)
+    [Id]     BIGINT        IDENTITY (1, 1) NOT NULL,
+    [Type]   VARCHAR (255) NOT NULL,
+    [Name]   VARCHAR (255) NOT NULL,
+    [IsRoot] BIT           CONSTRAINT [DF_MediaContainers_IsRoot] DEFAULT ((1)) NOT NULL,
+    CONSTRAINT [PK_MediaContainer] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_MediaContainers_TMediaContainerType] FOREIGN KEY ([Type]) REFERENCES [dbo].[TMediaContainerType] ([MediaContainerType])
 );
+
+
 
 
 GO
