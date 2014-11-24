@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Oleg_ivo.Base.Extensions;
-using Oleg_ivo.MeloManager.MediaObjects.Extensions;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
@@ -53,7 +52,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 
         partial void OnCreated()
         {
-            this.ActionWithLog(RefreshCache);
+            RefreshCache();
         }
 
         public void RefreshCache()
