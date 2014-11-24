@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="MeloManager" Class="MediaDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=OLEG-A\SQLEXPRESS;Initial Catalog=MeloManager;Integrated Security=True" SettingsObjectName="Oleg_ivo.MeloManager.MediaObjects.Properties.Settings" SettingsPropertyName="MeloManagerConnectionString" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=.\SQL2008R2;Initial Catalog=MeloManager;Integrated Security=True" SettingsObjectName="Oleg_ivo.MeloManager.MediaObjects.Properties.Settings" SettingsPropertyName="MeloManagerConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.MediaContainers" Member="MediaContainers">
     <Type Name="MediaContainer" InheritanceCode="MediaContainer" IsInheritanceDefault="true">
       <Column Name="Id" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsReadOnly="true" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -17,12 +17,12 @@
   <Table Name="dbo.Files" Member="Files">
     <Type Name="File">
       <Column Name="Id" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsReadOnly="true" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Drive" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Path" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Filename" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Extention" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
-      <Column Name="FullFileName" Type="System.String" DbType="VarChar(162) NOT NULL" IsDbGenerated="true" CanBeNull="false" UpdateCheck="Never" />
-      <Column Name="FileNameWithoutExtension" Type="System.String" DbType="VarChar(40) NOT NULL" CanBeNull="false" />
+      <Column Name="Drive" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Path" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Filename" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Extention" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="FullFileName" Type="System.String" DbType="NVarChar(521) NOT NULL" IsDbGenerated="true" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="FileNameWithoutExtension" Type="System.String" DbType="NVarChar(40) NOT NULL" CanBeNull="false" />
       <Association Name="File_MediaContainerFile" Member="MediaContainerFiles" ThisKey="Id" OtherKey="FileId" Type="MediaContainerFile" />
     </Type>
   </Table>
