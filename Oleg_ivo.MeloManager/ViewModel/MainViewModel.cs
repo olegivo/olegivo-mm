@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Autofac;
@@ -229,15 +230,19 @@ namespace Oleg_ivo.MeloManager.ViewModel
             //Clear();
             log.Info(StatusText = "Загрузка из БД");
             MediaTree.Items = new ObservableCollection<MediaContainerTreeWrapper>();
-            var categories = DataContext.MediaContainers
-                .Where(mc => mc is Category && mc.IsRoot)
-                .Cast<Category>();
-            MediaTree.InitSource(categories);
+            Task.Factory.StartNew(
+                () =>
+                {
+                    //DataContext.ActionWithLog(dataContext => dataContext.RefreshCache());
+                    MediaTree.InitSource(
+                        DataContext.MediaContainers.Where(mc => mc is Category && mc.IsRoot).Cast<Category>());
+                    log.Info(StatusText = "Загрузка из БД завершена");
+                });
             /*foreach (var mc in categories)
             {
                 MediaTree.AddCategory(mc, null);
             }*/
-            log.Info(StatusText = "Загрузка из БД завершена");
+            log.Info(StatusText = "Загрузка из БД в процессе...");
         }
 
         private void SaveAndLoad()
@@ -256,14 +261,43 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         public void ImportWinampPlaylists()
         {
-            StatusText = "Импорт плейлистов из Winamp";
-            var adapter = context.ResolveUnregistered<WinampM3UPlaylistFileAdapter>();
-
-            var winampCategory = new Category { Name = "Плейлисты Winamp", IsRoot = true };
-            winampCategory.AddChildren(adapter.GetPlaylists());//TODO:обновление плейлистов
-
-            MediaTree.AddCategory(winampCategory, null);
-            DataContext.MediaContainers.InsertOnSubmit(winampCategory);
+            Task.Factory.StartNew(() =>
+            {
+                log.Info(StatusText = "Сохранение в процессе...");
+                //var changeSet = DataContext.GetChangeSet();
+                DataContext.SubmitChanges();
+            })
+                .ContinueWith(task =>
+                {
+                    StatusText = "Импорт плейлистов из Winamp в процессе...";
+                    var root = (MediaTree.CurrentItem != null
+                        ? MediaTree.CurrentItem.ParentsRecursive.LastOrDefault()
+                        : null) ??
+                               MediaTree.Items.FirstOrDefault();
+                    var createNew = root == null;
+                    if (!createNew)
+                    {
+                        var messageBoxText =
+                            string.Format(
+                                "Импортировать в существующую категорию {0}?\nЕсли нет, будет создана новая категория",
+                                root.Name);
+                        var result = MessageBox.Show(messageBoxText, "Импорт плейлистов", MessageBoxButton.YesNoCancel);
+                        switch (result)
+                        {
+                            case MessageBoxResult.No:
+                                createNew = true;
+                                break;
+                            case MessageBoxResult.Cancel:
+                                return;
+                        }
+                    }
+                    var winampCategory = createNew
+                        ? new Category {Name = "Плейлисты Winamp", IsRoot = true}
+                        : root.UnderlyingItem as Category;
+                    winampFilesMonitor.RunImportAll(winampCategory);
+                })
+                .ContinueWith(task => LoadFromDb())
+                .ContinueWith(task => StatusText = "Импорт плейлистов из Winamp завершён");
         }
 
         private void InitDataSource()
@@ -319,6 +353,32 @@ namespace Oleg_ivo.MeloManager.ViewModel
                     : System.IO.Path.Combine(playlistsPath, adapter.Dic.FirstOrDefault(pair => pair.Value == playlist.Name).Key);
                 playlist.MediaContainerFiles.Add(new MediaContainerFile { File = File.GetFile(originalFileName) });
             }*/
+
+            /*var fullFilename = @"D:\Music\Disk\Music\9\Sixpence None the Richer - Kiss me.mp3";
+            var fileName = System.IO.Path.GetFileName(fullFilename);
+            var fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(fullFilename);
+            var extension = System.IO.Path.GetExtension(fullFilename);
+            var drive = System.IO.Path.GetPathRoot(fullFilename);
+            var path = System.IO.Path.GetDirectoryName(fullFilename);
+            var file = new File
+            {
+                FullFileName = fullFilename,
+                Drive = drive,
+                Path = path,
+                Filename = fileName,
+                FileNameWithoutExtension = fileNameWithoutExtension,
+                Extention = extension
+            };
+            var mediaFile = new MediaFile { Name = "Test" };
+            var mediaContainerFile = new MediaContainerFile { MediaContainer = mediaFile };
+            file.MediaContainerFiles.Add(mediaContainerFile);
+
+            DataContext.MediaContainerFiles.InsertOnSubmit(mediaContainerFile);
+            DataContext.MediaContainers.InsertOnSubmit(mediaFile);
+            DataContext.Files.InsertOnSubmit(file);
+
+            DataContext.SubmitChangesWithLog();
+            return;*/
         }
 
         private void GoToParent(MediaContainer parent)
