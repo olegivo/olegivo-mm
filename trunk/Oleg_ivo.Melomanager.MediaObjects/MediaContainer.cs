@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using NLog;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
@@ -62,9 +61,8 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <param name="child"></param>
         public void RemoveChild(MediaContainer child)
         {
-            MediaContainersParentChild found =
-                ChildMediaContainers.Where(mc => mc.ParentMediaContainer == this && mc.ChildMediaContainer == child).
-                    FirstOrDefault();
+            var found =
+                ChildMediaContainers.FirstOrDefault(mc => mc.ParentMediaContainer == this && mc.ChildMediaContainer == child);
             if (found != null)
             {
                 //BeginRemoveChild(found);
@@ -91,9 +89,8 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <param name="parent"></param>
         public void RemoveParent(MediaContainer parent)
         {
-            MediaContainersParentChild found =
-                ChildMediaContainers.Where(mc => mc.ChildMediaContainer == this && mc.ParentMediaContainer == parent).
-                    FirstOrDefault();
+            var found =
+                ChildMediaContainers.FirstOrDefault(mc => mc.ChildMediaContainer == this && mc.ParentMediaContainer == parent);
             if (found != null)
                 ChildMediaContainers.Remove(found);
         }
@@ -133,7 +130,8 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// </summary>
         /// <param name="foundFiles"></param>
         /// <param name="optionRepairOnlyBadFiles"></param>
-        public virtual void BatchRepair(IEnumerable<string> foundFiles, bool optionRepairOnlyBadFiles)
+        /// <param name="mediaCache"></param>
+        public virtual void BatchRepair(IEnumerable<string> foundFiles, bool optionRepairOnlyBadFiles, IMediaCache mediaCache)
         {
             IsRepaired = false;
             var foundFilesList = foundFiles as IList<string> ?? foundFiles.ToList();
@@ -141,7 +139,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             {
                 if (mediaContainer is Category || mediaContainer is Playlist)
                     log.Trace("Починка {0}", mediaContainer);
-                mediaContainer.BatchRepair(foundFilesList, optionRepairOnlyBadFiles);
+                mediaContainer.BatchRepair(foundFilesList, optionRepairOnlyBadFiles, mediaCache);
                 if (!IsRepaired)
                     IsRepaired = mediaContainer.IsRepaired;
             }
@@ -198,9 +196,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <returns></returns>
         public MediaContainersParentChild GetChildRelation(MediaContainer child)
         {
-            return ChildMediaContainers
-                .Where(relation => relation.ChildId == child.Id)
-                .SingleOrDefault();
+            return ChildMediaContainers.SingleOrDefault(relation => relation.ChildId == child.Id);
         }
 
         /// <summary>
@@ -212,9 +208,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <returns></returns>
         public MediaContainersParentChild GetParentRelation(MediaContainer parent)
         {
-            return ParentMediaContainers
-                .Where(relation => relation.ParentId == parent.Id)
-                .SingleOrDefault();
+            return ParentMediaContainers.SingleOrDefault(relation => relation.ParentId == parent.Id);
         }
 
         /// <summary>

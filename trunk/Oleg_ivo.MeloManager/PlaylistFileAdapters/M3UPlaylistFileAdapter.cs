@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NLog;
+using Oleg_ivo.Base.Autofac;
+using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
 
 namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
@@ -13,8 +15,14 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
     public class M3UPlaylistFileAdapter : PlaylistFileAdapter
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
+        protected readonly IMediaCache MediaCache;
 
-        public override Playlist FileToPlaylist(string filename)
+        protected M3UPlaylistFileAdapter(IMediaCache mediaCache)
+        {
+            MediaCache = Enforce.ArgumentNotNull(mediaCache, "mediaCache");
+        }
+
+        public override Playlist FileToPlaylist(string filename, string playlistName = null)
         {
             log.Info("Создание плейлиста из файла [{0}]", filename);
             //var regex =
@@ -22,18 +30,24 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             //        @"<div\b[^>]*\sclass=""custom_param.custom_param_n"".+<label>(?<paramName>.+?)</label>.+<div\b[^>]*\sclass=""custom_param_error""[^>]*>(?<tagContent>.+?)</div>",
             //        RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-            List<ExtInfo> infos = GetExtInfosFromFile_m3u(filename);
+            List<ExtInfo> infos = GetExtInfosFromM3UFile(filename);
             Playlist playlist = null;
             if (infos != null)
             {
-                playlist = new Playlist {OriginalFileName = filename};
+                playlist = new Playlist {MediaCache = MediaCache, OriginalFileName = filename, Name = playlistName};
                 foreach (var extInfo in infos)
                 {
-                    playlist.AddChildMediaFile(extInfo.GetMediaFile());
+                    var mediaFile = GetOrAddCachedMediaFile(extInfo.filename);
+                    playlist.AddChildMediaFile(mediaFile);
                 }
             }
 
             return playlist;
+        }
+
+        private MediaFile GetOrAddCachedMediaFile(string filename)
+        {
+            return MediaCache.GetOrAddCachedMediaFile(filename);
         }
 
         public override void MediaFilesToFile(string filename, IEnumerable<MediaFile> mediaFiles)
@@ -50,13 +64,13 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             System.IO.File.WriteAllLines(filename, files, Encoding.UTF8);
         }
 
-        private List<ExtInfo> GetExtInfosFromFile_m3u(String playlistFileName)
+        private List<ExtInfo> GetExtInfosFromM3UFile(String playlistFileName)
         {
-            List<string> lines =
+            var lines =
                 System.IO.File.ReadAllLines(playlistFileName, Encoding.UTF8)
                     .Where(s => !string.IsNullOrEmpty(s))
                     .ToList();
-            List<ExtInfo> extInfos = new List<ExtInfo>();
+            var extInfos = new List<ExtInfo>();
             if (lines[0].Trim().ToUpper() == "#EXTM3U")
             {
                 String title = String.Empty;
@@ -83,7 +97,11 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                 extInfos.AddRange(lines.Select(t => new ExtInfo(String.Empty, t.Trim())));
             }
 
-            return extInfos;
+            var duplicates = extInfos.GroupBy(info => info.filename.ToLower()).Where(group => group.Count() > 1).SelectMany(group => group.Skip(1)).ToList();
+            if(duplicates.Any())
+                log.Debug("Обнаружены дубликаты, которые будут исключены из импорта:\n{0}", duplicates.Select(info => info.filename).JoinToString("\n "));
+
+            return extInfos.Except(duplicates).ToList();
         }
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +8,6 @@ using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.Prism;
-using File = System.IO.File;
 
 namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 {
@@ -17,7 +15,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public WinampM3UPlaylistFileAdapter(MeloManagerOptions options)
+        public WinampM3UPlaylistFileAdapter(MeloManagerOptions options, IMediaCache mediaCache):base(mediaCache)
         {
             Options = Enforce.ArgumentNotNull(options, "options");
             RefreshDic();
@@ -68,10 +66,9 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
         private MeloManagerOptions Options { get; set; }
 
-        public override Playlist FileToPlaylist(string filename)
+        public override Playlist FileToPlaylist(string filename, string playlistName = null)
         {
-            var playlist = base.FileToPlaylist(filename);
-            playlist.Name = Dic[Path.GetFileName(playlist.OriginalFileName)];
+            var playlist = base.FileToPlaylist(filename, Dic[Path.GetFileName(filename)]);
             return playlist;
         }
 
@@ -82,7 +79,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
             log.Debug("Создание плейлистов из файлов");
 
-            return playlistFiles.Select(FileToPlaylist).ToList();
+            return playlistFiles.Select(filename => FileToPlaylist(filename)).ToList();
         }
 
         public List<string> GetPlaylistsFiles(string[] playlistFilesSearchPatterns)

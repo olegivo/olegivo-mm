@@ -98,12 +98,12 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             }
         }
 
-        public File Repair(IEnumerable<string> foundFiles)
+        public File Repair(IEnumerable<string> foundFiles, IMediaCache mediaCache)
         {
             //создание списка найденных файлов:
             var repairedFiles =
                 (foundFiles.Where(file => file.ToLower().Contains(Filename.ToLower()))
-                            .Select(GetFile)).ToList();
+                            .Select(mediaCache.GetOrAddCachedFile)).ToList();
 
             File repairedFile;
             switch (repairedFiles.Count)
@@ -121,32 +121,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                     log.Trace("При починке файла {0} найдено несколько соответствий ({1}) но будет использовано только одно: {2}", FullFileName, repairedFiles.Count, repairedFile.FullFileName);
                     return repairedFile;
             }
-        }
-
-        private static readonly Dictionary<string, File> filesCache = new Dictionary<string, File>();
-
-        public static File GetFile(string fullFilename)
-        {
-            if (filesCache.ContainsKey(fullFilename))
-                return filesCache[fullFilename];
-
-            var fileName = System.IO.Path.GetFileName(fullFilename);
-            var fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(fullFilename);
-            var extension = System.IO.Path.GetExtension(fullFilename);
-            var drive = System.IO.Path.GetPathRoot(fullFilename);
-            var path = System.IO.Path.GetDirectoryName(fullFilename);
-            var file = new File
-            {
-                FullFileName = fullFilename,
-                Drive = drive,
-                Path = path,
-                Filename = fileName,
-                FileNameWithoutExtension = fileNameWithoutExtension,
-                Extention = extension
-            };
-            filesCache.Add(fullFilename, file);
-            return file;
-
         }
     }
 }

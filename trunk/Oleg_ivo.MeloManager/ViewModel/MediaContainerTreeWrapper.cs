@@ -161,6 +161,19 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// </summary>
         public MediaContainerTreeWrapper Parent { get; set; }
 
+        public IEnumerable<MediaContainerTreeWrapper> ParentsRecursive
+        {
+            get
+            {
+                var currentParent = Parent;
+                while (currentParent!=null)
+                {
+                    yield return currentParent;
+                    currentParent = currentParent.Parent;
+                }
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
