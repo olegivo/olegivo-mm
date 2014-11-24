@@ -26,8 +26,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=OLEG-A\\SQLEXPRESS;Initial Catalog=MeloManager;Integrated Security=Tru" +
-            "e")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=.\\SQL2008R2;Initial Catalog=MeloManager;Integrated Security=True")]
         public string MeloManagerConnectionString {
             get {
                 return ((string)(this["MeloManagerConnectionString"]));
