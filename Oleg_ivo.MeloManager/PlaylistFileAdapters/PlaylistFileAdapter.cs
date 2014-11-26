@@ -10,7 +10,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public abstract Playlist FileToPlaylist(string filename, string playlistName = null);
+        public abstract PrePlaylist FileToPlaylist(string filename, string playlistName = null);
 
         public void PlaylistToFile(Playlist playlist, string filename)
         {

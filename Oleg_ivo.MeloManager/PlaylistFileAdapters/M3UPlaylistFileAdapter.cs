@@ -22,7 +22,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             MediaCache = Enforce.ArgumentNotNull(mediaCache, "mediaCache");
         }
 
-        public override Playlist FileToPlaylist(string filename, string playlistName = null)
+        public override PrePlaylist FileToPlaylist(string filename, string playlistName = null)
         {
             log.Info("Создание плейлиста из файла [{0}]", filename);
             //var regex =
@@ -30,24 +30,19 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             //        @"<div\b[^>]*\sclass=""custom_param.custom_param_n"".+<label>(?<paramName>.+?)</label>.+<div\b[^>]*\sclass=""custom_param_error""[^>]*>(?<tagContent>.+?)</div>",
             //        RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-            List<ExtInfo> infos = GetExtInfosFromM3UFile(filename);
-            Playlist playlist = null;
+            var infos = GetExtInfosFromM3UFile(filename);
+            PrePlaylist playlist = null;
             if (infos != null)
             {
-                playlist = new Playlist {MediaCache = MediaCache, OriginalFileName = filename, Name = playlistName};
-                foreach (var extInfo in infos)
+                playlist = new PrePlaylist
                 {
-                    var mediaFile = GetOrAddCachedMediaFile(extInfo.filename);
-                    playlist.AddChildMediaFile(mediaFile);
-                }
+                    Filename = filename, 
+                    Name = playlistName,
+                    MediaFiles = infos.Select(extInfo => MediaCache.GetOrAddCachedMediaFile(extInfo.filename)).ToList()
+                };
             }
 
             return playlist;
-        }
-
-        private MediaFile GetOrAddCachedMediaFile(string filename)
-        {
-            return MediaCache.GetOrAddCachedMediaFile(filename);
         }
 
         public override void MediaFilesToFile(string filename, IEnumerable<MediaFile> mediaFiles)

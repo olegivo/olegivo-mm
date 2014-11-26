@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.IO;
 using System.Linq;
 using Autofac;
@@ -28,7 +29,7 @@ namespace Oleg_ivo.MeloManager.Repairers
             log.Debug("Получение списка плейлистов");
             var categoryToRepair = new Category();
 
-            categoryToRepair.AddChildren(WinampM3UPlaylistFileAdapter.GetPlaylists());
+            categoryToRepair.AddChildren(WinampM3UPlaylistFileAdapter.GetPlaylists().Select(playlist => playlist.CreatePlaylist()));
 
             /*var playlistFiles =
                 PlaylistFilesSearchPatterns.SelectMany(
@@ -123,6 +124,11 @@ namespace Oleg_ivo.MeloManager.Repairers
                     WinampM3UPlaylistFileAdapter.PlaylistToFile(playlist, playlist.OriginalFileName);
                 }
             }
+
+            //TODO:здесь может быть проблема: категория это сущность, при связывании её с плейлистами она может быть добавлена в БД вместе с другими вспомогательными сущностями
+            //поэтому сбрасываем все изменения, которые могли произойти локально...
+            //TODO:по-хорошоме, надо бы ещё лочить DataContext, чтобы и другие не могли случайно сохранить изменения, которые были зделаны здесь
+            ((MediaDataContext)mediaCache).Refresh(RefreshMode.OverwriteCurrentValues);
 
             //Playlist playlist = playlistFileImporter.FileToPlaylist(@"D:\Oleg\ToRepair.m3u");
             log.Info("Починка завершена");
