@@ -61,7 +61,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                     .AsEnumerable()
                     .Where(playlist => playlist.OriginalFileName == filename)
                     .ToList();
-
+            
             var playlistFromFile = Adapter.FileToPlaylist(filename);
             var retPlaylist = playlists.FirstOrDefault();
             if (retPlaylist!=null)
@@ -70,33 +70,32 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             }
             else
             {
-                AddPlaylist(playlistFromFile, importCategory);
-                retPlaylist = playlistFromFile;
+                retPlaylist = AddPlaylist(playlistFromFile, importCategory);
             }
             return retPlaylist;
         }
 
-        private void UpdatePlaylist(Playlist playlist, Playlist playlistFromFile)
+        private void UpdatePlaylist(Playlist playlist, PrePlaylist playlistFromFile)
         {
             log.Debug("Обновление плейлиста {0}", playlist);
 
             //compare old and new version
-            var filesWas = GetFiles(playlist);
-            var filesNow = GetFiles(playlistFromFile);
+            var filesWas = GetFilenames(playlist.MediaFiles);
+            var filesNow = GetFilenames(playlistFromFile.MediaFiles);
             var foj = filesWas.FullOuterJoin(filesNow);
-            Func<Playlist, string, MediaFile> getMediaFile =
-                (p, f) => p.MediaFiles.First(mf => mf.MediaContainerFiles.Any(mcf => String.Compare(mcf.File.FullFileName, f, StringComparison.InvariantCultureIgnoreCase)==0));
+            Func<IEnumerable<MediaFile>, string, MediaFile> getMediaFile =
+                (mediaFiles, filename) => mediaFiles.First(mf => mf.MediaContainerFiles.Any(mcf => String.Compare(mcf.File.FullFileName, filename, StringComparison.InvariantCultureIgnoreCase)==0));
             foreach (var item in foj)
             {
                 if (item.Item1 == null)
                 {
-                    var mediaFile = getMediaFile(playlistFromFile, item.Item2);
-                    ((MediaContainer)mediaFile).ParentMediaContainers.Single().ParentMediaContainer = playlist;
+                    var mediaFile = getMediaFile(playlistFromFile.MediaFiles, item.Item2);
+                    playlist.AddChildMediaFile(mediaFile);
                     log.Debug("Добавлен: {0}", mediaFile);
                 }
                 else if (item.Item2 == null)
                 {
-                    var mediaFile = getMediaFile(playlist, item.Item1);
+                    var mediaFile = getMediaFile(playlist.MediaFiles, item.Item1);
                     DataContext.RemoveRelation(playlist, mediaFile);
                     log.Debug("Удалён: {0}", mediaFile);
                 }
@@ -107,7 +106,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             }
         }
 
-        private void AddPlaylist(Playlist playlistFromFile, Category importCategory)
+        private Playlist AddPlaylist(PrePlaylist playlistFromFile, Category importCategory)
         {
             log.Debug("Добавление плейлиста {0}", playlistFromFile);
 
@@ -120,14 +119,20 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                 rootCategory = new Category { Name = "Плейлисты Winamp" };
                 DataContext.MediaContainers.InsertOnSubmit(rootCategory);
             }
-            rootCategory.AddChild(playlistFromFile);
-            DataContext.MediaContainers.InsertOnSubmit(playlistFromFile);
+            var playlist = playlistFromFile.CreatePlaylist();
+            var file = DataContext.GetOrAddCachedFile(playlist.OriginalFileName);
+            playlist.MediaContainerFiles.Add(new MediaContainerFile { File = file });
+            //playlist.OriginalFileName = playlistFromFile.Filename;
+
+            rootCategory.AddChild(playlist);
+            DataContext.MediaContainers.InsertOnSubmit(playlist);
+            return playlist;
         }
 
-        private IEnumerable<string> GetFiles(Playlist playlist)
+        private IEnumerable<string> GetFilenames(IEnumerable<MediaFile> mediaFiles)
         {
             return
-                playlist.MediaFiles.SelectMany(mediaFile => mediaFile.MediaContainerFiles.Select(mcf => mcf.File))
+                mediaFiles.SelectMany(mediaFile => mediaFile.MediaContainerFiles.Select(mcf => mcf.File))
                     .Select(f => f.FileInfo)
                     //.Where(f => f.Exists)
                     .Select(f => f.FullName.ToLower());

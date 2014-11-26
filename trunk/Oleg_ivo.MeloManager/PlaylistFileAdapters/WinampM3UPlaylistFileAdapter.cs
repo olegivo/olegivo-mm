@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -66,13 +65,13 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
         private MeloManagerOptions Options { get; set; }
 
-        public override Playlist FileToPlaylist(string filename, string playlistName = null)
+        public override PrePlaylist FileToPlaylist(string filename, string playlistName = null)
         {
-            var playlist = base.FileToPlaylist(filename, Dic[Path.GetFileName(filename)]);
+            var playlist = base.FileToPlaylist(filename, playlistName: Dic[Path.GetFileName(filename)]);
             return playlist;
         }
 
-        public List<Playlist> GetPlaylists()
+        public List<PrePlaylist> GetPlaylists()
         {
             var playlistFiles = GetPlaylistsFiles(PlaylistFilesSearchPatterns);
             log.Debug("Найдено файлов: {0}", playlistFiles.Count);

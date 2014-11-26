@@ -77,9 +77,9 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             //    mediaFilesCache.Add(arg.FullFileName, arg.mediaFile);
             //}
 
-            MediaFilesCache = d.Where(arg => arg.MediaFile!=null).ToDictionary(arg => arg.FullFileName, arg => arg.MediaFile);
+            MediaFilesCache = d.Where(arg => arg.MediaFile!=null).ToDictionary(arg => arg.FullFileName.ToLower(), arg => arg.MediaFile);
             //PlaylistsCache = d.Where(arg => arg.Playlist!=null).ToDictionary(arg => arg.FullFileName, arg => arg.Playlist);
-            FilesCache = d.Where(arg => arg.MediaFile!=null).ToDictionary(arg => arg.FullFileName, arg => arg.file);
+            FilesCache = d.ToDictionary(arg => arg.FullFileName.ToLower(), arg => arg.file);
             /*
 
             mediaFilesCache =
