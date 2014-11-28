@@ -14,7 +14,6 @@ using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.MeloManager.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
-using Oleg_ivo.MeloManager.PlaylistFileAdapters;
 using Oleg_ivo.MeloManager.Winamp;
 using Oleg_ivo.MeloManager.Winamp.Tracking;
 
@@ -184,14 +183,19 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private void InitCommands()
         {
-            CommandTest = new ReactiveCommand().AddHandler(Test);
-            CommandLoadFromDb = new ReactiveCommand().AddHandler(LoadFromDb);
-            CommandSaveAndLoad = new ReactiveCommand().AddHandler(SaveAndLoad);
-            CommandTreeAddCategory = new ReactiveCommand().AddHandler(TreeAddCategory);
-            CommandImportWinampPlaylists = new ReactiveCommand().AddHandler(ImportWinampPlaylists);
-            CommandInitDataSource = new ReactiveCommand().AddHandler(InitDataSource);
+            CanWorkWithDataContext = new ReactiveProperty<bool>();
+
+            CommandTest = new ReactiveCommand(CanWorkWithDataContext).AddHandler(Test);
+            CommandLoadFromDb = new ReactiveCommand(CanWorkWithDataContext).AddHandler(() => LoadFromDb());
+            CommandSaveAndLoad = new ReactiveCommand(CanWorkWithDataContext).AddHandler(SaveAndLoad);
+            CommandTreeAddCategory = new ReactiveCommand(CanWorkWithDataContext).AddHandler(TreeAddCategory);
+            CommandImportWinampPlaylists = new ReactiveCommand(CanWorkWithDataContext).AddHandler(ImportWinampPlaylists);
+            CommandInitDataSource = new ReactiveCommand(CanWorkWithDataContext).AddHandler(InitDataSource);
             CommandTrayDoubleClick = new ReactiveCommand().AddHandler(SwitchHideShow);
         }
+
+        public ReactiveProperty<bool> CanWorkWithDataContext { get; set; }
+        
 
         private void SwitchHideShow()
         {
@@ -225,33 +229,43 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         #region Methods
 
-        public void LoadFromDb()
+        private Task LoadFromDb()
         {
             //Clear();
-            log.Info(StatusText = "Загрузка из БД");
+            log.Info(StatusText = "Загрузка из БД в процессе...");
+            CanWorkWithDataContext.Value = false;
             MediaTree.Items = new ObservableCollection<MediaContainerTreeWrapper>();
-            Task.Factory.StartNew(
+            var task = Task.Factory.StartNew(
                 () =>
                 {
                     //DataContext.ActionWithLog(dataContext => dataContext.RefreshCache());
                     MediaTree.InitSource(
                         DataContext.MediaContainers.Where(mc => mc is Category && mc.IsRoot).Cast<Category>());
                     log.Info(StatusText = "Загрузка из БД завершена");
+                    CanWorkWithDataContext.Value = true;
                 });
             /*foreach (var mc in categories)
             {
                 MediaTree.AddCategory(mc, null);
             }*/
             log.Info(StatusText = "Загрузка из БД в процессе...");
+            return task;
         }
 
         private void SaveAndLoad()
         {
-            log.Info(StatusText = "Сохранение");
+            Save();
+            LoadFromDb();
+        }
+
+        private void Save()
+        {
+            log.Info(StatusText = "Сохранение в процесе...");
+            CanWorkWithDataContext.Value = false;
             //var changeSet = DataContext.GetChangeSet();
             DataContext.SubmitChanges();
             log.Info(StatusText = "Сохранение завершено");
-            LoadFromDb();
+            CanWorkWithDataContext.Value = true;
         }
 
         private void TreeAddCategory()
@@ -261,14 +275,10 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         public void ImportWinampPlaylists()
         {
-            Task.Factory.StartNew(() =>
-            {
-                log.Info(StatusText = "Сохранение в процессе...");
-                //var changeSet = DataContext.GetChangeSet();
-                DataContext.SubmitChanges();
-            })
+            Task.Factory.StartNew(Save)
                 .ContinueWith(task =>
                 {
+                    CanWorkWithDataContext.Value = false;
                     StatusText = "Импорт плейлистов из Winamp в процессе...";
                     var root = (MediaTree.CurrentItem != null
                         ? MediaTree.CurrentItem.ParentsRecursive.LastOrDefault()
@@ -471,15 +481,30 @@ namespace Oleg_ivo.MeloManager.ViewModel
             {
                 // Code runs "for real"
                 mainWindow = Application.Current.MainWindow;
-                RunServices();
                 InitCommands();
             }
         }
 
-        private void RunServices()
+        private Task RunServices()
         {
-            winampControl.LaunchBind();
-            winampFilesMonitor.MonitorFilesChanges();
+            var task
+                = Task.Factory.StartNew(
+                    () =>
+                    {
+                        log.Info(StatusText = "Запуск служб в процессе...");
+                        winampControl.LaunchBind();
+                        winampFilesMonitor.MonitorFilesChanges();
+                    })
+                    .ContinueWith(t => log.Info(StatusText = "Запуск служб завершён"));
+            return task;
+        }
+
+        public void Init()
+        {
+            log.Info(StatusText = "Инициализация в процессе...");
+            LoadFromDb()
+                .ContinueWith(task => RunServices())
+                .ContinueWith(task => log.Info(StatusText = "Инициализация завершена"));
         }
 
         #region IDisposable

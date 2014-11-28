@@ -1,28 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Subjects;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reactive.Disposables;
+using Codeplex.Reactive;
 using Oleg_ivo.MeloManager.ServiceReference1;
 
 namespace Oleg_ivo.MeloManager.Winamp
 {
     class WinampServiceCallback : IWinampServiceCallback, IDisposable
     {
+        private readonly CompositeDisposable disposer = new CompositeDisposable();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="T:System.Object"/> class.
         /// </summary>
         public WinampServiceCallback()
         {
-            CurrentSongSubject = new Subject<string>();
+            CurrentSong = new ReactiveProperty<string>();
+            disposer.Add(CurrentSong);
         }
 
-        public Subject<string> CurrentSongSubject { get; private set; }
+        public ReactiveProperty<string> CurrentSong { get; private set; }
 
         public void OnCurrentSongChanged(string filename)
         {
-            CurrentSongSubject.OnNext(filename);
+            CurrentSong.Value = filename;
         }
 
         /// <summary>
@@ -30,9 +30,7 @@ namespace Oleg_ivo.MeloManager.Winamp
         /// </summary>
         public void Dispose()
         {
-            if (CurrentSongSubject == null) return;
-            CurrentSongSubject.Dispose();
-            CurrentSongSubject = null;
+            disposer.Dispose();
         }
     }
 }
