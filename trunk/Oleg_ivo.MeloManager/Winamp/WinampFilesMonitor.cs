@@ -35,11 +35,11 @@ namespace Oleg_ivo.MeloManager.Winamp
             disposer.Dispose();
         }
 
-        public IEnumerable<Playlist> RunImportAll(Category winampCategory)
+        public IEnumerable<Playlist> RunImport(Category winampCategory, IEnumerable<string> changedPlaylists)
         {
             lock (importer)
             {
-                var playlistFilenames = importer.Adapter.Dic.Keys.Select(f => Path.Combine(options.PlaylistsPath, f));
+                var playlistFilenames = changedPlaylists ?? importer.Adapter.Dic.Keys.Select(f => Path.Combine(options.PlaylistsPath, f));
                 return importer.RunImportAll(playlistFilenames, winampCategory);
             }
         }
@@ -113,6 +113,19 @@ namespace Oleg_ivo.MeloManager.Winamp
                 //importer.Import(filename);
                 //importer.DataContext.SubmitChanges();
             }
+        }
+
+        public List<string> GetChangedPlaylists()
+        {
+            var now = DateTime.Now;
+            var changedPlaylists = options.LastPlaylistsImportDate.Equals(DateTime.MinValue)
+                ? null
+                : importer.Adapter.Dic.Keys.Select(f => new FileInfo(Path.Combine(options.PlaylistsPath, f)))
+                    .Where(info => info.LastWriteTime > options.LastPlaylistsImportDate)
+                    .Select(info => info.FullName)
+                    .ToList();
+            options.LastPlaylistsImportDate = now;
+            return changedPlaylists;
         }
     }
 }
