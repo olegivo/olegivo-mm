@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Threading.Tasks;
@@ -17,18 +16,27 @@ namespace Oleg_ivo.MeloManager.Winamp
         private readonly CompositeDisposable disposer = new CompositeDisposable();
         private WinampServiceClient client;
         private IDisposable currentSongChangedSubscription;
+        private readonly WinampServiceCallback winampServiceCallback;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:System.Object"/> class.
+        /// </summary>
+        public WinampControl()
+        {
+            winampServiceCallback = new WinampServiceCallback();
+            CurrentSong = winampServiceCallback.CurrentSong;
+            IsConnected = 
+                Observable.Interval(TimeSpan.FromSeconds(1))
+                    .Select(l => client != null && client.State == CommunicationState.Opened)
+                    //.DistinctUntilChanged()
+                    .ToReactiveProperty();
+            disposer.Add(IsConnected);
+       }
 
         public void LaunchBind()
         {
             var endpointAddress = new EndpointAddress("net.tcp://localhost:9000/winamp_wcf");
             var netTcpBinding = new NetTcpBinding {OpenTimeout = TimeSpan.FromSeconds(1)};
-            var winampServiceCallback = new WinampServiceCallback();
-            CurrentSongSubject = winampServiceCallback.CurrentSongSubject;
-            IsConnected =
-                Observable.Interval(TimeSpan.FromSeconds(1))
-                    .Select(l => client != null && client.State == CommunicationState.Opened)
-                    //.DistinctUntilChanged()
-                    .ToReactiveProperty();
 
             disposer.Add(IsConnected.Where(isConnected => !isConnected)
                 .Subscribe(_ =>
@@ -52,7 +60,7 @@ namespace Oleg_ivo.MeloManager.Winamp
                     winampServiceClient.Ping();
                     log.Debug("Winamp на связи");
                     currentSongChangedSubscription =
-                        winampServiceCallback.CurrentSongSubject.Subscribe(OnCurrentSongChanged);
+                        winampServiceCallback.CurrentSong.Subscribe(OnCurrentSongChanged);
                 }
                 catch (TimeoutException)
                 {
@@ -68,7 +76,7 @@ namespace Oleg_ivo.MeloManager.Winamp
 
         public ReactiveProperty<bool> IsConnected { get; private set; }
 
-        public Subject<string> CurrentSongSubject { get; private set; }
+        public ReactiveProperty<string> CurrentSong { get; private set; }
 
         private void DisposeSubscription()
         {

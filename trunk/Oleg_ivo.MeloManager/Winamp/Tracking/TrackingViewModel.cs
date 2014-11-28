@@ -21,7 +21,7 @@ namespace Oleg_ivo.MeloManager.Winamp.Tracking
         public TrackingViewModel(WinampControl winampControl)
         {
             Enforce.ArgumentNotNull(winampControl, "winampControl");
-            disposer.Add(winampControl.CurrentSongSubject.Subscribe(OnCurrentSongChanged));
+            disposer.Add(winampControl.CurrentSong.Subscribe(OnCurrentSongChanged));
             InitCommands(winampControl);
         }
 

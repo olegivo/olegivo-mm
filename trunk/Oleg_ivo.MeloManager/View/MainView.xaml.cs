@@ -26,7 +26,7 @@ namespace Oleg_ivo.MeloManager.View
 
         private void MainView_OnLoaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.LoadFromDb();//ImportWinampPlaylists();//ViewModel.InitDataSource();//
+            ViewModel.Init();//ImportWinampPlaylists();//ViewModel.InitDataSource();//
         }
     }
 }
