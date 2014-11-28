@@ -1,3 +1,4 @@
+using System;
 using Oleg_ivo.MeloManager.Properties;
 
 namespace Oleg_ivo.MeloManager.Prism
@@ -38,5 +39,15 @@ namespace Oleg_ivo.MeloManager.Prism
         /// 
         /// </summary>
         public string ConnectionString { get { return Settings.Default.ConnectionString; } }
+
+        public DateTime LastPlaylistsImportDate
+        {
+            get { return Settings.Default.LastPlaylistsImportDate; }
+            set
+            {
+                Settings.Default.LastPlaylistsImportDate = value;
+                Settings.Default.Save();
+            }
+        }
     }
 }
