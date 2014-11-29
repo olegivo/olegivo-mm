@@ -7,6 +7,7 @@ using Autofac;
 using NLog;
 using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
+using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.MeloManager.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.PlaylistFileAdapters;
@@ -92,8 +93,6 @@ namespace Oleg_ivo.MeloManager.Winamp
             log.Debug("{0} deleted", filename);
         }
 
-
-
         private void OnChanged(string filename)
         {
             lock (importer)
@@ -118,12 +117,19 @@ namespace Oleg_ivo.MeloManager.Winamp
         public List<string> GetChangedPlaylists()
         {
             var now = DateTime.Now;
-            var changedPlaylists = options.LastPlaylistsImportDate.Equals(DateTime.MinValue)
-                ? null
-                : importer.Adapter.Dic.Keys.Select(f => new FileInfo(Path.Combine(options.PlaylistsPath, f)))
-                    .Where(info => info.LastWriteTime > options.LastPlaylistsImportDate)
-                    .Select(info => info.FullName)
-                    .ToList();
+            List<string> changedPlaylists;
+            if (options.LastPlaylistsImportDate.Equals(DateTime.MinValue))
+                changedPlaylists = null;
+            else
+            {
+                changedPlaylists =
+                    importer.Adapter.Dic.Keys.Select(f => new FileInfo(Path.Combine(options.PlaylistsPath, f)))
+                        .Where(info => info.LastWriteTime > options.LastPlaylistsImportDate)
+                        .Select(info => info.FullName)
+                        .ToList();
+                log.Debug("Обнаружено изменённых плейлистов: {0} (с {1})\n{2}", changedPlaylists.Count,
+                    options.LastPlaylistsImportDate, changedPlaylists.JoinToString("\n"));
+            }
             options.LastPlaylistsImportDate = now;
             return changedPlaylists;
         }
