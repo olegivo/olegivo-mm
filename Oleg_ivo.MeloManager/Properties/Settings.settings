@@ -2,20 +2,20 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Oleg_ivo.MeloManager.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="PlaylistsPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\oleg\AppData\Roaming\Winamp\Plugins\ml\playlists</Value>
-    </Setting>
-    <Setting Name="MusicFilesSource" Type="System.String" Scope="User">
+    <Setting Name="MusicFilesSource" Roaming="true" Type="System.String" Scope="User">
       <Value Profile="(Default)">D:\Music</Value>
     </Setting>
-    <Setting Name="Mp3TagRenamePreviewFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\oleg\AppData\Local\Temp\Mp3tag v2.58\preview.txt</Value>
-    </Setting>
-    <Setting Name="ConnectionString" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Data Source=OLEG-A\SQLEXPRESS;Initial Catalog=MeloManager;Integrated Security=True</Value>
-    </Setting>
-    <Setting Name="LastPlaylistsImportDate" Type="System.DateTime" Scope="User">
+    <Setting Name="LastPlaylistsImportDate" Roaming="true" Type="System.DateTime" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="PlaylistsPath" Roaming="true" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%userprofile%\AppData\Roaming\Winamp\Plugins\ml\playlists</Value>
+    </Setting>
+    <Setting Name="Mp3TagRenamePreviewFileName" Roaming="true" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%userprofile%\AppData\Local\Temp\Mp3tag v2.61a\preview.txt</Value>
+    </Setting>
+    <Setting Name="ConnectionString" Roaming="true" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Data Source=.\SQL2008R2;Initial Catalog=MeloManager;Integrated Security=True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

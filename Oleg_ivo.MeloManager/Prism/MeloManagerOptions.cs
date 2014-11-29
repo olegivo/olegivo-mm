@@ -1,5 +1,6 @@
 using System;
 using Oleg_ivo.MeloManager.Properties;
+using Oleg_ivo.Tools.Utils;
 
 namespace Oleg_ivo.MeloManager.Prism
 {
@@ -13,7 +14,10 @@ namespace Oleg_ivo.MeloManager.Prism
         /// <summary>
         /// Путь, по которому располагаются плейлисты, которые необходимо починить (без конечного "\")
         /// </summary>
-        public string PlaylistsPath { get { return Settings.Default.PlaylistsPath; } }
+        public string PlaylistsPath
+        {
+            get { return Utils.FileUtils.UnwrapEnvironmentBasedPath(Settings.Default.PlaylistsPath); }
+        }
 
         /// <summary>
         /// Пути (через ";"), содержащие музыкальные файлы (без конечных "\")
@@ -33,7 +37,7 @@ namespace Oleg_ivo.MeloManager.Prism
         /// <summary>
         /// 
         /// </summary>
-        public string Mp3TagRenamePreviewFileName { get { return Settings.Default.Mp3TagRenamePreviewFileName; } }
+        public string Mp3TagRenamePreviewFileName { get { return Utils.FileUtils.UnwrapEnvironmentBasedPath(Settings.Default.Mp3TagRenamePreviewFileName); } }
 
         /// <summary>
         /// 

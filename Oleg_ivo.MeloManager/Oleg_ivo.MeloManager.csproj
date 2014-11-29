@@ -307,6 +307,10 @@
       <Project>{194522F9-C931-45AB-98B1-BA0CDBD7DEB1}</Project>
       <Name>Oleg_ivo.Prism</Name>
     </ProjectReference>
+    <ProjectReference Include="..\External\Oleg_ivo.Tools\Oleg_ivo.Tools\Oleg_ivo.Tools.csproj">
+      <Project>{332A1894-922F-49A1-BD6A-E4E981FA2FEC}</Project>
+      <Name>Oleg_ivo.Tools</Name>
+    </ProjectReference>
     <ProjectReference Include="..\External\Sharpamp\Sharpamp.csproj">
       <Project>{09460e2b-da70-4667-b592-2c971019e9f2}</Project>
       <Name>Sharpamp</Name>
