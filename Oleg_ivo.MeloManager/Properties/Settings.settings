@@ -5,7 +5,7 @@
     <Setting Name="MusicFilesSource" Roaming="true" Type="System.String" Scope="User">
       <Value Profile="(Default)">D:\Music</Value>
     </Setting>
-    <Setting Name="LastPlaylistsImportDate" Roaming="true" Type="System.DateTime" Scope="User">
+    <Setting Name="LastPlaylistsImportDate" Roaming="true" GenerateDefaultValueInCode="false" Type="System.DateTime" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="PlaylistsPath" Roaming="true" Type="System.String" Scope="User">
