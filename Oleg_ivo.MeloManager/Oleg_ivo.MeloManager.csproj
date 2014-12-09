@@ -166,6 +166,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Dialogs\SimpleStringDialog.xaml.cs">
+      <DependentUpon>SimpleStringDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Extensions\DataContextExtensions.cs" />
     <Compile Include="Extensions\ReactiveExtensions.cs" />
     <Compile Include="Extensions\FileSystemWatcherExtensions.cs" />
@@ -187,6 +190,7 @@
     <Compile Include="Prism\MeloManagerBootstrapper.cs" />
     <Compile Include="Prism\MeloManagerPrismModule.cs" />
     <Compile Include="Prism\MeloManagerAutofacModule.cs" />
+    <Compile Include="Dialogs\SimpleStringDialogViewModel.cs" />
     <Compile Include="Repairers\AutoRepairer.cs" />
     <Compile Include="Repairers\Mp3TagRenameRepairer.cs" />
     <Compile Include="Repairers\RepairerBase.cs" />
@@ -213,6 +217,10 @@
     <Compile Include="Winamp\WinampFilesMonitor.cs" />
     <Compile Include="Winamp\WinampServiceCallback.cs" />
     <Compile Include="Winamp\WinampControl.cs" />
+    <Page Include="Dialogs\SimpleStringDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -299,6 +307,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\External\Oleg_ivo.Tools\Oleg_ivo.Base.WPF\Oleg_ivo.Base.WPF.csproj">
+      <Project>{EFCA38A8-EC7B-4947-80B6-9D9579BB19CC}</Project>
+      <Name>Oleg_ivo.Base.WPF</Name>
+    </ProjectReference>
     <ProjectReference Include="..\External\Oleg_ivo.Tools\Oleg_ivo.Base\Oleg_ivo.Base.csproj">
       <Project>{AC7D7F53-A330-45B0-A6B3-498BE85B9739}</Project>
       <Name>Oleg_ivo.Base</Name>
