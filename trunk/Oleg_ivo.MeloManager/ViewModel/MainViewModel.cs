@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -267,7 +266,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 });
             /*foreach (var mc in categories)
             {
-                MediaTree.AddCategory(mc, null);
+                MediaTree.AddMediaContainer(mc, null);
             }*/
             log.Info(StatusText = "Загрузка из БД в процессе...");
             return task;
@@ -289,22 +288,22 @@ namespace Oleg_ivo.MeloManager.ViewModel
             CanWorkWithDataContext.Value = true;
         }
 
-        private void TreeDeleteCurrent(MediaContainerTreeWrapper wrapper)
+        private void TreeDeleteCurrent()
         {
-            StatusText = "Удаление текущего элемента: " + wrapper;//TODO: Удаление текущего элемента
+            StatusText = "Удаление текущего элемента";
         }
 
-        private void TreeAddCategory(MediaContainerTreeWrapper parent)
+        private void TreeAddCategory()
         {
             StatusText = "Добавить категорию";
         }
 
-        private void TreeAddPlaylist(MediaContainerTreeWrapper parent)
+        private void TreeAddPlaylist()
         {
             StatusText = "Добавить плейлист";
         }
 
-        private void TreeAddMediaFile(MediaContainerTreeWrapper parent)
+        private void TreeAddMediaFile()
         {
             StatusText = "Добавить медиа-файл";
         }
@@ -381,10 +380,10 @@ namespace Oleg_ivo.MeloManager.ViewModel
             c3.AddChild(p3);
 
 
-            MediaTree.AddCategory(c1, null);
-            MediaTree.AddCategory(c2, null);
+            MediaTree.AddMediaContainer(c1, null);
+            MediaTree.AddMediaContainer(c2, null);
             c1.AddChild(c2);
-            MediaTree.AddCategory(c3, null);
+            MediaTree.AddMediaContainer(c3, null);
         }
 
         private void Test()

@@ -68,7 +68,7 @@ namespace Oleg_ivo.MeloManager.View
             treeSource.MediaDataContext = DataProvider.DataContext;
             foreach (var category in data.OfType<Category>().Where(c => c != null && c.ParentCategory == null))
             {
-                treeSource.AddCategory(category);
+                treeSource.AddMediaContainer(category);
             }
 
             tree.ItemsSource = treeSource;

@@ -61,6 +61,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                     .AsEnumerable()
                     .Where(playlist => playlist.OriginalFileName == filename)
                     .ToList();
+            //TODO: плейлист попытается добавиться, а не обновлён, если на разных компьютерах он хранится в одном и том же файле, но в разных папках (AppData)
             
             var playlistFromFile = Adapter.FileToPlaylist(filename);
             var retPlaylist = playlists.FirstOrDefault();
