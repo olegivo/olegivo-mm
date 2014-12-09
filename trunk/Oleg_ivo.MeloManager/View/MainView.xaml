@@ -43,18 +43,46 @@
             Grid.Row="0"
             Grid.Column="0" Grid.ColumnSpan="2">
             <ToolBar.Resources>
+                <!--TODO: иконки вынести в файл ресурсов-->
                 <Image x:Key="IconRefresh" Source="/Oleg_ivo.MeloManager;component/Resources/folder_refresh.ico" />
                 <Image x:Key="IconSave" Source="/Oleg_ivo.MeloManager;component/Resources/save.ico" />
+                <Image x:Key="IconDelete" Source="/Oleg_ivo.MeloManager;component/Resources/delete2.ico" />
+                <!--<Image x:Key="IconFolder" Source="/Oleg_ivo.MeloManager;component/Resources/folder.ico" />-->
                 <Image x:Key="IconAddFolder" Source="/Oleg_ivo.MeloManager;component/Resources/folder_add.ico" />
                 <Image x:Key="IconIntoFolder" Source="/Oleg_ivo.MeloManager;component/Resources/folder_into.ico" />
+                <Image x:Key="IconPlaylist" Source="/Oleg_ivo.MeloManager;component/Resources/form_yellow.ico" />
+                <Image x:Key="IconMediaFile" Source="/Oleg_ivo.MeloManager;component/Resources/headphones.ico" />
             </ToolBar.Resources>
-            <MenuItem Header="Load" Icon="{StaticResource IconRefresh}" Command="{Binding CommandLoadFromDb}" />
-            <MenuItem Header="Save" Icon="{StaticResource IconSave}" Command="{Binding CommandSaveAndLoad}" />
-            <MenuItem Header="Add category" Icon="{StaticResource IconAddFolder}" Command="{Binding CommandTreeAddCategory}" />
-            <MenuItem Header="Import from Winamp" Icon="{StaticResource IconIntoFolder}" Command="{Binding CommandImportWinampPlaylists}" />
-            <Separator />
-            <MenuItem Header="Init" Command="{Binding CommandInitDataSource}" />
-            <MenuItem Header="Test" Command="{Binding CommandTest}" />
+            <Menu>
+                <Menu.Resources>
+                    <Style TargetType="{x:Type MenuItem}" x:Key="IsEnabledToVisibility">
+                        <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Menu.Resources>
+                <MenuItem Header="Data">
+                    <MenuItem Header="Load" Icon="{StaticResource IconRefresh}" Command="{Binding CommandLoadFromDb}" />
+                    <MenuItem Header="Save" Icon="{StaticResource IconSave}" Command="{Binding CommandSaveAndLoad}" />
+                    <MenuItem Header="Import from Winamp" Icon="{StaticResource IconIntoFolder}" Command="{Binding CommandImportWinampPlaylists}" />
+                </MenuItem>
+                <MenuItem Header="Selected item">
+                    <MenuItem.Resources>
+                        <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource IsEnabledToVisibility}" />
+                    </MenuItem.Resources>
+                    <MenuItem Header="Delete" Icon="{StaticResource IconDelete}" Command="{Binding CommandTreeDeleteCurrent}"/>
+                    <MenuItem Header="Add category" Icon="{StaticResource IconAddFolder}" Command="{Binding CommandTreeAddCategory}" CommandParameter="{Binding MediaTree.CurrentWrapper.Value}"/>
+                    <MenuItem Header="Add Playlist" Icon="{StaticResource IconPlaylist}" Command="{Binding CommandTreeAddPlaylist}" CommandParameter="{Binding MediaTree.CurrentWrapper.Value}"/>
+                    <MenuItem Header="Add media file" Icon="{StaticResource IconMediaFile}" Command="{Binding CommandTreeAddMediaFile}" CommandParameter="{Binding MediaTree.CurrentWrapper.Value}"/>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="Debug">
+                    <MenuItem Header="Init" Command="{Binding CommandInitDataSource}" />
+                    <MenuItem Header="Test" Command="{Binding CommandTest}" />
+                </MenuItem>
+            </Menu>
         </ToolBar>
         <View:MediaTree 
             DataContext="{Binding MediaTree}"
