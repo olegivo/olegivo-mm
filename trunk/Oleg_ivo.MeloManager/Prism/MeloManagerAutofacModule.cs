@@ -1,6 +1,8 @@
 using Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.Autofac.Modules;
+using Oleg_ivo.Base.WPF.Dialogs;
+using Oleg_ivo.MeloManager.Dialogs;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.View;
 using Oleg_ivo.MeloManager.ViewModel;
@@ -42,6 +44,12 @@ namespace Oleg_ivo.MeloManager.Prism
             builder.RegisterType<MediaTree>();
 
             builder.RegisterType<TrackingViewModel>();
+
+            //MVVM Dialogs
+            builder.RegisterType<ModalDialogService>().AsImplementedInterfaces().SingleInstance();
+
+            builder.RegisterType<SimpleStringDialogViewModel>();
+            builder.RegisterType<SimpleStringDialog>().AsImplementedInterfaces();
         }
     }
 }

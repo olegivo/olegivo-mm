@@ -13,6 +13,8 @@ using NLog;
 using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.Extensions;
+using Oleg_ivo.Base.WPF.Dialogs;
+using Oleg_ivo.MeloManager.Dialogs;
 using Oleg_ivo.MeloManager.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.Winamp;
@@ -121,6 +123,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
         [Dependency(Required = true)]
         public TrackingViewModel Tracking { get; set; }
 
+        [Dependency]
+        public IModalDialogService ModalDialogService { get; set; }
 
         /// <summary>
         /// Статусная строка
@@ -199,7 +203,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             CommandTrayDoubleClick = new ReactiveCommand().AddHandler(SwitchHideShow);
 
             CommandInitDataSource = new ReactiveCommand(CanWorkWithDataContext).AddHandler(InitDataSource);
-            CommandTest = new ReactiveCommand(CanWorkWithDataContext).AddHandler(Test);
+            CommandTest = new ReactiveCommand().AddHandler(Test);
         }
 
         public ReactiveProperty<bool> CanWorkWithDataContext { get; set; }
@@ -385,8 +389,20 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private void Test()
         {
-            var winampTrackingWindow = context.ResolveUnregistered<WinampTrackingWindow>();
-            winampTrackingWindow.ShowDialog();
+            ModalDialogService.CreateAndShowDialog<SimpleStringDialogViewModel>(
+                modalWindow =>
+                {
+                    modalWindow.ViewModel.Caption = "Ввод строкового значения";
+                    modalWindow.ViewModel.Description = "Введите значение";
+                },
+                (model, dialogResult) =>
+                {
+                    if (dialogResult.HasValue && dialogResult.Value)
+                        MessageBox.Show("введено: " + model.Value);
+                });
+
+            /*var winampTrackingWindow = context.ResolveUnregistered<WinampTrackingWindow>();
+            winampTrackingWindow.ShowDialog();*/
             //winampControl.LoadPlaylist(@"f:\Subversion\MM\Oleg_ivo.MeloManager\bin\Debug\playlist.m3u");
             /*var mediaContainer = MediaTree.Items.First().UnderlyingItem;
             var playlistsPath = context.Resolve<MeloManagerOptions>().PlaylistsPath;
