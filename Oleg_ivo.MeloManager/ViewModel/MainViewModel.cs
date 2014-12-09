@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -59,6 +60,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
                     MediaTree.ParentListDataSourceChanged += MediaTree_ParentListDataSourceChanged;
                     MediaTree.ChildListDataSourceChanged += MediaTree_ChildListDataSourceChanged;
                     MediaTree.Deleting += MediaTree_Deleting;
+
+                    InitCommands();
                 }
                 RaisePropertyChanged(() => MediaTree);
             }
@@ -184,25 +187,33 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private void InitCommands()
         {
             CanWorkWithDataContext = new ReactiveProperty<bool>();
-
-            CommandTest = new ReactiveCommand(CanWorkWithDataContext).AddHandler(Test);
             CommandLoadFromDb = new ReactiveCommand(CanWorkWithDataContext).AddHandler(() => LoadFromDb());
             CommandSaveAndLoad = new ReactiveCommand(CanWorkWithDataContext).AddHandler(SaveAndLoad);
-            CommandTreeAddCategory = new ReactiveCommand(CanWorkWithDataContext).AddHandler(TreeAddCategory);
             CommandImportWinampPlaylists = new ReactiveCommand(CanWorkWithDataContext).AddHandler(() => ImportWinampPlaylists());
-            CommandInitDataSource = new ReactiveCommand(CanWorkWithDataContext).AddHandler(InitDataSource);
+
+            CommandTreeAddCategory = MediaTree.CommandAddCategoryToCurrent.AddHandler(TreeAddCategory);
+            CommandTreeAddPlaylist = MediaTree.CommandAddPlaylistToCurrent.AddHandler(TreeAddPlaylist);
+            CommandTreeAddMediaFile = MediaTree.CommandAddMediaFileToCurrent.AddHandler(TreeAddMediaFile);
+            CommandTreeDeleteCurrent = MediaTree.CommandDeleteCurrent.AddHandler(TreeDeleteCurrent);
+
             CommandTrayDoubleClick = new ReactiveCommand().AddHandler(SwitchHideShow);
+
+            CommandInitDataSource = new ReactiveCommand(CanWorkWithDataContext).AddHandler(InitDataSource);
+            CommandTest = new ReactiveCommand(CanWorkWithDataContext).AddHandler(Test);
         }
 
         public ReactiveProperty<bool> CanWorkWithDataContext { get; set; }
         
-
         private void SwitchHideShow()
         {
             if (mainWindow.WindowState == WindowState.Minimized)
             {
                 mainWindow.WindowState = WindowState.Maximized;
                 mainWindow.Show();
+                mainWindow.Activate();
+            }
+            if (!mainWindow.IsActive)
+            {
                 mainWindow.Activate();
             }
             else
@@ -217,7 +228,13 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         public ICommand CommandSaveAndLoad { get; private set; }
 
+        public ICommand CommandTreeDeleteCurrent { get; private set; }
+        
         public ICommand CommandTreeAddCategory { get; private set; }
+
+        public ICommand CommandTreeAddPlaylist { get; private set; }
+
+        public ICommand CommandTreeAddMediaFile { get; private set; }
 
         public ICommand CommandImportWinampPlaylists { get; private set; }
 
@@ -268,9 +285,24 @@ namespace Oleg_ivo.MeloManager.ViewModel
             CanWorkWithDataContext.Value = true;
         }
 
-        private void TreeAddCategory()
+        private void TreeDeleteCurrent(MediaContainerTreeWrapper wrapper)
         {
-            StatusText = "Добавить категорию";//TODO: Добавить категорию
+            StatusText = "Удаление текущего элемента: " + wrapper;//TODO: Удаление текущего элемента
+        }
+
+        private void TreeAddCategory(MediaContainerTreeWrapper parent)
+        {
+            StatusText = "Добавить категорию";
+        }
+
+        private void TreeAddPlaylist(MediaContainerTreeWrapper parent)
+        {
+            StatusText = "Добавить плейлист";
+        }
+
+        private void TreeAddMediaFile(MediaContainerTreeWrapper parent)
+        {
+            StatusText = "Добавить медиа-файл";
         }
 
         /// <summary>
@@ -487,7 +519,6 @@ namespace Oleg_ivo.MeloManager.ViewModel
             {
                 // Code runs "for real"
                 mainWindow = Application.Current.MainWindow;
-                InitCommands();
             }
         }
 

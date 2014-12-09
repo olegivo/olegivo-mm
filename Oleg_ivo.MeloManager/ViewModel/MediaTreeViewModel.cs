@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using Autofac;
+using Codeplex.Reactive;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using NLog;
 using Oleg_ivo.Base.Autofac;
+using Oleg_ivo.MeloManager.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.Winamp;
 
@@ -17,7 +21,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
     /// <summary>
     /// 
     /// </summary>
-    public class MediaTreeViewModel : ViewModelBase
+    public class MediaTreeViewModel : ViewModelBase, IDisposable
     {
         private readonly IComponentContext context;
 
@@ -25,13 +29,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private static Logger log = LogManager.GetCurrentClassLogger();
         
         private ObservableCollection<MediaContainerTreeWrapper> items;
-        private MediaContainerTreeWrapper currentItem;
-        private MediaContainer currentTreeMediaContainer;
         private ObservableCollection<MediaContainer> childListDataSource;
         private ObservableCollection<MediaContainer> parentListDataSource;
-
-        private ICommand commandTreeAddCategory;
-        private ICommand commandDeleteItem;
 
         #endregion
 
@@ -55,14 +54,14 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// </summary>
         public MediaContainerTreeWrapper CurrentItem
         {
-            get { return currentItem; }
+            get { return CurrentWrapper.Value; }
             set
             {
-                if (currentItem == value) return;
+                if (CurrentItem == value) return;
                 //TODO: история переходов
-                currentItem = value;
+                CurrentWrapper.Value = value;
                 RaisePropertyChanged(() => CurrentItem);
-                CurrentTreeMediaContainer = CurrentItem != null ? CurrentItem.UnderlyingItem : null;
+                RaisePropertyChanged(() => CurrentTreeMediaContainer);
             }
         }
 
@@ -71,19 +70,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// </summary>
         public MediaContainer CurrentTreeMediaContainer
         {
-            get
-            {
-                return currentTreeMediaContainer;
-            }
-            private set
-            {
-                if (currentTreeMediaContainer == value) return;
-
-                currentTreeMediaContainer = value;
-                ChildListDataSource = CurrentTreeMediaContainer!=null ? new ObservableCollection<MediaContainer>(CurrentTreeMediaContainer.Children) : null;
-                ParentListDataSource = CurrentTreeMediaContainer!=null ? new ObservableCollection<MediaContainer>(CurrentTreeMediaContainer.Parents) : null;
-                RaisePropertyChanged(() => CurrentTreeMediaContainer);
-            }
+            get { return CurrentContainer.Value; }
         }
 
         /// <summary>
@@ -170,24 +157,22 @@ namespace Oleg_ivo.MeloManager.ViewModel
         #endregion
 
         #region Commands
-        public ICommand CommandTreeAddCategory
-        {
-            get
-            {
-                return commandTreeAddCategory ??
-                       (commandTreeAddCategory = new RelayCommand<object>(TreeAddCategory));
-            }
-        }
 
-        public ICommand CommandDeleteItem
-        {
-            get
-            {
-                return commandDeleteItem ??
-                       (commandDeleteItem = new RelayCommand<MediaContainerTreeWrapper>(DeleteItem));
-            }
-        }
+        public ICommand CommandDeleteItem { get; private set; }
+        public ReactiveCommand<MediaContainerTreeWrapper> CommandDeleteCurrent { get; private set; }
+        public ReactiveCommand<MediaContainerTreeWrapper> CommandAddCategoryToCurrent { get; private set; }
+        public ReactiveCommand<MediaContainerTreeWrapper> CommandAddPlaylistToCurrent { get; private set; }
+        public ReactiveCommand<MediaContainerTreeWrapper> CommandAddMediaFileToCurrent { get; private set; }
 
+        private void InitCommands()
+        {
+            CommandDeleteItem = new RelayCommand<MediaContainerTreeWrapper>(DeleteItem);
+            CommandDeleteCurrent = new ReactiveCommand<MediaContainerTreeWrapper>(CurrentContainer.Select(c => c != null), false).AddHandler(DeleteItem);
+
+            CommandAddCategoryToCurrent = new ReactiveCommand<MediaContainerTreeWrapper>(CurrentContainer.Select(c => c == null || c is Category)).AddHandler(AddCategory);
+            CommandAddPlaylistToCurrent = new ReactiveCommand<MediaContainerTreeWrapper>(CurrentContainer.Select(c => c is Category), false).AddHandler(AddPlaylist);
+            CommandAddMediaFileToCurrent = new ReactiveCommand<MediaContainerTreeWrapper>(CurrentContainer.Select(c => c is Category || c is Playlist), false).AddHandler(AddMediaFile);
+        }
         #endregion
 
         #region Methods
@@ -216,9 +201,15 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         public void AddCategory(Category category, MediaContainerTreeWrapper parent)
         {
-            Items.Add(new MediaContainerTreeWrapper(category, parent, context, winampControl));
+            var wrapper = new MediaContainerTreeWrapper(category, parent, context, winampControl);
+            if (parent == null)
+                Items.Add(wrapper);
+            else
+                parent.ChildItems.Add(wrapper);
+            
             if (category.Id == 0)
                 DataContext.MediaContainers.InsertOnSubmit(category);
+            CurrentItem = wrapper;
         }
 
         public event EventHandler<DeletingEventArgs<List<MediaContainerTreeWrapper>>> Deleting;
@@ -262,10 +253,20 @@ namespace Oleg_ivo.MeloManager.ViewModel
             }
         }
 
-        private void TreeAddCategory(object mediaTree)
+        private void AddCategory(MediaContainerTreeWrapper parent)
         {
-            //throw new NotImplementedException();
+            var category = new Category {Name = "Новая категория"};
+            AddCategory(category, parent);
         }
+
+        private void AddPlaylist(MediaContainerTreeWrapper parent)
+        {
+        }
+
+        private void AddMediaFile(MediaContainerTreeWrapper parent)
+        {
+        }
+
 
         #endregion
 
@@ -273,6 +274,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private MediaContainerTreeSource treeDataSource;
         private string nameFilter;
         private readonly WinampControl winampControl;
+        private readonly CompositeDisposable disposer;
 
         /// <summary>
         /// Источник данных для дерева
@@ -305,12 +307,30 @@ namespace Oleg_ivo.MeloManager.ViewModel
             this.winampControl = Enforce.ArgumentNotNull(winampControl, "winampControl");
             items = new ObservableCollection<MediaContainerTreeWrapper>();
             items.CollectionChanged += items_CollectionChanged;
+            CurrentWrapper = new ReactiveProperty<MediaContainerTreeWrapper>();
+            CurrentContainer = CurrentWrapper.Select(wrapper => wrapper != null ? wrapper.UnderlyingItem : null).ToReactiveProperty();
+            disposer = new CompositeDisposable(
+                CurrentWrapper.Subscribe(w=>log.Debug("Текущая обёртка: {0}", w)),
+                CurrentContainer.Subscribe(c => log.Debug("Текущий контейнер: {0}", c))
+                );
+            InitCommands();
         }
+
+        public ReactiveProperty<MediaContainer> CurrentContainer { get; private set; }
+
+        public ReactiveProperty<MediaContainerTreeWrapper> CurrentWrapper { get; private set; }
 
         void items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             RaisePropertyChanged(() => Items);
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            disposer.Dispose();
+        }
     }
 }

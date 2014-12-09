@@ -50,7 +50,7 @@
                         ToolTip="Воспроизвести"
                         Command="{Binding CommandPlay}">
                         <MenuItem.Icon>
-                            <Image Source="/Oleg_ivo.MeloManager;component/Resources/media_play.ico"   />
+                            <Image Source="/Oleg_ivo.MeloManager;component/Resources/media_play.ico"   /><!--TODO:вынести в ресурс-->
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem 
@@ -58,7 +58,7 @@
                         Command="{Binding ElementName=mediaTree, Path=DataContext.CommandDeleteItem}" 
                         CommandParameter="{Binding}">
                         <MenuItem.Icon>
-                            <Image Source="/Oleg_ivo.MeloManager;component/Resources/delete2.ico"   />
+                            <Image Source="/Oleg_ivo.MeloManager;component/Resources/delete2.ico"   /><!--TODO:вынести в ресурс-->
                         </MenuItem.Icon>
                     </MenuItem>
                 </ToolBarPanel>
