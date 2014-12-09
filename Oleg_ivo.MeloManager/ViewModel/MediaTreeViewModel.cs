@@ -12,6 +12,9 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using NLog;
 using Oleg_ivo.Base.Autofac;
+using Oleg_ivo.Base.Autofac.DependencyInjection;
+using Oleg_ivo.Base.WPF.Dialogs;
+using Oleg_ivo.MeloManager.Dialogs;
 using Oleg_ivo.MeloManager.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.Winamp;
@@ -36,6 +39,9 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         #region Properties
         public MediaDataContext DataContext { get; set; }
+
+        [Dependency(Required = true)]
+        public IModalDialogService ModalDialogService { get; set; }
 
         public ObservableCollection<MediaContainerTreeWrapper> Items
         {
@@ -159,19 +165,19 @@ namespace Oleg_ivo.MeloManager.ViewModel
         #region Commands
 
         public ICommand CommandDeleteItem { get; private set; }
-        public ReactiveCommand<MediaContainerTreeWrapper> CommandDeleteCurrent { get; private set; }
-        public ReactiveCommand<MediaContainerTreeWrapper> CommandAddCategoryToCurrent { get; private set; }
-        public ReactiveCommand<MediaContainerTreeWrapper> CommandAddPlaylistToCurrent { get; private set; }
-        public ReactiveCommand<MediaContainerTreeWrapper> CommandAddMediaFileToCurrent { get; private set; }
+        public ReactiveCommand CommandDeleteCurrent { get; private set; }
+        public ReactiveCommand CommandAddCategoryToCurrent { get; private set; }
+        public ReactiveCommand CommandAddPlaylistToCurrent { get; private set; }
+        public ReactiveCommand CommandAddMediaFileToCurrent { get; private set; }
 
         private void InitCommands()
         {
             CommandDeleteItem = new RelayCommand<MediaContainerTreeWrapper>(DeleteItem);
-            CommandDeleteCurrent = new ReactiveCommand<MediaContainerTreeWrapper>(CurrentContainer.Select(c => c != null), false).AddHandler(DeleteItem);
+            CommandDeleteCurrent = new ReactiveCommand(CurrentContainer.Select(c => c != null), false).AddHandler(() => DeleteItem(CurrentWrapper.Value));
 
-            CommandAddCategoryToCurrent = new ReactiveCommand<MediaContainerTreeWrapper>(CurrentContainer.Select(c => c == null || c is Category)).AddHandler(AddCategory);
-            CommandAddPlaylistToCurrent = new ReactiveCommand<MediaContainerTreeWrapper>(CurrentContainer.Select(c => c is Category), false).AddHandler(AddPlaylist);
-            CommandAddMediaFileToCurrent = new ReactiveCommand<MediaContainerTreeWrapper>(CurrentContainer.Select(c => c is Category || c is Playlist), false).AddHandler(AddMediaFile);
+            CommandAddCategoryToCurrent = new ReactiveCommand(CurrentContainer.Select(c => c == null || c is Category)).AddHandler(() => AddCategory(CurrentWrapper.Value));
+            CommandAddPlaylistToCurrent = new ReactiveCommand(CurrentContainer.Select(c => c is Category), false).AddHandler(() => AddPlaylist(CurrentWrapper.Value));
+            CommandAddMediaFileToCurrent = new ReactiveCommand(CurrentContainer.Select(c => c is Category || c is Playlist), false).AddHandler(() => AddMediaFile(CurrentWrapper.Value));
         }
         #endregion
 
@@ -199,16 +205,16 @@ namespace Oleg_ivo.MeloManager.ViewModel
                     mediaContainers.Select(mc => new MediaContainerTreeWrapper(mc, null, context, winampControl)));
         }
 
-        public void AddCategory(Category category, MediaContainerTreeWrapper parent)
+        public void AddMediaContainer(MediaContainer mediaContainer, MediaContainerTreeWrapper parent)
         {
-            var wrapper = new MediaContainerTreeWrapper(category, parent, context, winampControl);
+            var wrapper = new MediaContainerTreeWrapper(mediaContainer, parent, context, winampControl);
             if (parent == null)
                 Items.Add(wrapper);
             else
                 parent.ChildItems.Add(wrapper);
             
-            if (category.Id == 0)
-                DataContext.MediaContainers.InsertOnSubmit(category);
+            if (mediaContainer.Id == 0)
+                DataContext.MediaContainers.InsertOnSubmit(mediaContainer);
             CurrentItem = wrapper;
         }
 
@@ -255,16 +261,59 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private void AddCategory(MediaContainerTreeWrapper parent)
         {
-            var category = new Category {Name = "Новая категория"};
-            AddCategory(category, parent);
+            ModalDialogService.CreateAndShowDialog<SimpleStringDialogViewModel>(
+                modalWindow =>
+                {
+                    modalWindow.ViewModel.Caption = "Добавление категории";
+                    modalWindow.ViewModel.Description = "Введите название";
+                    modalWindow.ViewModel.Value = "Новая категория";
+                },
+                (model, dialogResult) =>
+                {
+                    if (dialogResult.HasValue && dialogResult.Value)
+                    {
+                        var category = new Category { Name = model.Value };
+                        AddMediaContainer(category, parent);
+                    }
+                });
         }
 
         private void AddPlaylist(MediaContainerTreeWrapper parent)
         {
+            ModalDialogService.CreateAndShowDialog<SimpleStringDialogViewModel>(
+                modalWindow =>
+                {
+                    modalWindow.ViewModel.Caption = "Добавление плейлиста";
+                    modalWindow.ViewModel.Description = "Введите название";
+                    modalWindow.ViewModel.Value = "Новый плейлист";
+                },
+                (model, dialogResult) =>
+                {
+                    if (dialogResult.HasValue && dialogResult.Value)
+                    {
+                        var playlist = new Playlist {Name = model.Value};
+                        AddMediaContainer(playlist, parent);
+                    }
+                });
         }
 
         private void AddMediaFile(MediaContainerTreeWrapper parent)
         {
+            ModalDialogService.CreateAndShowDialog<SimpleStringDialogViewModel>(
+                modalWindow =>
+                {
+                    modalWindow.ViewModel.Caption = "Добавление медиа-файла";
+                    modalWindow.ViewModel.Description = "Введите название";
+                    modalWindow.ViewModel.Value = "Новый меди-файл";
+                },
+                (model, dialogResult) =>
+                {
+                    if (dialogResult.HasValue && dialogResult.Value)
+                    {
+                        var playlist = new MediaFile { Name = model.Value };
+                        AddMediaContainer(playlist, parent);
+                    }
+                });
         }
 
 
