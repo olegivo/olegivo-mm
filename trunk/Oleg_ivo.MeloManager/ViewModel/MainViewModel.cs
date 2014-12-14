@@ -13,6 +13,7 @@ using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.Base.WPF.Dialogs;
+using Oleg_ivo.Base.WPF.Extensions;
 using Oleg_ivo.MeloManager.Dialogs;
 using Oleg_ivo.MeloManager.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
@@ -391,13 +392,23 @@ namespace Oleg_ivo.MeloManager.ViewModel
             ModalDialogService.CreateAndShowDialog<SimpleStringDialogViewModel>(
                 modalWindow =>
                 {
+                    //modalWindow.Title = "Ввод строкового значения";
                     modalWindow.ViewModel.Caption = "Ввод строкового значения";
+                    modalWindow.ViewModel.Value = "test";
                     modalWindow.ViewModel.Description = "Введите значение";
                 },
                 (model, dialogResult) =>
                 {
-                    if (dialogResult.HasValue && dialogResult.Value)
-                        MessageBox.Show("введено: " + model.Value);
+                    if (dialogResult.HasValue)
+                    {
+                        if (dialogResult.Value)
+                            MessageBox.Show("Введено: " + model.Value);
+                        else
+                            MessageBox.Show("Не введено");
+                    }
+                    else
+                        MessageBox.Show("Неизвестно");
+
                 });
 
             /*var winampTrackingWindow = context.ResolveUnregistered<WinampTrackingWindow>();
