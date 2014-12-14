@@ -5,7 +5,7 @@ using Codeplex.Reactive;
 using GalaSoft.MvvmLight;
 using NLog;
 using Oleg_ivo.Base.Autofac;
-using Oleg_ivo.MeloManager.Extensions;
+using Oleg_ivo.Base.WPF.Extensions;
 
 namespace Oleg_ivo.MeloManager.Winamp.Tracking
 {

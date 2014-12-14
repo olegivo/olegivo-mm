@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -14,8 +15,8 @@ using NLog;
 using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.WPF.Dialogs;
+using Oleg_ivo.Base.WPF.Extensions;
 using Oleg_ivo.MeloManager.Dialogs;
-using Oleg_ivo.MeloManager.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.Winamp;
 
@@ -369,7 +370,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         public ReactiveProperty<MediaContainerTreeWrapper> CurrentWrapper { get; private set; }
 
-        void items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        void items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             RaisePropertyChanged(() => Items);
         }
