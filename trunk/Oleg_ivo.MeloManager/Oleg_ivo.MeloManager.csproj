@@ -170,7 +170,6 @@
       <DependentUpon>SimpleStringDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\DataContextExtensions.cs" />
-    <Compile Include="Extensions\ReactiveExtensions.cs" />
     <Compile Include="Extensions\FileSystemWatcherExtensions.cs" />
     <Compile Include="MediaIconsResources.Designer.cs">
       <AutoGen>True</AutoGen>
