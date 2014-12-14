@@ -1,19 +1,13 @@
-using Autofac;
-using GalaSoft.MvvmLight;
 using NLog;
-using Oleg_ivo.Base.Autofac.DependencyInjection;
+using Oleg_ivo.Base.WPF.Dialogs;
 
 namespace Oleg_ivo.MeloManager.Dialogs
 {
-    public class SimpleStringDialogViewModel : ViewModelBase
+    public class SimpleStringDialogViewModel : DialogViewModelBase
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
         private string value;
         private string description;
-        private string caption;
-
-        [Dependency]
-        public IComponentContext Context { get; set; }
 
         public string Value
         {
@@ -34,17 +28,6 @@ namespace Oleg_ivo.MeloManager.Dialogs
                 if (description == value) return;
                 description = value;
                 RaisePropertyChanged(() => Description);
-            }
-        }
-
-        public string Caption
-        {
-            get { return caption; }
-            set
-            {
-                if (caption == value) return;
-                caption = value;
-                RaisePropertyChanged(() => Caption);
             }
         }
     }
