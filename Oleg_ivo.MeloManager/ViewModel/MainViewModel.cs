@@ -7,15 +7,14 @@ using System.Windows;
 using System.Windows.Input;
 using Autofac;
 using Codeplex.Reactive;
-using GalaSoft.MvvmLight;
 using NLog;
 using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.Base.WPF.Dialogs;
 using Oleg_ivo.Base.WPF.Extensions;
+using Oleg_ivo.Base.WPF.ViewModels;
 using Oleg_ivo.MeloManager.Dialogs;
-using Oleg_ivo.MeloManager.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.Winamp;
 using Oleg_ivo.MeloManager.Winamp.Tracking;
@@ -25,7 +24,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
     /// <summary>
     /// 
     /// </summary>
-    public class MainViewModel : ViewModelBase, IDisposable/*TODO: IDisposable реализовать в промежуточном базовом классе (+virtual)*/
+    public class MainViewModel : ViewModelBase
     {
         #region Fields
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
@@ -536,6 +535,10 @@ namespace Oleg_ivo.MeloManager.ViewModel
             this.context = Enforce.ArgumentNotNull(context, "context");
             this.winampControl = Enforce.ArgumentNotNull(winampControl, "winampControl");
             this.winampFilesMonitor = Enforce.ArgumentNotNull(winampFilesMonitor, "winampFilesMonitor");
+
+            Disposer.Add(winampControl);
+            Disposer.Add(winampFilesMonitor);
+
             //InitializeComponents();
             if (IsInDesignMode)
             {
@@ -573,23 +576,6 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 .ContinueWith(task => log.Info(StatusText = "Инициализация завершена"));
         }
 
-        #region IDisposable
-        private bool isDisposed;
         private readonly Window mainWindow;
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            if (isDisposed) return;
-
-            winampControl.Dispose();
-            winampFilesMonitor.Dispose();
-
-            isDisposed = true;
-        }
-
-        #endregion
     }
 }

@@ -9,13 +9,13 @@ using System.Windows.Data;
 using System.Windows.Input;
 using Autofac;
 using Codeplex.Reactive;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using NLog;
 using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.WPF.Dialogs;
 using Oleg_ivo.Base.WPF.Extensions;
+using Oleg_ivo.Base.WPF.ViewModels;
 using Oleg_ivo.MeloManager.Dialogs;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.Winamp;
@@ -25,12 +25,12 @@ namespace Oleg_ivo.MeloManager.ViewModel
     /// <summary>
     /// 
     /// </summary>
-    public class MediaTreeViewModel : ViewModelBase, IDisposable
+    public class MediaTreeViewModel : ViewModelBase
     {
         private readonly IComponentContext context;
 
         #region Fields
-        private static Logger log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger log = LogManager.GetCurrentClassLogger();
         
         private ObservableCollection<MediaContainerTreeWrapper> items;
         private ObservableCollection<MediaContainer> childListDataSource;
@@ -324,7 +324,6 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private MediaContainerTreeSource treeDataSource;
         private string nameFilter;
         private readonly WinampControl winampControl;
-        private readonly CompositeDisposable disposer;
 
         /// <summary>
         /// Источник данных для дерева
@@ -359,10 +358,10 @@ namespace Oleg_ivo.MeloManager.ViewModel
             items.CollectionChanged += items_CollectionChanged;
             CurrentWrapper = new ReactiveProperty<MediaContainerTreeWrapper>();
             CurrentContainer = CurrentWrapper.Select(wrapper => wrapper != null ? wrapper.UnderlyingItem : null).ToReactiveProperty();
-            disposer = new CompositeDisposable(
+            Disposer.Add(new CompositeDisposable(
                 CurrentWrapper.Subscribe(w=>log.Debug("Текущая обёртка: {0}", w)),
                 CurrentContainer.Subscribe(c => log.Debug("Текущий контейнер: {0}", c))
-                );
+                ));
             InitCommands();
         }
 
@@ -375,12 +374,5 @@ namespace Oleg_ivo.MeloManager.ViewModel
             RaisePropertyChanged(() => Items);
         }
 
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            disposer.Dispose();
-        }
     }
 }

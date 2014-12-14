@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Reactive.Disposables;
 using System.Windows.Input;
 using Codeplex.Reactive;
-using GalaSoft.MvvmLight;
 using NLog;
 using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.WPF.Extensions;
+using Oleg_ivo.Base.WPF.ViewModels;
 
 namespace Oleg_ivo.MeloManager.Winamp.Tracking
 {
     public class TrackingViewModel : ViewModelBase
     {
         private readonly Logger log = LogManager.GetCurrentClassLogger();
-        private readonly CompositeDisposable disposer = new CompositeDisposable();
         private string filename;
 
         /// <summary>
@@ -21,7 +19,7 @@ namespace Oleg_ivo.MeloManager.Winamp.Tracking
         public TrackingViewModel(WinampControl winampControl)
         {
             Enforce.ArgumentNotNull(winampControl, "winampControl");
-            disposer.Add(winampControl.CurrentSong.Subscribe(OnCurrentSongChanged));
+            Disposer.Add(winampControl.CurrentSong.Subscribe(OnCurrentSongChanged));
             InitCommands(winampControl);
         }
 

@@ -15,7 +15,7 @@ using Oleg_ivo.MeloManager.Prism;
 
 namespace Oleg_ivo.MeloManager.Winamp
 {
-    public class WinampFilesMonitor//TODO: взять некоторые вещи из монитора папок?
+    public class WinampFilesMonitor : IDisposable//TODO: взять некоторые вещи из монитора папок?
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
         private readonly MeloManagerOptions options;
@@ -68,16 +68,8 @@ namespace Oleg_ivo.MeloManager.Winamp
             */
             var playlistsContainerThrottleTime = TimeSpan.FromSeconds(0.3);
             var playlistFileThrottleTime = TimeSpan.FromSeconds(1);
-            
             var observablePlaylistsContainer = fileWatcherPlaylistsContainer.ToObservable(WatcherChangeTypes.Changed, playlistsContainerThrottleTime);
             var observablePlaylistAdd = fileWatcherPlaylists.ToObservable(WatcherChangeTypes.Created, playlistFileThrottleTime)/*.Select(filename => )*/;//TODO: для того, чтобы взять актуальное значение название плейлиста из словаря, нужно, чтобы сначала сработал ObservablePlaylistsContainer, нужно его ждать
-            
-            /*
-            var throttledXml = observablePlaylistsContainer.Throttle(TimeSpan.FromSeconds(2));//xml, у которого устаканились изменения
-            var delayedPlaylistFileAdd = observablePlaylistAdd.Delay(TimeSpan.FromSeconds(2));
-            var playlistAddAfterOptionalXmlChanges = delayedPlaylistFileAdd.CombineLatest(throttledXml, (playlistFilename, xml) => playlistFilename);
-            */
-
             var observablePlaylistChange = fileWatcherPlaylists.ToObservable(WatcherChangeTypes.Changed, playlistFileThrottleTime);
             var observablePlaylistDelete = fileWatcherPlaylists.ToObservable(WatcherChangeTypes.Deleted, playlistFileThrottleTime);
 
@@ -107,7 +99,7 @@ namespace Oleg_ivo.MeloManager.Winamp
             {
                 log.Debug("{0} changed", filename);
                 importer.Import(filename);
-                importer.DataContext.SubmitChangesWithLog();
+                importer.DataContext.SubmitChanges();
             }
         }
 
