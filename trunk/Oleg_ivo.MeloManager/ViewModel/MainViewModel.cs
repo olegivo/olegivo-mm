@@ -16,6 +16,7 @@ using Oleg_ivo.Base.WPF.Extensions;
 using Oleg_ivo.Base.WPF.ViewModels;
 using Oleg_ivo.MeloManager.Dialogs;
 using Oleg_ivo.MeloManager.MediaObjects;
+using Oleg_ivo.MeloManager.Prism;
 using Oleg_ivo.MeloManager.Winamp;
 using Oleg_ivo.MeloManager.Winamp.Tracking;
 
@@ -32,6 +33,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private readonly IComponentContext context;
         private readonly WinampControl winampControl;
         private readonly WinampFilesMonitor winampFilesMonitor;
+        private readonly MeloManagerOptions options;
+        private readonly Window mainWindow;
 
         private MediaTreeViewModel mediaTree;
         private MediaListViewModel parents;
@@ -320,12 +323,13 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 {
                     CanWorkWithDataContext.Value = false;
                     StatusText = "Импорт плейлистов из Winamp в процессе...";
-                    var root = (MediaTree.CurrentItem != null
-                        ? MediaTree.CurrentItem.ParentsRecursive.LastOrDefault()
-                        : null) ??
-                               MediaTree.Items.FirstOrDefault();
+                    var root = MediaTree.Items.FirstOrDefault(item => item.UnderlyingItem.Id == options.WinampImportCategoryId)
+                               ?? (MediaTree.CurrentItem != null
+                                   ? MediaTree.CurrentItem.ParentsRecursive.LastOrDefault()
+                                   : null)
+                               ?? MediaTree.Items.FirstOrDefault();
                     var createNew = root == null;
-                    if (!createNew)
+                    if (!createNew && root.UnderlyingItem.Id != options.WinampImportCategoryId)
                     {
                         var messageBoxText =
                             string.Format(
@@ -343,8 +347,11 @@ namespace Oleg_ivo.MeloManager.ViewModel
                     }
                     var winampCategory = createNew
                         ? new Category {Name = "Плейлисты Winamp", IsRoot = true}
-                        : root.UnderlyingItem as Category;
+                        : (Category) root.UnderlyingItem;
                     winampFilesMonitor.RunImport(winampCategory, playlistsToImport);
+
+                    if (options.WinampImportCategoryId != winampCategory.Id)
+                        options.WinampImportCategoryId = winampCategory.Id;
                     return true;
                 })
                 .ContinueWith(task => { if(task.Result) LoadFromDb(); })
@@ -527,14 +534,16 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         #endregion
 
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel(IComponentContext context, WinampControl winampControl, WinampFilesMonitor winampFilesMonitor)//TODO: сделать для классов Winamp фасад
+        public MainViewModel(IComponentContext context, WinampControl winampControl, WinampFilesMonitor winampFilesMonitor, MeloManagerOptions options)//TODO: сделать для классов Winamp фасад
         {
             this.context = Enforce.ArgumentNotNull(context, "context");
             this.winampControl = Enforce.ArgumentNotNull(winampControl, "winampControl");
             this.winampFilesMonitor = Enforce.ArgumentNotNull(winampFilesMonitor, "winampFilesMonitor");
+            this.options = Enforce.ArgumentNotNull(options, "options");
 
             Disposer.Add(winampControl);
             Disposer.Add(winampFilesMonitor);
@@ -559,9 +568,12 @@ namespace Oleg_ivo.MeloManager.ViewModel
                     {
                         log.Info(StatusText = "Запуск служб в процессе...");
                         winampControl.LaunchBind();
-                        var changedPlaylists = winampFilesMonitor.GetChangedPlaylists();
-                        if (changedPlaylists != null && changedPlaylists.Any())
-                            ImportWinampPlaylists(changedPlaylists);
+                        if (options.AutoImportPlaylistsOnStart)
+                        {
+                            var changedPlaylists = winampFilesMonitor.GetChangedPlaylists();
+                            if (changedPlaylists != null && changedPlaylists.Any())
+                                ImportWinampPlaylists(changedPlaylists);
+                        }
                         winampFilesMonitor.MonitorFilesChanges();
                     })
                     .ContinueWith(t => log.Info(StatusText = "Запуск служб завершён"));
@@ -576,6 +588,5 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 .ContinueWith(task => log.Info(StatusText = "Инициализация завершена"));
         }
 
-        private readonly Window mainWindow;
     }
 }

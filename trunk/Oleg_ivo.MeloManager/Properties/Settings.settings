@@ -2,27 +2,33 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Oleg_ivo.MeloManager.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="MusicFilesSource" Roaming="true" Type="System.String" Scope="User">
+    <Setting Name="MusicFilesSource" Roaming="true" Type="System.String" Scope="Application">
       <Value Profile="(Default)">D:\Music</Value>
     </Setting>
     <Setting Name="LastPlaylistsImportDate" Roaming="true" GenerateDefaultValueInCode="false" Type="System.DateTime" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="PlaylistsPath" Roaming="true" Type="System.String" Scope="User">
+    <Setting Name="PlaylistsPath" Roaming="true" Type="System.String" Scope="Application">
       <Value Profile="(Default)">%userprofile%\AppData\Roaming\Winamp\Plugins\ml\playlists</Value>
     </Setting>
-    <Setting Name="Mp3TagRenamePreviewFileName" Roaming="true" Type="System.String" Scope="User">
+    <Setting Name="Mp3TagRenamePreviewFileName" Roaming="true" Type="System.String" Scope="Application">
       <Value Profile="(Default)">%userprofile%\AppData\Local\Temp\Mp3tag v2.61a\preview.txt</Value>
     </Setting>
-    <Setting Name="ConnectionString" Roaming="true" Type="System.String" Scope="User">
+    <Setting Name="ConnectionString" Roaming="true" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Data Source=.\SQL2008R2;Initial Catalog=MeloManager;Integrated Security=True</Value>
     </Setting>
-    <Setting Name="Users" Roaming="true" GenerateDefaultValueInCode="false" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="Users" Roaming="true" GenerateDefaultValueInCode="false" Type="System.Collections.Specialized.StringCollection" Scope="Application">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
   &lt;string&gt;oleg&lt;/string&gt;
   &lt;string&gt;oleg.industry&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="AutoImportPlaylistsOnStart" Roaming="true" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="WinampImportCategoryId" GenerateDefaultValueInCode="false" Type="System.Int64" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

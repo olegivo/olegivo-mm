@@ -23,16 +23,12 @@ namespace Oleg_ivo.MeloManager.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("D:\\Music")]
-        [global::System.Configuration.SettingsManageabilityAttribute(global::System.Configuration.SettingsManageability.Roaming)]
         public string MusicFilesSource {
             get {
                 return ((string)(this["MusicFilesSource"]));
-            }
-            set {
-                this["MusicFilesSource"] = value;
             }
         }
         
@@ -48,54 +44,62 @@ namespace Oleg_ivo.MeloManager.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("%userprofile%\\AppData\\Roaming\\Winamp\\Plugins\\ml\\playlists")]
-        [global::System.Configuration.SettingsManageabilityAttribute(global::System.Configuration.SettingsManageability.Roaming)]
         public string PlaylistsPath {
             get {
                 return ((string)(this["PlaylistsPath"]));
             }
-            set {
-                this["PlaylistsPath"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("%userprofile%\\AppData\\Local\\Temp\\Mp3tag v2.61a\\preview.txt")]
-        [global::System.Configuration.SettingsManageabilityAttribute(global::System.Configuration.SettingsManageability.Roaming)]
         public string Mp3TagRenamePreviewFileName {
             get {
                 return ((string)(this["Mp3TagRenamePreviewFileName"]));
             }
-            set {
-                this["Mp3TagRenamePreviewFileName"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=.\\SQL2008R2;Initial Catalog=MeloManager;Integrated Security=True")]
-        [global::System.Configuration.SettingsManageabilityAttribute(global::System.Configuration.SettingsManageability.Roaming)]
         public string ConnectionString {
             get {
                 return ((string)(this["ConnectionString"]));
             }
-            set {
-                this["ConnectionString"] = value;
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection Users {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["Users"]));
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         [global::System.Configuration.SettingsManageabilityAttribute(global::System.Configuration.SettingsManageability.Roaming)]
-        public global::System.Collections.Specialized.StringCollection Users {
+        public bool AutoImportPlaylistsOnStart {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["Users"]));
+                return ((bool)(this["AutoImportPlaylistsOnStart"]));
             }
             set {
-                this["Users"] = value;
+                this["AutoImportPlaylistsOnStart"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public long WinampImportCategoryId {
+            get {
+                return ((long)(this["WinampImportCategoryId"]));
+            }
+            set {
+                this["WinampImportCategoryId"] = value;
             }
         }
     }
