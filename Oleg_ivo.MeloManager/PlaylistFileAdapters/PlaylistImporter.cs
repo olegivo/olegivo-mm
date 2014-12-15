@@ -8,7 +8,8 @@ using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.MeloManager.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
-using File = Oleg_ivo.MeloManager.MediaObjects.File;
+using Oleg_ivo.MeloManager.Prism;
+using Oleg_ivo.Tools.Utils;
 
 namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 {
@@ -16,15 +17,21 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
     {
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public PlaylistImporter(IComponentContext context, MediaDataContext dataContext)
+        public PlaylistImporter(IComponentContext context, MediaDataContext dataContext, MeloManagerOptions options, IMediaCache mediaCache)
         {
             Adapter = context.ResolveUnregistered<TPlaylistFileAdapter>();
             DataContext = Enforce.ArgumentNotNull(dataContext, "dataContext");
+            Options = Enforce.ArgumentNotNull(options, "options");
+            MediaCache = Enforce.ArgumentNotNull(mediaCache, "mediaCache");
         }
 
+        public TPlaylistFileAdapter Adapter { get; private set; }
+        
         public MediaDataContext DataContext { get; private set; }
 
-        public TPlaylistFileAdapter Adapter { get; private set; }
+        public MeloManagerOptions Options { get; private set; }
+
+        public IMediaCache MediaCache { get; private set; }
 
         public IEnumerable<Playlist> RunImportAll(IEnumerable<string> playlistFilenames, Category winampCategory)
         {
@@ -55,25 +62,56 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
         public Playlist Import(string filename, Category importCategory = null)
         {
-            var playlists =
-                DataContext.MediaContainers.OfType<Playlist>()
-                    .Where(playlist => playlist != null)
-                    .AsEnumerable()
-                    .Where(playlist => playlist.OriginalFileName == filename)
-                    .ToList();
-            //TODO: плейлист попытается добавиться, а не обновлён, если на разных компьютерах он хранится в одном и том же файле, но в разных папках (AppData)
-            
-            var playlistFromFile = Adapter.FileToPlaylist(filename);
-            var retPlaylist = playlists.FirstOrDefault();
-            if (retPlaylist!=null)
+            var usage = Utils.FileUtils.GetEnvironmentVariableUsage(filename);
+            List<Playlist> playlists;
+            Playlist playlist;
+            if (usage != null)
             {
-                UpdatePlaylist(retPlaylist, playlistFromFile);
+                //плейлист попытается добавиться, а не обновлён, если на разных компьютерах он хранится в одном и том же файле, но в разных папках (AppData)
+                var currentUser = Environment.UserName.ToLower();
+                var otherUsers = Options.Users.OfType<string>().Where(user => user!=currentUser).ToList();
+
+                var wrapFunction = new Func<string, string>(source => source.Replace(usage.VariableValue, string.Format("%{0}%", usage.VariableName)));
+                var wrappedFilename = wrapFunction(filename);
+                playlists = DataContext.MediaContainers.OfType<Playlist>()
+                    .Where(p => p != null)
+                    .AsEnumerable()
+                    .Where(p => p.MediaContainerFiles.Any(mcf =>
+                    {
+                        var fullFileName = mcf.File.FullFileName;
+                        return wrapFunction(fullFileName) == wrappedFilename ||
+                               otherUsers.Any(
+                                   otherUser =>
+                                       wrapFunction(fullFileName.Replace(otherUser, currentUser)) == wrappedFilename);
+                    }))
+                    .ToList();
+                playlist = playlists.FirstOrDefault();
+                if (playlist != null 
+                    && (playlist.OriginalFileName==null || wrapFunction(playlist.OriginalFileName) != wrappedFilename))
+                {
+                    playlist.MediaContainerFiles.Add(new MediaContainerFile{File = MediaCache.GetOrAddCachedFile(filename)});
+                }
             }
             else
             {
-                retPlaylist = AddPlaylist(playlistFromFile, importCategory);
+                playlists = DataContext.MediaContainers.OfType<Playlist>()
+                    .Where(p => p != null)
+                    .AsEnumerable()
+                    .Where(p => p.OriginalFileName == filename)
+                    .ToList();
+                playlist = playlists.FirstOrDefault();
             }
-            return retPlaylist;
+
+            var playlistFromFile = Adapter.FileToPlaylist(filename);
+            if (playlist!=null)
+            {
+                UpdatePlaylist(playlist, playlistFromFile);
+            }
+            else
+            {
+                playlist = AddPlaylist(playlistFromFile, importCategory);
+            }
+            return playlist;
         }
 
         private void UpdatePlaylist(Playlist playlist, PrePlaylist playlistFromFile)
