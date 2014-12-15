@@ -62,6 +62,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
         public Playlist Import(string filename, Category importCategory = null)
         {
+            log.Debug("Импорт плейлиста из файла {0}{1}", filename, importCategory!=null ? string.Format(@" в категорию ""{0}""", importCategory.Name) : null);
             var usage = Utils.FileUtils.GetEnvironmentVariableUsage(filename);
             List<Playlist> playlists;
             Playlist playlist;

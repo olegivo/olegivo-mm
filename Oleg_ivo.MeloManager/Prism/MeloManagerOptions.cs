@@ -48,25 +48,24 @@ namespace Oleg_ivo.MeloManager.Prism
         public DateTime LastPlaylistsImportDate
         {
             get { return Settings.Default.LastPlaylistsImportDate; }
-            set
-            {
-                Settings.Default.LastPlaylistsImportDate = value;
-                //Save();
-            }
+            set { Settings.Default.LastPlaylistsImportDate = value; }
+        }
+
+        public bool AutoImportPlaylistsOnStart
+        {
+            get { return Settings.Default.AutoImportPlaylistsOnStart; }
+            set { Settings.Default.AutoImportPlaylistsOnStart = value; }
+        }
+
+        public long WinampImportCategoryId
+        {
+            get { return Settings.Default.WinampImportCategoryId; }
+            set { Settings.Default.WinampImportCategoryId = value; }
         }
 
         public StringCollection Users
         {
-            get
-            {
-                var settings = Settings.Default;
-                return settings.Users ?? (settings.Users = new StringCollection());
-            }
-            set
-            {
-                Settings.Default.Users = value;
-                Save();
-            }
+            get { return Settings.Default.Users; }
         }
 
         public void Save()
