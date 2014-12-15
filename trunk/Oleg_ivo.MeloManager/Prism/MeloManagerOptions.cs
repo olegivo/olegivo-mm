@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Specialized;
 using Oleg_ivo.MeloManager.Properties;
 using Oleg_ivo.Tools.Utils;
 
@@ -50,8 +51,27 @@ namespace Oleg_ivo.MeloManager.Prism
             set
             {
                 Settings.Default.LastPlaylistsImportDate = value;
-                Settings.Default.Save();
+                //Save();
             }
+        }
+
+        public StringCollection Users
+        {
+            get
+            {
+                var settings = Settings.Default;
+                return settings.Users ?? (settings.Users = new StringCollection());
+            }
+            set
+            {
+                Settings.Default.Users = value;
+                Save();
+            }
+        }
+
+        public void Save()
+        {
+            Settings.Default.Save();
         }
     }
 }
