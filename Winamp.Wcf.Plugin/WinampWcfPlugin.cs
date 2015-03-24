@@ -1,3 +1,5 @@
+//#define ATTACH_TO_DEBUG_MODE
+
 using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -36,7 +38,9 @@ namespace Winamp.Wcf.Plugin
             host.Description.Behaviors.Add(smb);
             host.AddServiceEndpoint("Winamp.Wcf.IWinampService", new NetTcpBinding(), uri);
             host.Open();
-            MessageBox.Show("Ready to attach debugger?");
+#if ATTACH_TO_DEBUG_MODE
+            System.Windows.MessageBox.Show("Ready to attach debugger?");
+#endif
             winampService.CurrentFileChanges = 
                 Observable.FromEventPattern<SongChangedEventArgs>(h => Winamp.SongChanged += h, h => Winamp.SongChanged -= h)
                             .Select(e => e.EventArgs.Song.Filename);
