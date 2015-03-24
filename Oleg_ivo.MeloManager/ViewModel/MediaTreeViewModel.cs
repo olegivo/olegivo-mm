@@ -8,7 +8,7 @@ using System.Reactive.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using Autofac;
-using Codeplex.Reactive;
+using Reactive.Bindings;
 using GalaSoft.MvvmLight.Command;
 using NLog;
 using Oleg_ivo.Base.Autofac;
