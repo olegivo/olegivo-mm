@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Threading.Tasks;
-using Codeplex.Reactive;
+using Reactive.Bindings;
 using NLog;
 using Oleg_ivo.MeloManager.ServiceReference1;
 

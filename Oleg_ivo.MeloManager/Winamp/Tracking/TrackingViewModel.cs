@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
-using Codeplex.Reactive;
+using Reactive.Bindings;
 using NLog;
 using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.WPF.Extensions;

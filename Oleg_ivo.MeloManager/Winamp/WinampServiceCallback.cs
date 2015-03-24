@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reactive.Disposables;
-using Codeplex.Reactive;
+using Reactive.Bindings;
 using Oleg_ivo.MeloManager.ServiceReference1;
 
 namespace Oleg_ivo.MeloManager.Winamp
