@@ -1,0 +1,3 @@
+[submodule "External/Oleg_ivo.Tools"]
+	path = External/Oleg_ivo.Tools
+	url = https://github.com/olegivo/olegivo-tools
