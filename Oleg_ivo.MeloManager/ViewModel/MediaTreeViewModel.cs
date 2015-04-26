@@ -266,14 +266,14 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 modalWindow =>
                 {
                     modalWindow.ViewModel.Caption = "Добавление категории";
-                    modalWindow.ViewModel.Description = "Введите название";
-                    modalWindow.ViewModel.Value = "Новая категория";
+                    modalWindow.ViewModel.ContentViewModel.Description = "Введите название";
+                    modalWindow.ViewModel.ContentViewModel.Value = "Новая категория";
                 },
                 (model, dialogResult) =>
                 {
                     if (dialogResult.HasValue && dialogResult.Value)
                     {
-                        var category = new Category { Name = model.Value };
+                        var category = new Category { Name = model.ContentViewModel.Value };
                         AddMediaContainer(category, parent);
                     }
                 });
@@ -285,14 +285,14 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 modalWindow =>
                 {
                     modalWindow.ViewModel.Caption = "Добавление плейлиста";
-                    modalWindow.ViewModel.Description = "Введите название";
-                    modalWindow.ViewModel.Value = "Новый плейлист";
+                    modalWindow.ViewModel.ContentViewModel.Description = "Введите название";
+                    modalWindow.ViewModel.ContentViewModel.Value = "Новый плейлист";
                 },
                 (model, dialogResult) =>
                 {
                     if (dialogResult.HasValue && dialogResult.Value)
                     {
-                        var playlist = new Playlist {Name = model.Value};
+                        var playlist = new Playlist { Name = model.ContentViewModel.Value };
                         AddMediaContainer(playlist, parent);
                     }
                 });
@@ -304,14 +304,14 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 modalWindow =>
                 {
                     modalWindow.ViewModel.Caption = "Добавление медиа-файла";
-                    modalWindow.ViewModel.Description = "Введите название";
-                    modalWindow.ViewModel.Value = "Новый меди-файл";
+                    modalWindow.ViewModel.ContentViewModel.Description = "Введите название";
+                    modalWindow.ViewModel.ContentViewModel.Value = "Новый меди-файл";
                 },
                 (model, dialogResult) =>
                 {
                     if (dialogResult.HasValue && dialogResult.Value)
                     {
-                        var playlist = new MediaFile { Name = model.Value };
+                        var playlist = new MediaFile { Name = model.ContentViewModel.Value };
                         AddMediaContainer(playlist, parent);
                     }
                 });

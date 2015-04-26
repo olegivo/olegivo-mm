@@ -400,15 +400,15 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 {
                     //modalWindow.Title = "Ввод строкового значения";
                     modalWindow.ViewModel.Caption = "Ввод строкового значения";
-                    modalWindow.ViewModel.Value = "test";
-                    modalWindow.ViewModel.Description = "Введите значение";
+                    modalWindow.ViewModel.ContentViewModel.Value = "test";
+                    modalWindow.ViewModel.ContentViewModel.Description = "Введите значение";
                 },
                 (model, dialogResult) =>
                 {
                     if (dialogResult.HasValue)
                     {
                         if (dialogResult.Value)
-                            MessageBox.Show("Введено: " + model.Value);
+                            MessageBox.Show("Введено: " + model.ContentViewModel.Value);
                         else
                             MessageBox.Show("Не введено");
                     }

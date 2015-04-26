@@ -1,9 +1,9 @@
 using NLog;
-using Oleg_ivo.Base.WPF.Dialogs;
+using Oleg_ivo.Base.WPF.ViewModels;
 
 namespace Oleg_ivo.MeloManager.Dialogs
 {
-    public class SimpleStringDialogViewModel : DialogViewModelBase
+    public class SimpleStringDialogViewModel : ViewModelBase
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
         private string value;

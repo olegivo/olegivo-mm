@@ -47,6 +47,7 @@ namespace Oleg_ivo.MeloManager.Prism
 
             //MVVM Dialogs
             builder.RegisterType<ModalDialogService>().AsImplementedInterfaces().SingleInstance();
+            builder.RegisterGeneric(typeof(DialogViewModel<>));
 
             builder.RegisterType<SimpleStringDialogViewModel>();
             builder.RegisterType<SimpleStringDialog>().AsImplementedInterfaces();
