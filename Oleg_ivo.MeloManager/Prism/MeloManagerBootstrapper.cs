@@ -52,7 +52,6 @@ namespace Oleg_ivo.MeloManager.Prism
                 if (options.Mp3TagRenameMode)
                 {
                     var mp3TagRenameRepairer = Container.ResolveUnregistered<Mp3TagRenameRepairer>();
-                    //mp3TagRenameRepairer.Repair(@"C:\Users\oleg\AppData\Roaming\Winamp\Plugins\ml\playlists\", @"C:\Users\oleg\AppData\Local\Temp\Mp3tag v2.58\preview.txt");
                     mp3TagRenameRepairer.Repair();
                 }
                 if (options.RepairMode)

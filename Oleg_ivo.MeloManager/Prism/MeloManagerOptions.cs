@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Specialized;
+using Microsoft.Win32;
 using Oleg_ivo.MeloManager.Properties;
 using Oleg_ivo.Tools.Utils;
 
@@ -7,6 +8,8 @@ namespace Oleg_ivo.MeloManager.Prism
 {
     public class MeloManagerOptions
     {
+        private string mp3TagRenamePreviewFileName;
+
         /// <summary>
         /// Название конфигурации
         /// </summary>
@@ -38,7 +41,23 @@ namespace Oleg_ivo.MeloManager.Prism
         /// <summary>
         /// 
         /// </summary>
-        public string Mp3TagRenamePreviewFileName { get { return Utils.FileUtils.UnwrapEnvironmentBasedPath(Settings.Default.Mp3TagRenamePreviewFileName); } }
+        public string Mp3TagRenamePreviewFileName
+        {
+            get
+            {
+                if (mp3TagRenamePreviewFileName == null)
+                {
+                    var mp3TagWithVersion =
+                        Registry.GetValue(
+                            @"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Mp3tag",
+                            "DisplayName", null) as string;
+                    mp3TagRenamePreviewFileName =
+                        Utils.FileUtils.UnwrapEnvironmentBasedPath(
+                            string.Format(@"%userprofile%\AppData\Local\Temp\{0}\preview.txt", mp3TagWithVersion));
+                }
+                return mp3TagRenamePreviewFileName;
+            }
+        }
 
         /// <summary>
         /// 
