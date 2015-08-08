@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using Autofac;
 using NLog;
 using Oleg_ivo.Base.Autofac;
@@ -40,7 +41,7 @@ namespace Oleg_ivo.MeloManager.Winamp
         {
             lock (importer)
             {
-                var playlistFilenames = changedPlaylists ?? importer.Adapter.Dic.Keys.Select(f => Path.Combine(options.PlaylistsPath, f));
+                var playlistFilenames = changedPlaylists ?? importer.Adapter.Dic.Keys.Select(f => Path.Combine(options.PlaylistsPath, f)).Where(System.IO.File.Exists);
                 return importer.RunImportAll(playlistFilenames, winampCategory);
             }
         }
@@ -68,22 +69,26 @@ namespace Oleg_ivo.MeloManager.Winamp
             */
             var playlistsContainerThrottleTime = TimeSpan.FromSeconds(0.3);
             var playlistFileThrottleTime = TimeSpan.FromSeconds(1);
-            var observablePlaylistsContainer = fileWatcherPlaylistsContainer.ToObservable(WatcherChangeTypes.Changed, playlistsContainerThrottleTime);
-            var observablePlaylistAdd = fileWatcherPlaylists.ToObservable(WatcherChangeTypes.Created, playlistFileThrottleTime)/*.Select(filename => )*/;//TODO: для того, чтобы взять актуальное значение название плейлиста из словаря, нужно, чтобы сначала сработал ObservablePlaylistsContainer, нужно его ждать
+            var observablePlaylistsContainerChanged = fileWatcherPlaylistsContainer.ToObservable(WatcherChangeTypes.Changed, playlistsContainerThrottleTime).Do(OnPlaylistXmlChanged);
+            //TODO: для того, чтобы взять актуальное значение название плейлиста из словаря, нужно, чтобы сначала сработал ObservablePlaylistsContainerChanged, нужно его ждать
+            var observablePlaylistAdd =
+                fileWatcherPlaylists.ToObservable(WatcherChangeTypes.Created, playlistFileThrottleTime)
+                    .Window(() => observablePlaylistsContainerChanged)
+                    .SelectMany(window => window/*.TakeLast(1)*/);//TODO: в случае можем потерять часть элементов
             var observablePlaylistChange = fileWatcherPlaylists.ToObservable(WatcherChangeTypes.Changed, playlistFileThrottleTime);
             var observablePlaylistDelete = fileWatcherPlaylists.ToObservable(WatcherChangeTypes.Deleted, playlistFileThrottleTime);
 
-            disposer.Add(observablePlaylistsContainer.Subscribe(OnPlaylistXmlChanged));
-            disposer.Add(observablePlaylistAdd.Subscribe(OnAdded));
+            //disposer.Add(observablePlaylistsContainerChanged.Subscribe(OnPlaylistXmlChanged));
+            disposer.Add(observablePlaylistAdd.Subscribe(OnAdded));//TODO: почему-то не срабатывает сразу
             disposer.Add(observablePlaylistChange.Subscribe(OnChanged));
             disposer.Add(observablePlaylistDelete.Subscribe(OnDeleted));
         }
 
-        private void OnPlaylistXmlChanged(string f)
+        private void OnPlaylistXmlChanged(string filename)
         {
             lock (importer)
             {
-                log.Debug("{0} changed", f);
+                log.Debug("{0} changed", filename);
                 importer.Adapter.RefreshDic();
             }
         }
@@ -109,8 +114,8 @@ namespace Oleg_ivo.MeloManager.Winamp
             {
                 log.Debug("{0} added", filename);
                 //TODO: импорт нового плейлиста, но перед этим нужно разобраться с ожиданием обновления словаря их xml (см. метод MonitorFilesChanges)
-                //importer.Import(filename);
-                //importer.DataContext.SubmitChanges();
+                importer.Import(filename);
+                importer.DataContext.SubmitChanges();
             }
         }
 
