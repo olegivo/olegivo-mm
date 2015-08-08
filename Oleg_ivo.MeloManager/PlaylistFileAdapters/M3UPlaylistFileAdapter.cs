@@ -24,7 +24,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
         public override PrePlaylist FileToPlaylist(string filename, string playlistName = null)
         {
-            log.Info("Создание плейлиста из файла [{0}]", filename);
+            log.Info("Создание плейлиста {0} из файла [{1}]", playlistName != null ? String.Format("[{0}]", playlistName) : null, filename);
             //var regex =
             //    new Regex(
             //        @"<div\b[^>]*\sclass=""custom_param.custom_param_n"".+<label>(?<paramName>.+?)</label>.+<div\b[^>]*\sclass=""custom_param_error""[^>]*>(?<tagContent>.+?)</div>",
@@ -34,7 +34,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             PrePlaylist playlist = null;
             if (infos != null)
             {
-                playlist = new PrePlaylist
+                playlist = new PrePlaylist(MediaCache)
                 {
                     Filename = filename, 
                     Name = playlistName,
@@ -66,7 +66,10 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                     .Where(s => !string.IsNullOrEmpty(s))
                     .ToList();
             var extInfos = new List<ExtInfo>();
-            if (lines[0].Trim().ToUpper() == "#EXTM3U")
+            if (!lines.Any())
+                return extInfos;
+
+            if (lines.First().Trim().ToUpper() == "#EXTM3U")
             {
                 String title = String.Empty;
                 for (int i = 0; i < lines.Count; i++)
@@ -74,7 +77,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                     string s = lines[i];
                     if (s.StartsWith("#EXTINF", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        String[] info = s.Split(new[] {":", ","}, StringSplitOptions.None);
+                        string[] info = s.Split(new[] {":", ","}, StringSplitOptions.None);
                         if (info.Length > 2)
                             title = info[2];
                         extInfos.Add(new ExtInfo(title, lines[++i]));

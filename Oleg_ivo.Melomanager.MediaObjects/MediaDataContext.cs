@@ -132,12 +132,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             var playlist = PlaylistsCache.GetValueOrDefault(filename);
             if (playlist != null) return playlist;
 
-            var file = GetOrAddCachedFile(filename);
-            playlist = new Playlist();
-            playlist.MediaCache = this;
-            playlist.Name = playlistName;
-            //playlist.OriginalFileName = file.Filename;
-            playlist.MediaContainerFiles.Add(new MediaContainerFile{File = file});
+            playlist = new Playlist(filename, this) {Name = playlistName};
             PlaylistsCache.Add(filename, playlist);
             return playlist;
         }

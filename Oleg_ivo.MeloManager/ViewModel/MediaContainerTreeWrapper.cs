@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -20,7 +20,7 @@ using Oleg_ivo.MeloManager.Winamp;
 namespace Oleg_ivo.MeloManager.ViewModel
 {
     /// <summary>
-    /// Обёртка для <see cref="MediaContainer"/>
+    /// РћР±С‘СЂС‚РєР° РґР»СЏ <see cref="MediaContainer"/>
     /// </summary>
     [DebuggerDisplay("Wrapper: {UnderlyingItem}; Parent: {Parent!=null ? Parent.UnderlyingItem : null}")]
     public class MediaContainerTreeWrapper : ViewModelBase
@@ -38,7 +38,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// <param name="parent"></param>
         /// <param name="context"></param>
         /// <param name="winampControl"></param>
-        public MediaContainerTreeWrapper(MediaContainer underlyingItem, MediaContainerTreeWrapper parent, IComponentContext context, WinampControl winampControl)//TODO: вынести вызов конструктора в метод-фабрику
+        public MediaContainerTreeWrapper(MediaContainer underlyingItem, MediaContainerTreeWrapper parent, IComponentContext context, WinampControl winampControl)//TODO: РІС‹РЅРµСЃС‚Рё РІС‹Р·РѕРІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РІ РјРµС‚РѕРґ-С„Р°Р±СЂРёРєСѓ
         {
             this.winampControl = winampControl;
             this.context = Enforce.ArgumentNotNull(context, "context");
@@ -60,14 +60,14 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
-            return string.Format("{0}", UnderlyingItem!=null ? UnderlyingItem.ToString() : "пустое содержимое");
+            return string.Format("{0}", UnderlyingItem!=null ? UnderlyingItem.ToString() : "РїСѓСЃС‚РѕРµ СЃРѕРґРµСЂР¶РёРјРѕРµ");
         }
 
         public void DeleteWithChildren(MediaDataContext dataContext)
         {
             if (Parent != null)
             {
-                //разрыв связи между parent и текущим элементом
+                //СЂР°Р·СЂС‹РІ СЃРІСЏР·Рё РјРµР¶РґСѓ parent Рё С‚РµРєСѓС‰РёРј СЌР»РµРјРµРЅС‚РѕРј
                 var parentContainer = Parent.UnderlyingItem;
                 var relation =
                     parentContainer.ChildMediaContainers.Single(rel => rel.ChildMediaContainer == UnderlyingItem);
@@ -78,18 +78,27 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 parentContainer.ChildMediaContainers.Remove(relation);
             }
 
-            //в случае сиротства удаляем сам элемент контейнера из базы
+            //РІ СЃР»СѓС‡Р°Рµ СЃРёСЂРѕС‚СЃС‚РІР° СѓРґР°Р»СЏРµРј СЃР°Рј СЌР»РµРјРµРЅС‚ РєРѕРЅС‚РµР№РЅРµСЂР° РёР· Р±Р°Р·С‹
             if (!UnderlyingItem.Parents.Any())
             {
                 if (UnderlyingItem.Id > 0) 
                     dataContext.MediaContainers.DeleteOnSubmit(UnderlyingItem);
 
-                //рекурсивное удаление дочерних элементов
+                //СЂРµРєСѓСЂСЃРёРІРЅРѕРµ СѓРґР°Р»РµРЅРёРµ РґРѕС‡РµСЂРЅРёС… СЌР»РµРјРµРЅС‚РѕРІ
                 foreach (var childItem in ChildItems.ToList())
                 {
                     childItem.DeleteWithChildren(dataContext);
                     ChildItems.Remove(childItem);
                 }
+            }
+
+            //СѓРґР°Р»РµРЅРёРµ СЃРІСЏР·Рё СЃ С„Р°Р№Р»Р°РјРё Рё СЃР°РјРёС… С„Р°Р№Р»РѕРІ, РµСЃР»Рё СЌС‚Рѕ РµРґРёРЅСЃС‚РІРµРЅР°СЏ СЃРІСЏР·СЊ
+            if (UnderlyingItem.MediaContainerFiles.Any())
+            {
+                dataContext.Files.DeleteAllOnSubmit(
+                    UnderlyingItem.MediaContainerFiles.Where(mcf => mcf.File.MediaContainerFiles.Count == 1)
+                        .Select(mcf => mcf.File));
+                dataContext.MediaContainerFiles.DeleteAllOnSubmit(UnderlyingItem.MediaContainerFiles);
             }
         }
 
@@ -105,7 +114,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         public MediaContainerTreeWrapper(Func<MediaContainerTreeWrapper, long> sourceIdDelegate, MediaContainer underlyingItem, MediaContainerTreeWrapper parent)
         {
             _getMySourceIdDelegateId = Enforce.ArgumentNotNull(sourceIdDelegate, "sourceIdDelegate");
-            //Обёртка не может быть пустой
+            //РћР±С‘СЂС‚РєР° РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚РѕР№
             UnderlyingItem = Enforce.ArgumentNotNull(underlyingItem, "underlyingItem");
             UnderlyingItem.ChildrenChanged += UnderlyingItem_ChildrenChanged;
             Parent = parent;
@@ -211,12 +220,12 @@ namespace Oleg_ivo.MeloManager.ViewModel
         #endregion
 
         /// <summary>
-        /// Поиск обёртки для целевого медиа-контейнера:
-        /// target должен быть равен UnderlyingItem,
-        /// parent (если указано) должно быть равно родительской обёртке-обёртке искомого контейнера
+        /// РџРѕРёСЃРє РѕР±С‘СЂС‚РєРё РґР»СЏ С†РµР»РµРІРѕРіРѕ РјРµРґРёР°-РєРѕРЅС‚РµР№РЅРµСЂР°:
+        /// target РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЂР°РІРµРЅ UnderlyingItem,
+        /// parent (РµСЃР»Рё СѓРєР°Р·Р°РЅРѕ) РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ СЂР°РІРЅРѕ СЂРѕРґРёС‚РµР»СЊСЃРєРѕР№ РѕР±С‘СЂС‚РєРµ-РѕР±С‘СЂС‚РєРµ РёСЃРєРѕРјРѕРіРѕ РєРѕРЅС‚РµР№РЅРµСЂР°
         /// </summary>
-        /// <param name="target">Целевой медиа-контейнер</param>
-        /// <param name="parent">Родительская обёртка искомой обёртки. Если null, не проверяется</param>
+        /// <param name="target">Р¦РµР»РµРІРѕР№ РјРµРґРёР°-РєРѕРЅС‚РµР№РЅРµСЂ</param>
+        /// <param name="parent">Р РѕРґРёС‚РµР»СЊСЃРєР°СЏ РѕР±С‘СЂС‚РєР° РёСЃРєРѕРјРѕР№ РѕР±С‘СЂС‚РєРё. Р•СЃР»Рё null, РЅРµ РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ</param>
         /// <returns></returns>
         public MediaContainerTreeWrapper FindChild(MediaContainer target, MediaContainerTreeWrapper parent = null)
         {
@@ -248,11 +257,11 @@ namespace Oleg_ivo.MeloManager.ViewModel
         }
 
         /// <summary>
-        /// Рекурсивно найти детей, у которых (<see cref="UnderlyingItem"/> == <see cref="target"/>), 
-        /// при этом у родительского элемента (<see cref="UnderlyingItem"/> == <see cref="parent"/>)
+        /// Р РµРєСѓСЂСЃРёРІРЅРѕ РЅР°Р№С‚Рё РґРµС‚РµР№, Сѓ РєРѕС‚РѕСЂС‹С… (<see cref="UnderlyingItem"/> == <see cref="target"/>), 
+        /// РїСЂРё СЌС‚РѕРј Сѓ СЂРѕРґРёС‚РµР»СЊСЃРєРѕРіРѕ СЌР»РµРјРµРЅС‚Р° (<see cref="UnderlyingItem"/> == <see cref="parent"/>)
         /// </summary>
         /// <param name="target"></param>
-        /// <param name="parent">Опциональный фильтрующий параметр для родительского контейнера</param>
+        /// <param name="parent">РћРїС†РёРѕРЅР°Р»СЊРЅС‹Р№ С„РёР»СЊС‚СЂСѓСЋС‰РёР№ РїР°СЂР°РјРµС‚СЂ РґР»СЏ СЂРѕРґРёС‚РµР»СЊСЃРєРѕРіРѕ РєРѕРЅС‚РµР№РЅРµСЂР°</param>
         /// <returns></returns>
         public List<MediaContainerTreeWrapper> FindChildren(MediaContainer target, MediaContainer parent)
         {
@@ -270,13 +279,13 @@ namespace Oleg_ivo.MeloManager.ViewModel
         }
 
         /// <summary>
-        /// Поиск обёртки для целевого медиа-контейнера:
-        /// target должен быть равен UnderlyingItem,
-        /// parent (если указано) должно быть равно родительской обёртке-обёртке искомого контейнера
-        /// child (если указано) должно содержаться в коллекции дочерних-обёрток искомого контейнера
+        /// РџРѕРёСЃРє РѕР±С‘СЂС‚РєРё РґР»СЏ С†РµР»РµРІРѕРіРѕ РјРµРґРёР°-РєРѕРЅС‚РµР№РЅРµСЂР°:
+        /// target РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЂР°РІРµРЅ UnderlyingItem,
+        /// parent (РµСЃР»Рё СѓРєР°Р·Р°РЅРѕ) РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ СЂР°РІРЅРѕ СЂРѕРґРёС‚РµР»СЊСЃРєРѕР№ РѕР±С‘СЂС‚РєРµ-РѕР±С‘СЂС‚РєРµ РёСЃРєРѕРјРѕРіРѕ РєРѕРЅС‚РµР№РЅРµСЂР°
+        /// child (РµСЃР»Рё СѓРєР°Р·Р°РЅРѕ) РґРѕР»Р¶РЅРѕ СЃРѕРґРµСЂР¶Р°С‚СЊСЃСЏ РІ РєРѕР»Р»РµРєС†РёРё РґРѕС‡РµСЂРЅРёС…-РѕР±С‘СЂС‚РѕРє РёСЃРєРѕРјРѕРіРѕ РєРѕРЅС‚РµР№РЅРµСЂР°
         /// </summary>
-        /// <param name="target">Целевой медиа-контейнер</param>
-        /// <param name="child">Дочерняя обёртка искомой обёртки</param>
+        /// <param name="target">Р¦РµР»РµРІРѕР№ РјРµРґРёР°-РєРѕРЅС‚РµР№РЅРµСЂ</param>
+        /// <param name="child">Р”РѕС‡РµСЂРЅСЏСЏ РѕР±С‘СЂС‚РєР° РёСЃРєРѕРјРѕР№ РѕР±С‘СЂС‚РєРё</param>
         /// <returns></returns>
         public MediaContainerTreeWrapper FindParent(MediaContainer target, MediaContainerTreeWrapper child)
         {
@@ -308,7 +317,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         internal event EventHandler<MediaListChangedEventArgs> ChildrenChanged;
 
         /// <summary>
-        /// Класс для сравнения обёрток по подлежащему элементу
+        /// РљР»Р°СЃСЃ РґР»СЏ СЃСЂР°РІРЅРµРЅРёСЏ РѕР±С‘СЂС‚РѕРє РїРѕ РїРѕРґР»РµР¶Р°С‰РµРјСѓ СЌР»РµРјРµРЅС‚Сѓ
         /// </summary>
         internal class MediaContainerTreeWrapperByUnderlyingItemComparer : IEqualityComparer<MediaContainerTreeWrapper>
         {

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+п»їusing System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -42,13 +42,13 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                         Dic.Remove(item.Item1);
                         deleted++;
                     }
-                    else
+                    else if (Dic[item.Item1] != newDic[item.Item1])
                     {
                         Dic[item.Item1] = newDic[item.Item1];
                         updated++;
                     }
                 }
-                log.Debug("Добавлено: {0}, удалено: {1}, обновлено: {2}", added, deleted, updated);
+                log.Debug("Р”РѕР±Р°РІР»РµРЅРѕ: {0}, СѓРґР°Р»РµРЅРѕ: {1}, РѕР±РЅРѕРІР»РµРЅРѕ: {2}", added, deleted, updated);
             }
         }
 
@@ -74,21 +74,21 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
         public List<PrePlaylist> GetPlaylists()
         {
             var playlistFiles = GetPlaylistsFiles(PlaylistFilesSearchPatterns);
-            log.Debug("Найдено файлов: {0}", playlistFiles.Count);
+            log.Debug("РќР°Р№РґРµРЅРѕ С„Р°Р№Р»РѕРІ: {0}", playlistFiles.Count);
 
-            log.Debug("Создание плейлистов из файлов");
+            log.Debug("РЎРѕР·РґР°РЅРёРµ РїР»РµР№Р»РёСЃС‚РѕРІ РёР· С„Р°Р№Р»РѕРІ");
 
             return playlistFiles.Select(filename => FileToPlaylist(filename)).ToList();
         }
 
         public List<string> GetPlaylistsFiles(string[] playlistFilesSearchPatterns)
         {
-            log.Debug("Получение списка плейлистов");
+            log.Debug("РџРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° РїР»РµР№Р»РёСЃС‚РѕРІ");
             var playlistFiles = playlistFilesSearchPatterns.SelectMany(
                 searchPattern => Directory.GetFiles(Options.PlaylistsPath, searchPattern, SearchOption.TopDirectoryOnly))
                 .Distinct()
                 .ToList();
-            log.Debug("Получено плейлистов: {0}", playlistFiles.Count);
+            log.Debug("РџРѕР»СѓС‡РµРЅРѕ РїР»РµР№Р»РёСЃС‚РѕРІ: {0}", playlistFiles.Count);
             return playlistFiles;
         }
     }

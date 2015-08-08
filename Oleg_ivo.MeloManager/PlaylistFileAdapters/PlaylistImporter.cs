@@ -160,10 +160,6 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                 DataContext.MediaContainers.InsertOnSubmit(rootCategory);
             }
             var playlist = playlistFromFile.CreatePlaylist();
-            var file = DataContext.GetOrAddCachedFile(playlist.OriginalFileName);
-            playlist.MediaContainerFiles.Add(new MediaContainerFile { File = file });
-            //playlist.OriginalFileName = playlistFromFile.Filename;
-
             rootCategory.AddChild(playlist);
             DataContext.MediaContainers.InsertOnSubmit(playlist);
             return playlist;

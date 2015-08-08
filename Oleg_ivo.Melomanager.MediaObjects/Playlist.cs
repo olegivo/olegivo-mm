@@ -10,6 +10,23 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     partial class Playlist
     {
         private string originalFileName;
+        private readonly IMediaCache mediaCache;
+
+        /// <summary>
+        /// Создаёт плейлист и инициализирует <see cref="OriginalFileName"/>, а также на основе него добавляет связанный элемент в коллекцию <see cref="MediaContainer.MediaContainerFiles"/>
+        /// </summary>
+        /// <param name="originalFileName"></param>
+        /// <param name="mediaCache"></param>
+        public Playlist(string originalFileName, IMediaCache mediaCache)
+        {
+            this.originalFileName = originalFileName;
+            this.mediaCache = mediaCache;
+            if (System.IO.File.Exists(originalFileName) && !MediaContainerFiles.Any())
+            {
+                var file = MediaCache.GetOrAddCachedFile(originalFileName);
+                MediaContainerFiles.Add(new MediaContainerFile { File = file });
+            }
+        }
 
         /// <summary>
         /// Родительские категории
@@ -37,21 +54,14 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                 return originalFileName ??
                        (originalFileName =
                            MediaContainerFiles.Select(mcf => mcf.File.FullFileName)
-                               .FirstOrDefault(System.IO.File.Exists));
-            }
-            set
-            {
-                if(originalFileName == value) return;
-                originalFileName = value;
-                if (System.IO.File.Exists(OriginalFileName) && !MediaContainerFiles.Any())
-                {
-                    var file = MediaCache.GetOrAddCachedFile(OriginalFileName);
-                    MediaContainerFiles.Add(new MediaContainerFile { File = file });
-                }
+                               .FirstOrDefault(System.IO.File.Exists/*TODO: кеширование признака "существует"? (например, в MediaCache)*/));
             }
         }
 
-        public IMediaCache MediaCache { get; set; }
+        public IMediaCache MediaCache
+        {
+            get { return mediaCache; }
+        }
 
         /// <summary>
         /// Добавить дочерний медиа-файл
