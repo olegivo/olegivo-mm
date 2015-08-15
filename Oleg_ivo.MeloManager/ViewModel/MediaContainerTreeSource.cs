@@ -22,7 +22,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// <summary>
         /// 
         /// </summary>
-        public MediaDataContext MediaDataContext { get; set; }
+        public MediaDbContext MediaDbContext { get; set; }
 
         /// <summary>
         /// 
@@ -34,7 +34,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             item.ChildrenChanged += item_ChildrenChanged;
 
             //рекурсивное добавление дочерних элементов
-            foreach (var child in item.UnderlyingItem.Children)
+            foreach (var child in item.UnderlyingItem.ChildContainers)
             {
                 Add(new MediaContainerTreeWrapper(GetSourceId, child, item));
             }
@@ -62,7 +62,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             MediaContainer underlyingItem = item.UnderlyingItem;
 
             //рекурсивное удаление дочерних элементов
-            foreach (var child in underlyingItem.Children.ToList())
+            foreach (var child in underlyingItem.ChildContainers.ToList())
             {
                 var childWrapper = FindItem(item, child);
                 Remove(childWrapper);
@@ -91,14 +91,14 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private void RemoveRelation(MediaContainer parent, MediaContainer child)
         {
-            MediaDataContext.RemoveRelation(parent, child);
+            MediaDbContext.RemoveRelation(parent, child);
         }
 
         private void RemoveIfNoParent(MediaContainer mediaContainer)
         {
-            if (!mediaContainer.ParentMediaContainers.Any())
+            if (!mediaContainer.ParentContainers.Any())
             {
-                MediaDataContext.MediaContainers.DeleteOnSubmit(mediaContainer);
+                MediaDbContext.MediaContainers.Remove(mediaContainer);
             }
         }
 

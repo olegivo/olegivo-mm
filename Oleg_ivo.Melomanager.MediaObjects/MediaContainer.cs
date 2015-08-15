@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.Entity.Core.Objects;
 using System.Diagnostics;
 using System.Linq;
 using NLog;
@@ -11,31 +12,18 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// Медиа-контейнер
     /// </summary>
     [DebuggerDisplay("Медиа-контейнер [{Name}]")]
-    partial class MediaContainer
+    public class MediaContainer
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// Дочерние элементы
-        /// </summary>
-        public IQueryable<MediaContainer> Children
-        {
-            get
-            {
-                return ChildMediaContainers.Select(mc => mc.ChildMediaContainer).AsQueryable();
-            }
-        }
-
-        /// <summary>
         /// Родительские элементы
         /// </summary>
-        public IQueryable<MediaContainer> Parents
-        {
-            get
-            {
-                return ParentMediaContainers.Select(mc => mc.ParentMediaContainer).AsQueryable();
-            }
-        }
+        public virtual ICollection<MediaContainer> ParentContainers { get; protected set; }
+        /// <summary>
+        /// Дочерние элементы
+        /// </summary>
+        public virtual ICollection<MediaContainer> ChildContainers { get; protected set; }
 
         /// <summary>
         /// Добавляет дочерний элемент
@@ -43,7 +31,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <param name="child"></param>
         protected void AddChild(MediaContainer child)
         {
-            ChildMediaContainers.Add(new MediaContainersParentChild { ChildMediaContainer = child, ParentMediaContainer = this });
+            ChildContainers.Add(child);
         }
 
         /// <summary>
@@ -52,7 +40,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <param name="parent"></param>
         protected void AddParent(MediaContainer parent)
         {
-            ParentMediaContainers.Add(new MediaContainersParentChild { ChildMediaContainer = this, ParentMediaContainer = parent });
+            ParentContainers.Add(parent);
         }
 
         /// <summary>
@@ -61,19 +49,13 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <param name="child"></param>
         public void RemoveChild(MediaContainer child)
         {
-            var found =
-                ChildMediaContainers.FirstOrDefault(mc => mc.ParentMediaContainer == this && mc.ChildMediaContainer == child);
-            if (found != null)
-            {
-                //BeginRemoveChild(found);
-                ChildMediaContainers.Remove(found);
-                EndRemoveChild(found);
-            }
+            if(ChildContainers.Remove(child))
+                EndRemoveChild(child);
         }
 
-        private void EndRemoveChild(MediaContainersParentChild child)
+        private void EndRemoveChild(MediaContainer child)
         {
-            InvokeChildrenChanged(ListChangedType.ItemDeleted, child.ChildMediaContainer);
+            InvokeChildrenChanged(ListChangedType.ItemDeleted, child);
         }
 
 /*
@@ -84,15 +66,12 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 */
 
         /// <summary>
-        /// Добавляет родительский элемент
+        /// Удаляет родительский элемент
         /// </summary>
         /// <param name="parent"></param>
         public void RemoveParent(MediaContainer parent)
         {
-            var found =
-                ChildMediaContainers.FirstOrDefault(mc => mc.ChildMediaContainer == this && mc.ParentMediaContainer == parent);
-            if (found != null)
-                ChildMediaContainers.Remove(found);
+            ParentContainers.Remove(parent);
         }
 
         /// <summary>
@@ -135,7 +114,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         {
             IsRepaired = false;
             var foundFilesList = foundFiles as IList<string> ?? foundFiles.ToList();
-            foreach (var mediaContainer in Children)
+            foreach (var mediaContainer in ParentContainers)
             {
                 if (mediaContainer is Category || mediaContainer is Playlist)
                     log.Trace("Починка {0}", mediaContainer);
@@ -160,18 +139,33 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 */
         }
 
-        public bool IsRepaired { get; set; }//TODO: INPC?
+//TODO: INPC?
 
-        partial void OnCreated()
+        public MediaContainer()
         {
+            Files = new HashSet<File>();
+            ChildMediaContainers = new BindingList<MediaContainer>();
+            ChildContainers = ChildMediaContainers;
+
             ChildMediaContainers.ListChanged += ChildMediaContainers_ListChanged;
         }
+
+        public bool IsRepaired { get; set; }
+        public virtual ICollection<File> Files { get; set; }
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public bool IsRoot { get; set; }
+        public DateTime? DateInsert { get; set; }
+        public DateTime? DateUpdate { get; set; }
+
+        private BindingList<MediaContainer> ChildMediaContainers { get; set; }
+
 
         void ChildMediaContainers_ListChanged(object sender, ListChangedEventArgs e)
         {
             if (e.ListChangedType == ListChangedType.ItemAdded)
             {
-                MediaContainer child = ChildMediaContainers[e.NewIndex].ChildMediaContainer;
+                var child = ChildMediaContainers[e.NewIndex];
                 InvokeChildrenChanged(e.ListChangedType, child);
             }                      
         }
@@ -188,30 +182,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         public event EventHandler<MediaListChangedEventArgs> ChildrenChanged;
 
         /// <summary>
-        /// Получить связь, 
-        /// в которой данный <see cref="MediaContainer"/> выступает в качестве родительского, 
-        /// а <paramref name="child"/> - в качестве дочернего элемента
-        /// </summary>
-        /// <param name="child"></param>
-        /// <returns></returns>
-        public MediaContainersParentChild GetChildRelation(MediaContainer child)
-        {
-            return ChildMediaContainers.SingleOrDefault(relation => relation.ChildId == child.Id);
-        }
-
-        /// <summary>
-        /// Получить связь, 
-        /// в которой данный <see cref="MediaContainer"/> выступает в качестве дочернего, 
-        /// а <paramref name="parent"/> - в качестве родительского элемента
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <returns></returns>
-        public MediaContainersParentChild GetParentRelation(MediaContainer parent)
-        {
-            return ParentMediaContainers.SingleOrDefault(relation => relation.ParentId == parent.Id);
-        }
-
-        /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
         /// <returns>
@@ -221,6 +191,11 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         public override string ToString()
         {
             return Name;
+        }
+
+        public Type GetRealType()
+        {
+            return ObjectContext.GetObjectType(GetType());
         }
     }
 

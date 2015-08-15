@@ -8,27 +8,19 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// Категория
     /// </summary>
     [DebuggerDisplay("Категория [{Name}]")]
-    partial class Category
+    public class Category : MediaContainer
     {
         /// <summary>
         /// Родительская категория
         /// </summary>
         public Category ParentCategory
         {
-            get { return Parents != null ? Parents.Cast<Category>().FirstOrDefault() : null; }
+            get { return ParentContainers != null ? ParentContainers.OfType<Category>().FirstOrDefault() : null; }
             set
             {
-                if (ParentMediaContainers.Count > 0) ParentMediaContainers.Clear();//у категории не может быть несколько родителей
+                if (ParentContainers.Any()) ParentContainers.Clear();//у категории не может быть несколько родителей // TODO: на данный момент
                 AddParent(value);
             }
-        }
-
-        /// <summary>
-        /// Дочерние элементы
-        /// </summary>
-        public new IQueryable<MediaContainer> Children
-        {
-            get { return base.Children; }
         }
 
         /// <summary>

@@ -6,8 +6,8 @@ using NLog;
 using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.Extensions;
-using Oleg_ivo.MeloManager.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
+using Oleg_ivo.MeloManager.MediaObjects.Extensions;
 using Oleg_ivo.MeloManager.Prism;
 using Oleg_ivo.Tools.Utils;
 
@@ -17,17 +17,17 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
     {
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public PlaylistImporter(IComponentContext context, MediaDataContext dataContext, MeloManagerOptions options, IMediaCache mediaCache)
+        public PlaylistImporter(IComponentContext context, MediaDbContext dbContext, MeloManagerOptions options, IMediaCache mediaCache)
         {
             Adapter = context.ResolveUnregistered<TPlaylistFileAdapter>();
-            DataContext = Enforce.ArgumentNotNull(dataContext, "dataContext");
+            DbContext = Enforce.ArgumentNotNull(dbContext, "dataContext");
             Options = Enforce.ArgumentNotNull(options, "options");
             MediaCache = Enforce.ArgumentNotNull(mediaCache, "mediaCache");
         }
 
         public TPlaylistFileAdapter Adapter { get; private set; }
         
-        public MediaDataContext DataContext { get; private set; }
+        public MediaDbContext DbContext { get; private set; }
 
         public MeloManagerOptions Options { get; private set; }
 
@@ -37,7 +37,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
         {
             var playlists = playlistFilenames.Select(filename => Import(filename, winampCategory)).ToList();
             if (winampCategory.Id == 0)
-                DataContext.MediaContainers.InsertOnSubmit(winampCategory);
+                DbContext.MediaContainers.Add(winampCategory);
 
             /*var files =
                 DataContext.GetChangeSet()
@@ -56,7 +56,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                 .Inserts.OfType<MediaFile>()
                 .Where(mf => mf.MediaContainerFiles.Count > 1)
                 .ToList();*/
-            DataContext.SubmitChangesWithLog();
+            DbContext.SubmitChangesWithLog(log.Debug);
             return playlists;
         }
 
@@ -74,12 +74,12 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
                 var wrapFunction = new Func<string, string>(source => source.Replace(usage.VariableValue, string.Format("%{0}%", usage.VariableName)));
                 var wrappedFilename = wrapFunction(filename);
-                playlists = DataContext.MediaContainers.OfType<Playlist>()
+                playlists = DbContext.MediaContainers.OfType<Playlist>()
                     .Where(p => p != null)
                     .AsEnumerable()
-                    .Where(p => p.MediaContainerFiles.Any(mcf =>
+                    .Where(p => p.Files.Any(file =>
                     {
-                        var fullFileName = mcf.File.FullFileName;
+                        var fullFileName = file.FullFileName;
                         return wrapFunction(fullFileName) == wrappedFilename ||
                                otherUsers.Any(
                                    otherUser =>
@@ -90,12 +90,12 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                 if (playlist != null 
                     && (playlist.OriginalFileName==null || wrapFunction(playlist.OriginalFileName) != wrappedFilename))
                 {
-                    playlist.MediaContainerFiles.Add(new MediaContainerFile{File = MediaCache.GetOrAddCachedFile(filename)});
+                    playlist.Files.Add(MediaCache.GetOrAddCachedFile(filename));
                 }
             }
             else
             {
-                playlists = DataContext.MediaContainers.OfType<Playlist>()
+                playlists = DbContext.MediaContainers.OfType<Playlist>()
                     .Where(p => p != null)
                     .AsEnumerable()
                     .Where(p => p.OriginalFileName == filename)
@@ -120,11 +120,11 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             log.Debug("Обновление плейлиста {0}", playlist);
 
             //compare old and new version
-            var filesWas = GetFilenames(playlist.MediaFiles);
-            var filesNow = GetFilenames(playlistFromFile.MediaFiles);
+            var filesWas = GetFilenames(playlist.MediaFiles).ToList();
+            var filesNow = GetFilenames(playlistFromFile.MediaFiles).ToList();
             var foj = filesWas.FullOuterJoin(filesNow);
             Func<IEnumerable<MediaFile>, string, MediaFile> getMediaFile =
-                (mediaFiles, filename) => mediaFiles.First(mf => mf.MediaContainerFiles.Any(mcf => String.Compare(mcf.File.FullFileName, filename, StringComparison.InvariantCultureIgnoreCase)==0));
+                (mediaFiles, filename) => mediaFiles.First(file => file.Files.Any(mcf => String.Compare(mcf.FullFileName, filename, StringComparison.InvariantCultureIgnoreCase)==0));
             foreach (var item in foj)
             {
                 if (item.Item1 == null)
@@ -136,7 +136,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                 else if (item.Item2 == null)
                 {
                     var mediaFile = getMediaFile(playlist.MediaFiles, item.Item1);
-                    DataContext.RemoveRelation(playlist, mediaFile);
+                    DbContext.RemoveRelation(playlist, mediaFile);
                     log.Debug("Удалён: {0}", mediaFile);
                 }
                 else
@@ -151,24 +151,24 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             log.Debug("Добавление плейлиста {0}", playlistFromFile);
 
             var rootCategory = importCategory ??
-                               DataContext.MediaContainers.OfType<Category>().FirstOrDefault(c => c.IsRoot);
+                               DbContext.MediaContainers.OfType<Category>().FirstOrDefault(c => c.IsRoot);
             if (rootCategory == null)
             {
                 log.Debug("Добавление корневой категории");
 
                 rootCategory = new Category { Name = "Плейлисты Winamp" };
-                DataContext.MediaContainers.InsertOnSubmit(rootCategory);
+                DbContext.MediaContainers.Add(rootCategory);
             }
             var playlist = playlistFromFile.CreatePlaylist();
             rootCategory.AddChild(playlist);
-            DataContext.MediaContainers.InsertOnSubmit(playlist);
+            DbContext.MediaContainers.Add(playlist);
             return playlist;
         }
 
         private IEnumerable<string> GetFilenames(IEnumerable<MediaFile> mediaFiles)
         {
             return
-                mediaFiles.SelectMany(mediaFile => mediaFile.MediaContainerFiles.Select(mcf => mcf.File))
+                mediaFiles.SelectMany(mediaFile => mediaFile.Files)
                     .Select(f => f.FileInfo)
                     //.Where(f => f.Exists)
                     .Select(f => f.FullName.ToLower());
@@ -227,7 +227,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
             private IEnumerable<File> GetFiles(MediaFile mediaFile)
             {
-                return mediaFile != null ? mediaFile.MediaContainerFiles.Select(mcf => mcf.File) : Enumerable.Empty<File>();
+                return mediaFile != null ? mediaFile.Files : Enumerable.Empty<File>();
             }
 
             /// <summary>

@@ -2,22 +2,28 @@
 using System.Data.Linq;
 using System.IO;
 using Oleg_ivo.Base.Autofac;
+using Oleg_ivo.Base.Utils;
 
-namespace Oleg_ivo.MeloManager.Extensions
+namespace Oleg_ivo.MeloManager.MediaObjects.Extensions
 {
     public static class DataContextExtensions
     {
-        public class DataContextLogHelper : IDisposable
+        public class DataContextLogHelper : StateHolder<TextWriter>
         {
-            private readonly TextWriter textWriter;
             private readonly DataContext dataContext;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="T:System.Object"/> class.
             /// </summary>
             public DataContextLogHelper(DataContext dataContext, TextWriter textWriter)
+                : base(() =>
+                {
+                    var old = dataContext.Log;
+                    dataContext.Log = textWriter;
+                    return old;
+                },
+                oldState => dataContext.Log = oldState)
             {
-                this.textWriter = textWriter;
                 this.dataContext = Enforce.ArgumentNotNull(dataContext, "dataContext");
                 this.dataContext.Log = textWriter;
             }
@@ -25,24 +31,16 @@ namespace Oleg_ivo.MeloManager.Extensions
             public void LogChangesInfo()
             {
                 var changeSet = dataContext.GetChangeSet();
-                textWriter.WriteLine("Изменения для фиксации:");
-                textWriter.WriteLine("Вставок: {0}", changeSet.Inserts.Count);
-                textWriter.WriteLine("Обновлений: {0}", changeSet.Updates.Count);
-                textWriter.WriteLine("Удалений: {0}", changeSet.Deletes.Count);
+                dataContext.Log.WriteLine("Изменения для фиксации:");
+                dataContext.Log.WriteLine("Вставок: {0}", changeSet.Inserts.Count);
+                dataContext.Log.WriteLine("Обновлений: {0}", changeSet.Updates.Count);
+                dataContext.Log.WriteLine("Удалений: {0}", changeSet.Deletes.Count);
             }
 
             public void SubmitChanges()
             {
                 LogChangesInfo();
                 dataContext.SubmitChanges();
-            }
-
-            /// <summary>
-            /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-            /// </summary>
-            public void Dispose()
-            {
-                dataContext.Log = null;
             }
         }
 

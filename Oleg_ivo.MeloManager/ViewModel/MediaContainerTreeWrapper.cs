@@ -46,7 +46,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             UnderlyingItem.ChildrenChanged += UnderlyingItem_ChildrenChanged;
             Parent = parent;
 
-            var mediaContainerTreeWrappers = UnderlyingItem.Children.Select(mc => new MediaContainerTreeWrapper(mc, this, context, winampControl));
+            var mediaContainerTreeWrappers = UnderlyingItem.ChildContainers.Select(mc => new MediaContainerTreeWrapper(mc, this, context, winampControl));
             ChildItems = new ObservableCollection<MediaContainerTreeWrapper>(mediaContainerTreeWrappers);
             ChildItems.CollectionChanged += ChildItems_CollectionChanged;
         }
@@ -63,42 +63,34 @@ namespace Oleg_ivo.MeloManager.ViewModel
             return string.Format("{0}", UnderlyingItem!=null ? UnderlyingItem.ToString() : "пустое содержимое");
         }
 
-        public void DeleteWithChildren(MediaDataContext dataContext)
+        public void DeleteWithChildren(MediaDbContext dbContext)
         {
             if (Parent != null)
             {
                 //разрыв связи между parent и текущим элементом
                 var parentContainer = Parent.UnderlyingItem;
-                var relation =
-                    parentContainer.ChildMediaContainers.Single(rel => rel.ChildMediaContainer == UnderlyingItem);
-
-                if (relation.Id > 0)
-                    dataContext.MediaContainersParentChilds.DeleteOnSubmit(relation);
-                UnderlyingItem.ParentMediaContainers.Remove(relation);
-                parentContainer.ChildMediaContainers.Remove(relation);
+                parentContainer.ChildContainers.Remove(UnderlyingItem);
+                UnderlyingItem.ParentContainers.Remove(parentContainer);//TODO: проверить, может эта строка дублирует предыдущую!
             }
 
             //в случае сиротства удаляем сам элемент контейнера из базы
-            if (!UnderlyingItem.Parents.Any())
+            if (!UnderlyingItem.ParentContainers.Any())
             {
-                if (UnderlyingItem.Id > 0) 
-                    dataContext.MediaContainers.DeleteOnSubmit(UnderlyingItem);
+                //if (UnderlyingItem.Id > 0) 
+                dbContext.MediaContainers.Remove(UnderlyingItem);
 
                 //рекурсивное удаление дочерних элементов
                 foreach (var childItem in ChildItems.ToList())
                 {
-                    childItem.DeleteWithChildren(dataContext);
+                    childItem.DeleteWithChildren(dbContext);
                     ChildItems.Remove(childItem);
                 }
             }
 
             //удаление связи с файлами и самих файлов, если это единственая связь
-            if (UnderlyingItem.MediaContainerFiles.Any())
+            if (UnderlyingItem.Files.Any())
             {
-                dataContext.Files.DeleteAllOnSubmit(
-                    UnderlyingItem.MediaContainerFiles.Where(mcf => mcf.File.MediaContainerFiles.Count == 1)
-                        .Select(mcf => mcf.File));
-                dataContext.MediaContainerFiles.DeleteAllOnSubmit(UnderlyingItem.MediaContainerFiles);
+                dbContext.Files.RemoveRange(UnderlyingItem.Files.Where(file => file.MediaContainers.Count == 1));
             }
         }
 
@@ -120,7 +112,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             Parent = parent;
 
             var mediaContainerTreeWrappers =
-                UnderlyingItem.Children.Select(
+                UnderlyingItem.ChildContainers.Select(
                     mc => new MediaContainerTreeWrapper(sourceIdDelegate, mc, this));
             ChildItems = new ObservableCollection<MediaContainerTreeWrapper>(mediaContainerTreeWrappers);
             ChildItems.CollectionChanged += ChildItems_CollectionChanged;
@@ -199,7 +191,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// </summary>
         public BitmapImage Image
         {
-            get { return ImageResourceFactory.GetImage(UnderlyingItem.GetType()); }
+            get { return ImageResourceFactory.GetImage(UnderlyingItem.GetRealType()); }
         }
 
         public Predicate<object> Filter

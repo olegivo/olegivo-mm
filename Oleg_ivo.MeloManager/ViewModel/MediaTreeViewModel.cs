@@ -39,7 +39,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         #endregion
 
         #region Properties
-        public MediaDataContext DataContext { get; set; }
+        public MediaDbContext DbContext { get; set; }
 
         [Dependency(Required = true)]
         public IModalDialogService ModalDialogService { get; set; }
@@ -215,7 +215,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 parent.ChildItems.Add(wrapper);
             
             if (mediaContainer.Id == 0)
-                DataContext.MediaContainers.InsertOnSubmit(mediaContainer);
+                DbContext.MediaContainers.Add(mediaContainer);
             CurrentItem = wrapper;
         }
 
@@ -249,7 +249,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             if (!foundWrappers.Any()) return;
             
             //удаление из базы
-            foundWrappers.First().DeleteWithChildren(DataContext);
+            foundWrappers.First().DeleteWithChildren(DbContext);
             //удаление из родительскитх обёрток
             foreach (var foundWrapper in foundWrappers)
             {

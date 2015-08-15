@@ -49,7 +49,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
         {
             var files = mediaFiles
                 .Select(mf =>
-                    mf.MediaContainerFiles.Select(mcf => mcf.File)
+                    mf.Files
                         .OrderBy(file => file.FileInfo.Exists)
                         .FirstOrDefault())
                 .Select(file => string.Format("#EXTINF:-1,{0}\n{1}", file.FileNameWithoutExtension, file.FullFileName))

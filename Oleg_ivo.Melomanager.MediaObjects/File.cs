@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Spatial;
 using System.IO;
 using System.Linq;
 using NLog;
@@ -7,9 +8,14 @@ using NLog;
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
     //[DebuggerDisplay("{FullFileName}")]
-    partial class File : IEquatable<File>
+    public class File : IEquatable<File>
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
+
+        public File()
+        {
+            MediaContainers = new HashSet<MediaContainer>();
+        }
 
         public override string ToString()
         {
@@ -18,6 +24,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 
         private FileInfo fileInfo;
         private List<string> fullFileNameElements;
+        private string fullFileName;
 
         public FileInfo FileInfo
         {
@@ -29,11 +36,37 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             }
         }
 
+        public virtual ICollection<MediaContainer> MediaContainers { get; set; }
+        public long Id { get; set; }
+
+        public string Drive { get; set; }
+
+        public string Path { get; set; }
+
+        public string Filename { get; set; }
+
+        public string Extention { get; set; }
+
+        public string FullFileName
+        {
+            get { return fullFileName; }
+            set
+            {
+                if(fullFileName == value) return;
+                fullFileName = value;
+                CreateFileInfoAndElements();
+            }
+        }
+
+        public string FileNameWithoutExtension { get; set; }
+        public DateTime? DateInsert { get; set; }
+        public DateTime? DateUpdate { get; set; }
+
         public bool Equals(File other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(_FullFileName, other._FullFileName);
+            return string.Equals(fullFileName, other.fullFileName);
         }
 
         public override bool Equals(object obj)
@@ -46,7 +79,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 
         public override int GetHashCode()
         {
-            return (_FullFileName != null ? _FullFileName.GetHashCode() : 0);
+            return (fullFileName != null ? fullFileName.GetHashCode() : 0);
         }
 
         public static bool operator ==(File left, File right)
@@ -57,11 +90,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         public static bool operator !=(File left, File right)
         {
             return !Equals(left, right);
-        }
-
-        partial void OnFullFileNameChanged()
-        {
-            CreateFileInfoAndElements();
         }
 
         private void CreateFileInfoAndElements()

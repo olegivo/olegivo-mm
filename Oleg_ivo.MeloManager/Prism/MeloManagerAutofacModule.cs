@@ -21,14 +21,14 @@ namespace Oleg_ivo.MeloManager.Prism
             builder.Register(context =>
             {
                 var meloManagerOptions = context.Resolve<MeloManagerOptions>();
-                var mediaDataContext = context.ResolveUnregistered<MediaDataContext>(
+                var mediaDataContext = context.ResolveUnregistered<MediaDbContext>(
                     new TypedParameter(typeof (string),
                     meloManagerOptions.ConnectionString));
                 //mediaDataContext.Log = Console.Out;
                 //mediaDataContext.ObjectTrackingEnabled = true;
                 return mediaDataContext;
             }).SingleInstance();
-            builder.Register(context => context.Resolve<MediaDataContext>()).As<IMediaCache>();
+            builder.Register(context => context.Resolve<MediaDbContext>()).As<IMediaCache>();
 
             builder.RegisterType<WinampControl>().SingleInstance();
             builder.RegisterType<WinampFilesMonitor>().SingleInstance();
