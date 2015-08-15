@@ -63,32 +63,32 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
         public Playlist Import(string filename, Category importCategory = null)
         {
             log.Debug("Импорт плейлиста из файла {0}{1}", filename, importCategory!=null ? string.Format(@" в категорию ""{0}""", importCategory.Name) : null);
-            var usage = Utils.FileUtils.GetEnvironmentVariableUsage(filename);
+            var environmentVariableUsage = Utils.FileUtils.GetEnvironmentVariableUsage(filename);
             List<Playlist> playlists;
             Playlist playlist;
-            if (usage != null)
+            
+            if (environmentVariableUsage != null)
             {
                 //плейлист попытается добавиться, а не обновлён, если на разных компьютерах он хранится в одном и том же файле, но в разных папках (AppData)
                 var currentUser = Environment.UserName.ToLower();
                 var otherUsers = Options.Users.OfType<string>().Where(user => user!=currentUser).ToList();
 
-                var wrapFunction = new Func<string, string>(source => source.Replace(usage.VariableValue, string.Format("%{0}%", usage.VariableName)));
-                var wrappedFilename = wrapFunction(filename);
+                var wrappedFilename = environmentVariableUsage.WrapPathWithVariable(filename);
                 playlists = DataContext.MediaContainers.OfType<Playlist>()
                     .Where(p => p != null)
                     .AsEnumerable()
                     .Where(p => p.MediaContainerFiles.Any(mcf =>
                     {
                         var fullFileName = mcf.File.FullFileName;
-                        return wrapFunction(fullFileName) == wrappedFilename ||
+                        return new Func<string, string>(environmentVariableUsage.WrapPathWithVariable)(fullFileName) == wrappedFilename ||
                                otherUsers.Any(
                                    otherUser =>
-                                       wrapFunction(fullFileName.Replace(otherUser, currentUser)) == wrappedFilename);
+                                       environmentVariableUsage.WrapPathWithVariable(fullFileName.Replace(otherUser, currentUser)) == wrappedFilename);
                     }))
                     .ToList();
-                playlist = playlists.FirstOrDefault();
-                if (playlist != null 
-                    && (playlist.OriginalFileName==null || wrapFunction(playlist.OriginalFileName) != wrappedFilename))
+                playlist = playlists.SingleOrDefault();
+                if (playlist != null
+                    && (playlist.OriginalFileName == null || environmentVariableUsage.WrapPathWithVariable(playlist.OriginalFileName) != wrappedFilename))
                 {
                     playlist.MediaContainerFiles.Add(new MediaContainerFile{File = MediaCache.GetOrAddCachedFile(filename)});
                 }
@@ -100,7 +100,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                     .AsEnumerable()
                     .Where(p => p.OriginalFileName == filename)
                     .ToList();
-                playlist = playlists.FirstOrDefault();
+                playlist = playlists.SingleOrDefault();
             }
 
             var playlistFromFile = Adapter.FileToPlaylist(filename);
