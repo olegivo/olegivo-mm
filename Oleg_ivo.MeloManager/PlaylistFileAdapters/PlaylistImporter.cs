@@ -106,63 +106,80 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             var playlistFromFile = Adapter.FileToPlaylist(filename);
             if (playlist!=null)
             {
-                UpdatePlaylist(playlist, playlistFromFile);
+                GetUpdatePlaylistDiffAction(playlist, playlistFromFile).Apply();
             }
             else
             {
-                playlist = AddPlaylist(playlistFromFile, importCategory);
+                playlist = GetAddPlaylistDiffAction(playlistFromFile, importCategory).ApplyAndReturnItem();
             }
             return playlist;
         }
 
-        private void UpdatePlaylist(Playlist playlist, PrePlaylist playlistFromFile)
+        private ContainerDiffAction GetUpdatePlaylistDiffAction(Playlist playlist, PrePlaylist playlistFromFile)
         {
-            log.Debug("Обновление плейлиста {0}", playlist);
+            Func<IEnumerable<MediaFile>, string, MediaFile> getMediaFile =
+                (mediaFiles, filename) =>
+                    mediaFiles.First(
+                        mf =>
+                            mf.MediaContainerFiles.Any(
+                                mcf =>
+                                    string.Compare(mcf.File.FullFileName, filename,
+                                        StringComparison.InvariantCultureIgnoreCase) == 0));
+
+            Func<string, IDiffAction> onAdd = filename => new DiffAction<Playlist, MediaFile>(() => playlist,
+                () => getMediaFile(playlistFromFile.MediaFiles, filename),
+                (pl, mediaFile) =>
+                {
+                    pl.AddChildMediaFile(mediaFile);
+                    log.Debug("Добавлен: {0}", mediaFile);
+                }, DiffType.Added);
+
+            Func<string, IDiffAction> onDelete = filename => new DiffAction<Playlist, MediaFile>(() => playlist,
+                () => getMediaFile(playlist.MediaFiles, filename),
+                (pl, mediaFile) =>
+                {
+                    DataContext.RemoveRelation(playlist, mediaFile);
+                    log.Debug("Удалён: {0}", mediaFile);
+                }, DiffType.Deleted);
+            Func<string, string, IDiffAction> onEquals = (filename1, filename2) =>
+                new DiffAction<Playlist, string>(() => playlist,
+                    () => filename1,
+                    (pl, filename) =>
+                    {
+                        log.Debug("Без изменения: {0}", filename);
+                    }, DiffType.None);
 
             //compare old and new version
             var filesWas = GetFilenames(playlist.MediaFiles);
             var filesNow = GetFilenames(playlistFromFile.MediaFiles);
-            var foj = filesWas.FullOuterJoin(filesNow);
-            Func<IEnumerable<MediaFile>, string, MediaFile> getMediaFile =
-                (mediaFiles, filename) => mediaFiles.First(mf => mf.MediaContainerFiles.Any(mcf => String.Compare(mcf.File.FullFileName, filename, StringComparison.InvariantCultureIgnoreCase)==0));
-            foreach (var item in foj)
+            var collectionDiff = DiffCreator.CreateCollectionDiff(filesWas, filesNow, onAdd, onDelete, onEquals);
+            return new ContainerDiffAction(collectionDiff, DiffType.None)
             {
-                if (item.Item1 == null)
-                {
-                    var mediaFile = getMediaFile(playlistFromFile.MediaFiles, item.Item2);
-                    playlist.AddChildMediaFile(mediaFile);
-                    log.Debug("Добавлен: {0}", mediaFile);
-                }
-                else if (item.Item2 == null)
-                {
-                    var mediaFile = getMediaFile(playlist.MediaFiles, item.Item1);
-                    DataContext.RemoveRelation(playlist, mediaFile);
-                    log.Debug("Удалён: {0}", mediaFile);
-                }
-                else
-                {
-                    log.Trace("Без изменения: {0}", item.Item2);
-                }
-            }
+                PreAction = () => log.Debug("Обновление плейлиста {0}", playlist),
+                PostAction = () => log.Debug("Обновление плейлиста {0} завершено", playlist),
+            };
         }
 
-        private Playlist AddPlaylist(PrePlaylist playlistFromFile, Category importCategory)
+        private DiffAction<Category, Playlist> GetAddPlaylistDiffAction(PrePlaylist playlistFromFile, Category importCategory)
         {
-            log.Debug("Добавление плейлиста {0}", playlistFromFile);
-
-            var rootCategory = importCategory ??
-                               DataContext.MediaContainers.OfType<Category>().FirstOrDefault(c => c.IsRoot);
-            if (rootCategory == null)
+            return new DiffAction<Category, Playlist>(() =>
             {
-                log.Debug("Добавление корневой категории");
+                var rootCategory = importCategory ??
+                   DataContext.MediaContainers.OfType<Category>().FirstOrDefault(c => c.IsRoot);
+                if (rootCategory == null)
+                {
+                    log.Debug("Добавление корневой категории");
 
-                rootCategory = new Category { Name = "Плейлисты Winamp" };
-                DataContext.MediaContainers.InsertOnSubmit(rootCategory);
-            }
-            var playlist = playlistFromFile.CreatePlaylist();
-            rootCategory.AddChild(playlist);
-            DataContext.MediaContainers.InsertOnSubmit(playlist);
-            return playlist;
+                    rootCategory = new Category { Name = "Плейлисты Winamp" };
+                    DataContext.MediaContainers.InsertOnSubmit(rootCategory);
+                }
+                return rootCategory;
+
+            }, playlistFromFile.CreatePlaylist, (c, p) =>
+            {
+                c.AddChild(p);
+                DataContext.MediaContainers.InsertOnSubmit(p);
+            }, DiffType.Added) { PreAction = () => log.Debug("Добавление плейлиста {0}", playlistFromFile) };
         }
 
         private IEnumerable<string> GetFilenames(IEnumerable<MediaFile> mediaFiles)

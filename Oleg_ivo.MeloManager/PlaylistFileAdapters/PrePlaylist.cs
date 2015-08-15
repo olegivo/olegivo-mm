@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Oleg_ivo.MeloManager.MediaObjects;
 
 namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
@@ -33,6 +35,24 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                 }
             }
             return playlist;
+        }
+        
+        public Func<Playlist> CreatePlaylistFunc()
+        {
+            Playlist playlist = null;
+            if (MediaFiles != null)
+            {
+                playlist = new Playlist(Filename, mediaCache) {Name = Name};
+                var diffAction =
+                    new ContainerDiffAction(
+                        MediaFiles.Select(
+                            mediaFile =>
+                                new DiffAction<Playlist, MediaFile>(
+                                    () => new Playlist(Filename, mediaCache) {Name = Name}, () => mediaFile,
+                                    (pl, mf) => pl.AddChildMediaFile(mf), DiffType.Added)).Cast<IDiffAction>().ToList(),
+                        DiffType.None);
+            }
+            return null;
         }
     }
 }

@@ -178,6 +178,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MediaIconsResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="PlaylistFileAdapters\Diff.cs" />
     <Compile Include="PlaylistFileAdapters\ExtInfo.cs" />
     <Compile Include="PlaylistFileAdapters\M3UPlaylistFileAdapter.cs" />
     <Compile Include="PlaylistFileAdapters\PlaylistFileAdapter.cs" />
