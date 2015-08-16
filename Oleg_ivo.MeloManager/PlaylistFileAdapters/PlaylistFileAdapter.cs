@@ -17,7 +17,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             log.Info("Запись плейлиста [{0}] в файл [{1}]", playlist, filename);
             try
             {
-                var mediaFiles = playlist.Children.Cast<MediaFile>();
+                var mediaFiles = playlist.ChildContainers.Cast<MediaFile>();
                 MediaFilesToFile(filename, mediaFiles);
             }
             catch (Exception ex)

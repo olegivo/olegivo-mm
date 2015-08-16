@@ -10,6 +10,9 @@ namespace Oleg_ivo.MeloManager.Prism
     {
         private string mp3TagRenamePreviewFileName;
 
+        public bool DisableMonitorFilesChanges { get; set; }
+        public bool DisableWinampBinding { get; set; }
+
         /// <summary>
         /// Название конфигурации
         /// </summary>

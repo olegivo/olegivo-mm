@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Autofac;
-using Reactive.Bindings;
 using NLog;
 using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
@@ -14,11 +14,12 @@ using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.Base.WPF.Dialogs;
 using Oleg_ivo.Base.WPF.Extensions;
 using Oleg_ivo.Base.WPF.ViewModels;
-using Oleg_ivo.MeloManager.Dialogs;
 using Oleg_ivo.MeloManager.MediaObjects;
+using Oleg_ivo.MeloManager.MediaObjects.Extensions;
 using Oleg_ivo.MeloManager.Prism;
 using Oleg_ivo.MeloManager.Winamp;
 using Oleg_ivo.MeloManager.Winamp.Tracking;
+using Reactive.Bindings;
 
 namespace Oleg_ivo.MeloManager.ViewModel
 {
@@ -116,10 +117,10 @@ namespace Oleg_ivo.MeloManager.ViewModel
         }
 
         [Dependency(Required = true)]
-        public MediaDataContext DataContext
+        public MediaDbContext DbContext
         {
-            get { return MediaTree.DataContext; }
-            set { MediaTree.DataContext = value; }
+            get { return MediaTree.DbContext; }
+            set { MediaTree.DbContext = value; }
         }
 
         [Dependency(Required = true)]
@@ -263,7 +264,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 {
                     //DataContext.ActionWithLog(dataContext => dataContext.RefreshCache());
                     MediaTree.InitSource(
-                        DataContext.MediaContainers.Where(mc => mc is Category && mc.IsRoot).Cast<Category>());
+                        DbContext.MediaContainers.OfType<Category>().Where(category => category.IsRoot));
                     log.Info(StatusText = "Загрузка из БД завершена");
                     CanWorkWithDataContext.Value = true;
                 });
@@ -286,7 +287,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
             log.Info(StatusText = "Сохранение в процесе...");
             CanWorkWithDataContext.Value = false;
             //var changeSet = DataContext.GetChangeSet();
-            DataContext.SubmitChanges();
+            DbContext.SubmitChangesWithLog(log.Debug);
+            //DataContext.SubmitChanges();
             log.Info(StatusText = "Сохранение завершено");
             CanWorkWithDataContext.Value = true;
         }
@@ -395,70 +397,10 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private void Test()
         {
-            ModalDialogService.CreateAndShowDialog<SimpleStringDialogViewModel>(
-                modalWindow =>
-                {
-                    //modalWindow.Title = "Ввод строкового значения";
-                    modalWindow.ViewModel.Caption = "Ввод строкового значения";
-                    modalWindow.ViewModel.ContentViewModel.Value = "test";
-                    modalWindow.ViewModel.ContentViewModel.Description = "Введите значение";
-                },
-                (model, dialogResult) =>
-                {
-                    if (dialogResult.HasValue)
-                    {
-                        if (dialogResult.Value)
-                            MessageBox.Show("Введено: " + model.ContentViewModel.Value);
-                        else
-                            MessageBox.Show("Не введено");
-                    }
-                    else
-                        MessageBox.Show("Неизвестно");
-
-                });
-
-            /*var winampTrackingWindow = context.ResolveUnregistered<WinampTrackingWindow>();
-            winampTrackingWindow.ShowDialog();*/
+            //TestMethods.TestDialogService(ModalDialogService);
+            //TestMethods.TestWinampTrackingWindow(context);
             //winampControl.LoadPlaylist(@"f:\Subversion\MM\Oleg_ivo.MeloManager\bin\Debug\playlist.m3u");
-            /*var mediaContainer = MediaTree.Items.First().UnderlyingItem;
-            var playlistsPath = context.Resolve<MeloManagerOptions>().PlaylistsPath;
-            var adapter = context.ResolveUnregistered<WinampM3UPlaylistFileAdapter>();
-            foreach (
-                var playlist in
-                    mediaContainer.Children.Cast<Playlist>().ToList()
-                        .Where(p => !p.MediaContainerFiles.Any()))
-            {
-                var originalFileName = System.IO.File.Exists(playlist.OriginalFileName)
-                    ? playlist.OriginalFileName
-                    : System.IO.Path.Combine(playlistsPath, adapter.Dic.FirstOrDefault(pair => pair.Value == playlist.Name).Key);
-                playlist.MediaContainerFiles.Add(new MediaContainerFile { File = File.GetFile(originalFileName) });
-            }*/
-
-            /*var fullFilename = @"D:\Music\Disk\Music\9\Sixpence None the Richer - Kiss me.mp3";
-            var fileName = System.IO.Path.GetFileName(fullFilename);
-            var fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(fullFilename);
-            var extension = System.IO.Path.GetExtension(fullFilename);
-            var drive = System.IO.Path.GetPathRoot(fullFilename);
-            var path = System.IO.Path.GetDirectoryName(fullFilename);
-            var file = new File
-            {
-                FullFileName = fullFilename,
-                Drive = drive,
-                Path = path,
-                Filename = fileName,
-                FileNameWithoutExtension = fileNameWithoutExtension,
-                Extention = extension
-            };
-            var mediaFile = new MediaFile { Name = "Test" };
-            var mediaContainerFile = new MediaContainerFile { MediaContainer = mediaFile };
-            file.MediaContainerFiles.Add(mediaContainerFile);
-
-            DataContext.MediaContainerFiles.InsertOnSubmit(mediaContainerFile);
-            DataContext.MediaContainers.InsertOnSubmit(mediaFile);
-            DataContext.Files.InsertOnSubmit(file);
-
-            DataContext.SubmitChangesWithLog();
-            return;*/
+            //TestMethods.TestInsertMediaFileWithFile(DataContext);
         }
 
         private void GoToParent(MediaContainer parent)
@@ -567,14 +509,20 @@ namespace Oleg_ivo.MeloManager.ViewModel
                     () =>
                     {
                         log.Info(StatusText = "Запуск служб в процессе...");
-                        winampControl.LaunchBind();
+                        
+                        log.Info("WinampBinding: {0}", !options.DisableWinampBinding ? "on" : "off");
+                        if (!options.DisableWinampBinding) winampControl.LaunchBind();
+                        
+                        log.Info("AutoImportPlaylistsOnStart: {0}", options.AutoImportPlaylistsOnStart ? "on" : "off");
                         if (options.AutoImportPlaylistsOnStart)
                         {
                             var changedPlaylists = winampFilesMonitor.GetChangedPlaylists();
                             if (changedPlaylists != null && changedPlaylists.Any())
                                 ImportWinampPlaylists(changedPlaylists);
                         }
-                        winampFilesMonitor.MonitorFilesChanges();
+
+                        log.Info("DisableMonitorFilesChanges: {0}", !options.DisableMonitorFilesChanges ? "on" : "off");
+                        if (!options.DisableMonitorFilesChanges) winampFilesMonitor.MonitorFilesChanges();
                     })
                     .ContinueWith(t => log.Info(StatusText = "Запуск служб завершён"));
             return task;
@@ -583,7 +531,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
         public void Init()
         {
             log.Info(StatusText = "Инициализация в процессе...");
-            LoadFromDb()
+            Task.Factory.StartNew(() => { })
+                .ContinueWith(task => LoadFromDb())
                 .ContinueWith(task => RunServices())
                 .ContinueWith(task => log.Info(StatusText = "Инициализация завершена"));
         }

@@ -10,7 +10,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// Медиа-файл
     /// </summary>
     [DebuggerDisplay("Медиа-файл [{Name}]")]
-    partial class MediaFile
+    public class MediaFile : MediaContainer
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
         private bool isProcessed;
@@ -24,15 +24,15 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 
                 var repairedFiles =
                     (optionRepairOnlyBadFiles
-                        ? MediaContainerFiles.Where(mcf => !mcf.File.FileInfo.Exists)
-                        : MediaContainerFiles)
-                        .Select(mcf => new { old = mcf, repairedFile = mcf.File.Repair(foundFiles, mediaCache) })
+                        ? Files.Where(file => !file.FileInfo.Exists)
+                        : Files)
+                        .Select(file => new { old = file, repairedFile = file.Repair(foundFiles, mediaCache) })
                         .Where(rf => rf.repairedFile != null).ToList();
 
                 foreach (var rf in repairedFiles)
                 {
-                    MediaContainerFiles.Remove(rf.old);
-                    MediaContainerFiles.Add(new MediaContainerFile { File = rf.repairedFile });
+                    Files.Remove(rf.old);
+                    Files.Add(rf.repairedFile);
                 }
 
                 IsRepaired = repairedFiles.Any();
@@ -79,14 +79,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                 //                MessageBoxIcon.Exclamation);
             }
 */
-        }
-
-        /// <summary>
-        /// Родительские элементы
-        /// </summary>
-        public new IQueryable<MediaContainer> ParentMediaContainers
-        {
-            get { return Parents != null ? Parents.Cast<MediaContainer>() : null; }
         }
 
         /// <summary>

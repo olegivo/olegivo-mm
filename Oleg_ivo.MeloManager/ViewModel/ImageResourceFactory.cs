@@ -1,6 +1,8 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Windows.Media.Imaging;
+using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
 
 namespace Oleg_ivo.MeloManager.ViewModel
@@ -12,24 +14,11 @@ namespace Oleg_ivo.MeloManager.ViewModel
     {
         public static BitmapImage GetImage(Type type)
         {
-            //return GetResourceIcon(type);
-            if (images.ContainsKey(type)) return images[type] as BitmapImage;
-
-            BitmapImage image =
-                new BitmapImage(new Uri(@"/Oleg_ivo.MeloManager;component/Resources/" + GetResourceName(type) + ".ico",
-                                        UriKind.Relative));
-            images.Add(type, image);
-/*
-            var icon = GetResourceIcon(type);
-            if (icon != null)
-            {
-                var bitmap = icon.ToBitmap();
-                image = LoadBitmap(bitmap);
-                images.Add(type, image);
-            }
-
-*/
-            return image;
+            return images.GetOrAdd(type,
+                type1 =>
+                    new BitmapImage(
+                        new Uri(String.Format(@"/Oleg_ivo.MeloManager;component/Resources/{0}.ico", resourcesDic.GetValueOrDefault(type1)),
+                            UriKind.Relative)));
         }
 
         /*private static BitmapSource LoadBitmap(Bitmap source)
@@ -39,7 +28,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                                                                                 BitmapSizeOptions.FromEmptyOptions());
         }*/
 
-        private static Hashtable images = new Hashtable();
+        private static readonly ConcurrentDictionary<Type, BitmapImage> images = new ConcurrentDictionary<Type, BitmapImage>();
 
         /*private static Icon GetResourceIcon(Type type)
         {
@@ -53,19 +42,11 @@ namespace Oleg_ivo.MeloManager.ViewModel
             return null;
         }*/
 
-        private static string GetResourceName(Type type)
+        private static readonly Dictionary<Type, string> resourcesDic = new Dictionary<Type, string>()
         {
-            if (type == typeof (Category)) 
-                return "folder";
-            if (type == typeof (Playlist))
-                //return"form_blue";
-                //return"form_green";
-                //return"form_red";
-                return"form_yellow";
-            if (type == typeof (MediaFile))
-                return "headphones";
-
-            return null;
-        }
+            {typeof(Category), "folder"},
+            {typeof(Playlist), "form_yellow"},//"form_blue";//"form_green";//"form_red";
+            {typeof(MediaFile), "headphones"},
+        };
     }
 }

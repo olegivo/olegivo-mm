@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
@@ -7,13 +9,13 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// Плейлист
     /// </summary>
     [DebuggerDisplay("Плейлист [{Name}]")]
-    partial class Playlist
+    public class Playlist : MediaContainer
     {
         private string originalFileName;
         private readonly IMediaCache mediaCache;
 
         /// <summary>
-        /// Создаёт плейлист и инициализирует <see cref="OriginalFileName"/>, а также на основе него добавляет связанный элемент в коллекцию <see cref="MediaContainer.MediaContainerFiles"/>
+        /// Создаёт плейлист и инициализирует <see cref="OriginalFileName"/>, а также на основе него добавляет связанный элемент в коллекцию <see cref="MediaContainer.Files"/>
         /// </summary>
         /// <param name="originalFileName"></param>
         /// <param name="mediaCache"></param>
@@ -21,27 +23,32 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         {
             this.originalFileName = originalFileName;
             this.mediaCache = mediaCache;
-            if (System.IO.File.Exists(originalFileName) && !MediaContainerFiles.Any())
+            if (System.IO.File.Exists(originalFileName) && !Files.Any())
             {
                 var file = MediaCache.GetOrAddCachedFile(originalFileName);
-                MediaContainerFiles.Add(new MediaContainerFile { File = file });
+                Files.Add(file);
             }
+        }
+
+        [Obsolete("Должен быть protected")]
+        public Playlist()
+        {
         }
 
         /// <summary>
         /// Родительские категории
         /// </summary>
-        public IQueryable<Category> ParentCategories
+        public IEnumerable<Category> ParentCategories
         {
-            get { return Parents != null ? Parents.Cast<Category>() : null; }
+            get { return ParentContainers != null ? ParentContainers.OfType<Category>() : null; }
         }
 
         /// <summary>
         /// Дочерние файлы
         /// </summary>
-        public IQueryable<MediaFile> MediaFiles
+        public IEnumerable<MediaFile> MediaFiles
         {
-            get { return Children != null ? Children.Cast<MediaFile>() : null; }
+            get { return ChildContainers != null ? ChildContainers.OfType<MediaFile>() : null; }
         }
 
         /// <summary>
@@ -53,7 +60,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             {
                 return originalFileName ??
                        (originalFileName =
-                           MediaContainerFiles.Select(mcf => mcf.File.FullFileName)
+                           Files.Select(file => file.FullFileName)
                                .FirstOrDefault(System.IO.File.Exists/*TODO: кеширование признака "существует"? (например, в MediaCache)*/));
             }
         }

@@ -49,11 +49,11 @@ namespace Oleg_ivo.MeloManager.Repairers
             }*/
 
             var fileInfos =
-                categoryToRepair.Children.Cast<Playlist>()
+                categoryToRepair.ChildContainers.Cast<Playlist>()
                     .SelectMany(
                         playlist =>
-                            playlist.Children.Cast<MediaFile>()
-                                .SelectMany(mediaFile => mediaFile.MediaContainerFiles.Select(mcf => mcf.File.FileInfo))).ToList();
+                            playlist.ChildContainers.Cast<MediaFile>()
+                                .SelectMany(mediaFile => mediaFile.Files.Select(file => file.FileInfo))).ToList();
 
             var count1 = fileInfos.Count();
             var distinctFilesCount = fileInfos.Select(fi => fi.FullName).Distinct().Count();
@@ -81,14 +81,11 @@ namespace Oleg_ivo.MeloManager.Repairers
 
                 categoryToRepair.BatchRepair(files, true, mediaCache);
                 var files2 =
-                    categoryToRepair.Children.Cast<Playlist>()
+                    categoryToRepair.ChildContainers.Cast<Playlist>()
                         .SelectMany(
                             playlist =>
-                                playlist.Children.Cast<MediaFile>()
-                                    .SelectMany(
-                                        mediaFile =>
-                                            mediaFile.MediaContainerFiles.Where(mcf => mcf.File != null)
-                                                .Select(mcf => mcf.File))).ToList();
+                                playlist.ChildContainers.Cast<MediaFile>()
+                                    .SelectMany(mediaFile => mediaFile.Files)).ToList();
                 fileInfos = files2.Select(f => f.FileInfo).ToList();
                 var count2 = fileInfos.Count();
                 var existsCount2 = fileInfos.Count(fi => fi.Exists);
@@ -101,7 +98,7 @@ namespace Oleg_ivo.MeloManager.Repairers
                             {
                                 Dir = fi.FileInfo.Directory.FullName,
                                 FileName = fi.FileInfo.FullName,
-                                Playlists = fi.MediaContainerFiles.Single().MediaContainer.Parents
+                                Playlists = fi.MediaContainers.Single().ParentContainers
                             })
                     .GroupBy(s => s.Dir, EqualityComparer<string>.Default)
                     .OrderBy(dir => dir.Key)
@@ -115,7 +112,7 @@ namespace Oleg_ivo.MeloManager.Repairers
                 log.Info("Всего файлов: {0}, было сломано: {1}, осталось сломано: {2}", count2, notExistsCount1, notExistsCount2);
                 log.Debug(notExistsDirs.JoinToString("\n"));
 
-                var playlists = categoryToRepair.Children.Cast<Playlist>().Where(playlist => playlist.IsRepaired).ToList();
+                var playlists = categoryToRepair.ChildContainers.OfType<Playlist>().Where(playlist => playlist.IsRepaired).ToList();
                 log.Info("Сохранение плейлистов {0}", playlists.Count);
                 EnsureBackupPath("AutoRepair");
                 foreach (var playlist in playlists)
@@ -128,7 +125,7 @@ namespace Oleg_ivo.MeloManager.Repairers
             //TODO:здесь может быть проблема: категория это сущность, при связывании её с плейлистами она может быть добавлена в БД вместе с другими вспомогательными сущностями
             //поэтому сбрасываем все изменения, которые могли произойти локально...
             //TODO:по-хорошоме, надо бы ещё лочить DataContext, чтобы и другие не могли случайно сохранить изменения, которые были зделаны здесь
-            ((MediaDataContext)mediaCache).Refresh(RefreshMode.OverwriteCurrentValues);
+            //((MediaDataContext)mediaCache).Refresh(RefreshMode.OverwriteCurrentValues);//TODO: может оно и не нужно больше
 
             //Playlist playlist = playlistFileImporter.FileToPlaylist(@"D:\Oleg\ToRepair.m3u");
             log.Info("Починка завершена");

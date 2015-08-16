@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using Oleg_ivo.MeloManager.MediaObjects;
 
 namespace Oleg_ivo.MeloManager
@@ -21,4 +21,4 @@ namespace Oleg_ivo.MeloManager
         /// </summary>
         public static MediaDataContext DataContext { get; set; }
     }
-}
+}*/

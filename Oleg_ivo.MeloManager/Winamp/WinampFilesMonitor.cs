@@ -104,7 +104,7 @@ namespace Oleg_ivo.MeloManager.Winamp
             {
                 log.Debug("{0} changed", filename);
                 importer.Import(filename);
-                importer.DataContext.SubmitChanges();
+                importer.DbContext.SaveChanges();
             }
         }
 
@@ -115,7 +115,7 @@ namespace Oleg_ivo.MeloManager.Winamp
                 log.Debug("{0} added", filename);
                 //TODO: импорт нового плейлиста, но перед этим нужно разобраться с ожиданием обновления словаря их xml (см. метод MonitorFilesChanges)
                 importer.Import(filename);
-                importer.DataContext.SubmitChanges();
+                importer.DbContext.SaveChanges();
             }
         }
 
