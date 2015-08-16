@@ -70,7 +70,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 //разрыв связи между parent и текущим элементом
                 var parentContainer = Parent.UnderlyingItem;
                 parentContainer.ChildContainers.Remove(UnderlyingItem);
-                UnderlyingItem.ParentContainers.Remove(parentContainer);//TODO: проверить, может эта строка дублирует предыдущую!
+                UnderlyingItem.ParentContainers.Remove(parentContainer);
             }
 
             //в случае сиротства удаляем сам элемент контейнера из базы
@@ -78,6 +78,12 @@ namespace Oleg_ivo.MeloManager.ViewModel
             {
                 //if (UnderlyingItem.Id > 0) 
                 dbContext.MediaContainers.Remove(UnderlyingItem);
+
+                //удаление связи с файлами и самих файлов, если это единственая связь
+                if (UnderlyingItem.Files.Any())
+                {
+                    dbContext.Files.RemoveRange(UnderlyingItem.Files.Where(file => file.MediaContainers.Count == 1));
+                }
 
                 //рекурсивное удаление дочерних элементов
                 foreach (var childItem in ChildItems.ToList())
@@ -87,11 +93,6 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 }
             }
 
-            //удаление связи с файлами и самих файлов, если это единственая связь
-            if (UnderlyingItem.Files.Any())
-            {
-                dbContext.Files.RemoveRange(UnderlyingItem.Files.Where(file => file.MediaContainers.Count == 1));
-            }
         }
 
         //public IEnumerable<MediaContainerTreeWrapper> GetAllChilds(){}
