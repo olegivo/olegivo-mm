@@ -10,7 +10,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
     /// <summary>
     /// Содержит информацию о плейлисте, достаточную для создания сущности <see cref="Playlist"/>
     /// </summary>
-    public class PrePlaylist : IRepairable, IMediaFilesContainer
+    public class PrePlaylist : IRepairable, IEnumerable<MediaFile>
     {
         private readonly IMediaCache mediaCache;
         /// <summary>

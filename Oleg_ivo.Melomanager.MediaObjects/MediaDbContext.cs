@@ -112,6 +112,8 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                     .Include(mc => mc.ParentContainers)
                     .Include(mc => mc.ChildContainers)
                     .Load();
+
+                //this.ActionWithLog(() => {}, Console.WriteLine);
                 //var mediaContainers = Playlists.ToList();
                 var d = Files//.ToList()
                     .Select(file =>
@@ -119,11 +121,13 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                         {
                             file.FullFileName,
                             MediaFiles = file.MediaContainers.OfType<MediaFile>().ToList(),
-                            Playlists = file.MediaContainers.OfType<Playlist>().ToList(),
+                            //BUG: пока Playlist реализует интерфейс, IEnumerable<MediaFile>, запросы на фильтрацию по типу Playlist не работают
+                            //Playlists = file.MediaContainers.OfType<Playlist>().ToList(), 
                             file
                         })
                     .ToList();
-                var list = MediaContainers.Where(mc => (mc is Playlist || mc is MediaFile) && !mc.Files.Any()).ToList();
+                var list1 = Playlists.Where(playlist => !playlist.Files.Any()).ToList();
+                var list = MediaContainers.Where(mc => (/*mc is Playlist ||*/ mc is MediaFile) && !mc.Files.Any()).ToList();
                 //if (list.Any())
                 //    throw new InvalidOperationException();
                 //var list = d.ToList();

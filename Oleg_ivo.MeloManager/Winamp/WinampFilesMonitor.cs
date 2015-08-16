@@ -46,7 +46,7 @@ namespace Oleg_ivo.MeloManager.Winamp
                         .ToList();
 
                 return playlistsToImport != null && playlistsToImport.Any() &&
-                       fileAdapterService.Import(playlistsToImport, winampCategory).Any();
+                       fileAdapterService.RequestImport(playlistsToImport, winampCategory).Result;
             }
         }
 
@@ -99,7 +99,10 @@ namespace Oleg_ivo.MeloManager.Winamp
 
         private void OnDeleted(string filename)
         {
-            log.Debug("{0} deleted", filename);
+            lock (fileAdapterService)
+            {
+                log.Debug("{0} deleted", filename);
+            }
         }
 
         private void OnChanged(string filename)
@@ -107,7 +110,7 @@ namespace Oleg_ivo.MeloManager.Winamp
             lock (fileAdapterService)
             {
                 log.Debug("{0} changed", filename);
-                fileAdapterService.Import(filename);
+                fileAdapterService.RequestImport(filename);
                 fileAdapterService.Save();
             }
         }
@@ -118,12 +121,12 @@ namespace Oleg_ivo.MeloManager.Winamp
             {
                 log.Debug("{0} added", filename);
                 //TODO: импорт нового плейлиста, но перед этим нужно разобраться с ожиданием обновления словаря их xml (см. метод MonitorFilesChanges)
-                fileAdapterService.Import(filename);
+                fileAdapterService.RequestImport(filename);
                 fileAdapterService.Save();
             }
         }
 
-        public List<string> GetChangedPlaylists()
+        private List<string> GetChangedPlaylists()
         {
             var now = DateTime.Now;
             List<string> changedPlaylists;

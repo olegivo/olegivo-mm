@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using NLog;
 using Oleg_ivo.MeloManager.MediaObjects;
 
@@ -11,7 +12,8 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
         public abstract PrePlaylist FileToPlaylist(string filename, string playlistName = null);
 
-        public void PlaylistToFile(IMediaFilesContainer mediaFilesContainer, string filename)
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        public void PlaylistToFile(IEnumerable<MediaFile> mediaFilesContainer, string filename)
         {
             log.Info("Запись плейлиста [{0}] в файл [{1}]", mediaFilesContainer, filename);
             try

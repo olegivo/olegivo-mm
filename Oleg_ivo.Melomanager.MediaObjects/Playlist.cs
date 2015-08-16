@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// Плейлист
     /// </summary>
     [DebuggerDisplay("Плейлист [{Name}]")]
-    public class Playlist : MediaContainer
+    public class Playlist : MediaContainer, IEnumerable<MediaFile>
     {
         private string originalFileName;
         private readonly IMediaCache mediaCache;
@@ -105,5 +106,26 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             RemoveParent(parent);
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>
+        /// An enumerator that can be used to iterate through the collection.
+        /// </returns>
+        public IEnumerator<MediaFile> GetEnumerator()
+        {
+            return ChildContainers.OfType<MediaFile>().GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
+        /// </returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ChildContainers.OfType<MediaFile>().GetEnumerator();
+        }
     }
 }

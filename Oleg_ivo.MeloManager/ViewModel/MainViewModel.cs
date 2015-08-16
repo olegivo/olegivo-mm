@@ -353,10 +353,10 @@ namespace Oleg_ivo.MeloManager.ViewModel
                         ? new Category {Name = "Плейлисты Winamp", IsRoot = true}
                         : (Category) root.UnderlyingItem;
 
-                    var imported = winampFilesMonitor.RunImport(winampCategory, onlyChanged);
-
                     if (options.WinampImportCategoryId != winampCategory.Id)
                         options.WinampImportCategoryId = winampCategory.Id;
+
+                    var imported = winampFilesMonitor.RunImport(winampCategory, onlyChanged);
                     return imported;
                 })
                 .ContinueWith(task =>
