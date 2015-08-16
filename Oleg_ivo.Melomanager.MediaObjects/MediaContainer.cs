@@ -114,7 +114,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         {
             IsRepaired = false;
             var foundFilesList = foundFiles as IList<string> ?? foundFiles.ToList();
-            foreach (var mediaContainer in ParentContainers)
+            foreach (var mediaContainer in ChildContainers)
             {
                 if (mediaContainer is Category || mediaContainer is Playlist)
                     log.Trace("Починка {0}", mediaContainer);
