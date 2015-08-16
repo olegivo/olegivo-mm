@@ -4,28 +4,26 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using Autofac;
 using NLog;
 using Oleg_ivo.Base.Autofac;
-using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.MeloManager.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
-using Oleg_ivo.MeloManager.PlaylistFileAdapters;
 using Oleg_ivo.MeloManager.Prism;
+using File = System.IO.File;
 
 namespace Oleg_ivo.MeloManager.Winamp
 {
     public class WinampFilesMonitor : IDisposable//TODO: взять некоторые вещи из монитора папок?
     {
+        private readonly WinampFileAdapterService fileAdapterService;
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
         private readonly MeloManagerOptions options;
-        private readonly PlaylistImporter<WinampM3UPlaylistFileAdapter> importer;
         private readonly CompositeDisposable disposer = new CompositeDisposable();
 
-        public WinampFilesMonitor(MeloManagerOptions options, IComponentContext context)
+        public WinampFilesMonitor(MeloManagerOptions options, WinampFileAdapterService fileAdapterService)
         {
-            importer = context.ResolveUnregistered<PlaylistImporter<WinampM3UPlaylistFileAdapter>>();
+            this.fileAdapterService = Enforce.ArgumentNotNull(fileAdapterService, "fileAdapterService");
             this.options = Enforce.ArgumentNotNull(options, "options");
         }
 
@@ -37,12 +35,18 @@ namespace Oleg_ivo.MeloManager.Winamp
             disposer.Dispose();
         }
 
-        public IEnumerable<Playlist> RunImport(Category winampCategory, IEnumerable<string> changedPlaylists)
+        public bool RunImport(Category winampCategory, bool onlyChanged)
         {
-            lock (importer)
+            lock (fileAdapterService)
             {
-                var playlistFilenames = changedPlaylists ?? importer.Adapter.Dic.Keys.Select(f => Path.Combine(options.PlaylistsPath, f)).Where(System.IO.File.Exists);
-                return importer.RunImportAll(playlistFilenames, winampCategory);
+                var playlistsToImport = onlyChanged
+                    ? GetChangedPlaylists()
+                    : fileAdapterService.Adapter.Dic.Keys.Select(f => Path.Combine(options.PlaylistsPath, f))
+                        .Where(File.Exists)
+                        .ToList();
+
+                return playlistsToImport != null && playlistsToImport.Any() &&
+                       fileAdapterService.Import(playlistsToImport, winampCategory).Any();
             }
         }
 
@@ -86,10 +90,10 @@ namespace Oleg_ivo.MeloManager.Winamp
 
         private void OnPlaylistXmlChanged(string filename)
         {
-            lock (importer)
+            lock (fileAdapterService)
             {
                 log.Debug("{0} changed", filename);
-                importer.Adapter.RefreshDic();
+                fileAdapterService.Adapter.RefreshDic();
             }
         }
 
@@ -100,22 +104,22 @@ namespace Oleg_ivo.MeloManager.Winamp
 
         private void OnChanged(string filename)
         {
-            lock (importer)
+            lock (fileAdapterService)
             {
                 log.Debug("{0} changed", filename);
-                importer.Import(filename);
-                importer.DbContext.SaveChanges();
+                fileAdapterService.Import(filename);
+                fileAdapterService.Save();
             }
         }
 
         private void OnAdded(string filename)
         {
-            lock (importer)
+            lock (fileAdapterService)
             {
                 log.Debug("{0} added", filename);
                 //TODO: импорт нового плейлиста, но перед этим нужно разобраться с ожиданием обновления словаря их xml (см. метод MonitorFilesChanges)
-                importer.Import(filename);
-                importer.DbContext.SaveChanges();
+                fileAdapterService.Import(filename);
+                fileAdapterService.Save();
             }
         }
 
@@ -128,7 +132,7 @@ namespace Oleg_ivo.MeloManager.Winamp
             else
             {
                 changedPlaylists =
-                    importer.Adapter.Dic.Keys.Select(f => new FileInfo(Path.Combine(options.PlaylistsPath, f)))
+                    fileAdapterService.Adapter.Dic.Keys.Select(f => new FileInfo(Path.Combine(options.PlaylistsPath, f)))
                         .Where(info => info.LastWriteTime > options.LastPlaylistsImportDate)
                         .Select(info => info.FullName)
                         .ToList();

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,6 +18,7 @@ using Oleg_ivo.MeloManager.MediaObjects.Extensions;
 using Oleg_ivo.MeloManager.Prism;
 using Oleg_ivo.MeloManager.Winamp;
 using Oleg_ivo.MeloManager.Winamp.Tracking;
+using Oleg_ivo.Tools.Utils;
 using Reactive.Bindings;
 
 namespace Oleg_ivo.MeloManager.ViewModel
@@ -207,6 +207,9 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
             CommandInitDataSource = new ReactiveCommand(CanWorkWithDataContext).AddHandler(InitDataSource);
             CommandTest = new ReactiveCommand().AddHandler(Test);
+
+            Disposer.Add(CanWorkWithDataContext);
+            Disposer.Add(CanWorkWithDataContext.Subscribe(value => log.Debug("CanWorkWithDataContext = {0}", value)));
         }
 
         public ReactiveProperty<bool> CanWorkWithDataContext { get; set; }
@@ -316,10 +319,9 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// <summary>
         /// Импорт плейлистов
         /// </summary>
-        /// <param name="playlistsToImport">Содержит список плейлистов, которые нужно импортировать. Если null, импортировать все</param>
-        private void ImportWinampPlaylists(IEnumerable<string> playlistsToImport=null)
+        /// <param name="onlyChanged">Только изменённые с последнего импорта</param>
+        private void ImportWinampPlaylists(bool onlyChanged = false)
         {
-
             Task.Factory.StartNew(Save)
                 .ContinueWith(task =>
                 {
@@ -350,13 +352,18 @@ namespace Oleg_ivo.MeloManager.ViewModel
                     var winampCategory = createNew
                         ? new Category {Name = "Плейлисты Winamp", IsRoot = true}
                         : (Category) root.UnderlyingItem;
-                    winampFilesMonitor.RunImport(winampCategory, playlistsToImport);
+
+                    var imported = winampFilesMonitor.RunImport(winampCategory, onlyChanged);
 
                     if (options.WinampImportCategoryId != winampCategory.Id)
                         options.WinampImportCategoryId = winampCategory.Id;
-                    return true;
+                    return imported;
                 })
-                .ContinueWith(task => { if(task.Result) LoadFromDb(); })
+                .ContinueWith(task =>
+                {
+                    CanWorkWithDataContext.Value = true;
+                    if(task.Result) LoadFromDb();
+                })
                 .ContinueWith(task => StatusText = "Импорт плейлистов из Winamp завершён");
         }
 
@@ -514,12 +521,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                         if (!options.DisableWinampBinding) winampControl.LaunchBind();
                         
                         log.Info("AutoImportPlaylistsOnStart: {0}", options.AutoImportPlaylistsOnStart ? "on" : "off");
-                        if (options.AutoImportPlaylistsOnStart)
-                        {
-                            var changedPlaylists = winampFilesMonitor.GetChangedPlaylists();
-                            if (changedPlaylists != null && changedPlaylists.Any())
-                                ImportWinampPlaylists(changedPlaylists);
-                        }
+                        if (options.AutoImportPlaylistsOnStart) ImportWinampPlaylists(true);
 
                         log.Info("DisableMonitorFilesChanges: {0}", !options.DisableMonitorFilesChanges ? "on" : "off");
                         if (!options.DisableMonitorFilesChanges) winampFilesMonitor.MonitorFilesChanges();
@@ -532,6 +534,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         {
             log.Info(StatusText = "Инициализация в процессе...");
             Task.Factory.StartNew(() => { })
+                .ContinueWith(task => DbContext.RefreshCache())
                 .ContinueWith(task => LoadFromDb())
                 .ContinueWith(task => RunServices())
                 .ContinueWith(task => log.Info(StatusText = "Инициализация завершена"));

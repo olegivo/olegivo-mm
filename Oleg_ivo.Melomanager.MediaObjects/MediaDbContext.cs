@@ -17,7 +17,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         {
             //Disable initializer
             Database.SetInitializer<MediaDbContext>(null);
-            using (new ElapsedAction(elapsed => log.Debug("Caches filled in {0}", elapsed))) RefreshCache();
         }
 
         /// <summary>
@@ -101,9 +100,9 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             }
         }
 
-        private ConcurrentDictionary<string, FileExt> filesCache;
-        private ConcurrentDictionary<string, MediaFile> mediaFilesCache;
-        private ConcurrentDictionary<string, Playlist> playlistsCache;
+        private ConcurrentDictionary<string, FileExt> filesCache = new ConcurrentDictionary<string,FileExt>();
+        private ConcurrentDictionary<string, MediaFile> mediaFilesCache = new ConcurrentDictionary<string, MediaFile>();
+        private ConcurrentDictionary<string, Playlist> playlistsCache = new ConcurrentDictionary<string, Playlist>();
 
         public void RefreshCache()
         {

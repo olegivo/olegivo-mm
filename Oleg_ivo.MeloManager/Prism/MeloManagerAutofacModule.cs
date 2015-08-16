@@ -31,6 +31,7 @@ namespace Oleg_ivo.MeloManager.Prism
             builder.Register(context => context.Resolve<MediaDbContext>()).As<IMediaCache>();
 
             builder.RegisterType<WinampControl>().SingleInstance();
+            builder.RegisterType<WinampFileAdapterService>().SingleInstance();
             builder.RegisterType<WinampFilesMonitor>().SingleInstance();
 
             //MVVM registration:

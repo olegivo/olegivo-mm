@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Oleg_ivo.MeloManager.MediaObjects;
+using Oleg_ivo.MeloManager.PlaylistFileAdapters.Diff;
 
 namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 {
@@ -26,34 +27,31 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
         public Playlist CreatePlaylist()
         {
-            Playlist playlist = null;
-            if (MediaFiles != null)
-            {
-                playlist = new Playlist(Filename, mediaCache) {Name = Name};
-                foreach (var mediaFile in MediaFiles)
-                {
-                    playlist.AddChildMediaFile(mediaFile);
-                }
-            }
-            return playlist;
+            var diffAction = GetCreatePlaylistAction();
+            return diffAction.ApplyAndReturnItem();
         }
         
-        public Func<Playlist> CreatePlaylistFunc()
+        public ItemDiffAction<Playlist> GetCreatePlaylistAction()
         {
+            if (MediaFiles == null) return ItemDiffAction<Playlist>.CreateEmptyStub();
+
             Playlist playlist = null;
-            if (MediaFiles != null)
-            {
-                playlist = new Playlist(Filename, mediaCache) {Name = Name};
-                var diffAction =
-                    new ContainerDiffAction(
-                        MediaFiles.Select(
-                            mediaFile =>
-                                new DiffAction<Playlist, MediaFile>(
-                                    () => new Playlist(Filename, mediaCache) {Name = Name}, () => mediaFile,
-                                    (pl, mf) => pl.AddChildMediaFile(mf), DiffType.Added)).Cast<IDiffAction>().ToList(),
-                        DiffType.None);
-            }
-            return null;
+            Func<Playlist> playlistProvider =
+                () => playlist ?? (playlist = new Playlist(Filename, mediaCache) {Name = Name});
+                
+            var diffAction =
+                new ContainerDiffAction<Playlist>(
+                    playlistProvider,
+                    MediaFiles.Select(
+                        mediaFile =>
+                            new DiffAction<Playlist, MediaFile>(
+                                playlistProvider,
+                                () => mediaFile,
+                                (pl, mf) => pl.AddChildMediaFile(mf),
+                                DiffType.Added))
+                        .Cast<IDiffAction>().ToList(),
+                    DiffType.Added);
+            return diffAction;
         }
 
         /// <summary>
