@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using NLog;
 using Oleg_ivo.MeloManager.MediaObjects;
 
@@ -12,13 +11,12 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
         public abstract PrePlaylist FileToPlaylist(string filename, string playlistName = null);
 
-        public void PlaylistToFile(Playlist playlist, string filename)
+        public void PlaylistToFile(IMediaFilesContainer mediaFilesContainer, string filename)
         {
-            log.Info("Запись плейлиста [{0}] в файл [{1}]", playlist, filename);
+            log.Info("Запись плейлиста [{0}] в файл [{1}]", mediaFilesContainer, filename);
             try
             {
-                var mediaFiles = playlist.ChildContainers.Cast<MediaFile>();
-                MediaFilesToFile(filename, mediaFiles);
+                MediaFilesToFile(filename, mediaFilesContainer);
             }
             catch (Exception ex)
             {
@@ -26,7 +24,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             }
         }
 
-        public readonly static string[] PlaylistFilesSearchPatterns = { "*.m3u8", "*.m3u" };
+        public readonly static string[] PlaylistFilesSearchPatterns = { "*.m3u8", "*.m3u" };//TODO: на своём ли оно месте?
         public abstract void MediaFilesToFile(string filename, IEnumerable<MediaFile> mediaFiles);
     }
 }

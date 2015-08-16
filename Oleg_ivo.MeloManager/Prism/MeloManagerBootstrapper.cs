@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Windows;
 using System.Windows.Threading;
 using Autofac;
@@ -34,7 +34,7 @@ namespace Oleg_ivo.MeloManager.Prism
 
         void Current_Exit(object sender, ExitEventArgs e)
         {
-            log.Debug("Сохранение настроек");
+            log.Debug("РЎРѕС…СЂР°РЅРµРЅРёРµ РЅР°СЃС‚СЂРѕРµРє");
             options.Save();
         }
 
@@ -62,7 +62,7 @@ namespace Oleg_ivo.MeloManager.Prism
                 }
                 if (options.RepairMode || options.Mp3TagRenameMode)
                 {
-                    log.Debug("В командной строке заданы альтернативного режимы работы приложение, поэтому главное окно запущено не будет");
+                    log.Debug("Р’ РєРѕРјР°РЅРґРЅРѕР№ СЃС‚СЂРѕРєРµ Р·Р°РґР°РЅС‹ Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅС‹Рµ СЂРµР¶РёРјС‹ СЂР°Р±РѕС‚С‹ РїСЂРёР»РѕР¶РµРЅРёСЏ, РїРѕСЌС‚РѕРјСѓ РіР»Р°РІРЅРѕРµ РѕРєРЅРѕ Р·Р°РїСѓС‰РµРЅРѕ РЅРµ Р±СѓРґРµС‚");
                     return false;
                 }
             }
@@ -71,18 +71,18 @@ namespace Oleg_ivo.MeloManager.Prism
                 throw;
             }
 
-            log.Debug("В командной строке не заданы альтернативного режимы работы приложение, поэтому будет запущено главное окно");
+            log.Debug("Р’ РєРѕРјР°РЅРґРЅРѕР№ СЃС‚СЂРѕРєРµ РЅРµ Р·Р°РґР°РЅС‹ Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅС‹Рµ СЂРµР¶РёРјС‹ СЂР°Р±РѕС‚С‹ РїСЂРёР»РѕР¶РµРЅРёСЏ, РїРѕСЌС‚РѕРјСѓ Р±СѓРґРµС‚ Р·Р°РїСѓС‰РµРЅРѕ РіР»Р°РІРЅРѕРµ РѕРєРЅРѕ");
             return true;
         }
 
         private void UpdateUsers()
         {
-            log.Debug("Обновление списка пользователей");
+            log.Debug("РћР±РЅРѕРІР»РµРЅРёРµ СЃРїРёСЃРєР° РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№");
             var userName = Environment.UserName.ToLower();
             if (!options.Users.Contains(userName))
             {
                 options.Users.Add(userName);
-                log.Debug("Текущий пользователь добавлен в список пользователей");
+                log.Debug("РўРµРєСѓС‰РёР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РґРѕР±Р°РІР»РµРЅ РІ СЃРїРёСЃРѕРє РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№");
                 options.Save();
             }
         }

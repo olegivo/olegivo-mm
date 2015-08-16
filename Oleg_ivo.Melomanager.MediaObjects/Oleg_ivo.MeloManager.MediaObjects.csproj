@@ -65,6 +65,7 @@
     <Compile Include="Category.cs" />
     <Compile Include="Extensions\DataContextExtensions.cs" />
     <Compile Include="Extensions\DbContextExtensions.cs" />
+    <Compile Include="IRepairable.cs" />
     <Compile Include="MediaDbContext.cs" />
     <Compile Include="File.cs" />
     <Compile Include="IMediaCache.cs" />

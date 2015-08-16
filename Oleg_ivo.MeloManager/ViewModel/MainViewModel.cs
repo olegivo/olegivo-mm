@@ -264,7 +264,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 {
                     //DataContext.ActionWithLog(dataContext => dataContext.RefreshCache());
                     MediaTree.InitSource(
-                        DbContext.MediaContainers.OfType<Category>().Where(category => category.IsRoot));
+                        DbContext.Categories.Where(category => category.IsRoot));
                     log.Info(StatusText = "Загрузка из БД завершена");
                     CanWorkWithDataContext.Value = true;
                 });

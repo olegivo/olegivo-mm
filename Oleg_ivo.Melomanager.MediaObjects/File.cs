@@ -129,8 +129,9 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         public File Repair(IEnumerable<string> foundFiles, IMediaCache mediaCache)
         {
             //создание списка найденных файлов:
+            var filename = Filename.ToLower();
             var repairedFiles =
-                (foundFiles.Where(file => file.ToLower().Contains(Filename.ToLower()))
+                (foundFiles.Where(file => file.ToLower().Contains(filename))
                             .Select(mediaCache.GetOrAddCachedFile)).ToList();
 
             File repairedFile;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Linq;
 using System.IO;
 using System.Linq;
 using Autofac;
@@ -27,9 +26,13 @@ namespace Oleg_ivo.MeloManager.Repairers
         {
             log.Info("Автоматическая починка путей файлов");
             log.Debug("Получение списка плейлистов");
-            var categoryToRepair = new Category();
+            //var categoryToRepair = new Category();
 
-            categoryToRepair.AddChildren(WinampM3UPlaylistFileAdapter.GetPlaylists().Select(playlist => playlist.CreatePlaylist()));
+            /*TODO: PrePlaylist.CreatePlaylist() неявно добавляет в MediaDbContext новые сущности, 
+             * благо, что AutoRepairer используется в отдельном режиме работы программы и программа после этого закрывается.
+             Если бы MediaDbContext использовался и дальше, то все неявно импортированные через AutoRepairer данные могли случайно сохраниться (хотя это по сути мусор)*/
+            var winampPlaylists = WinampM3UPlaylistFileAdapter.GetPlaylists()/*.Select(playlist => playlist.CreatePlaylist()).ToList()*/;
+            //categoryToRepair.AddChildren(winampPlaylists);
 
             /*var playlistFiles =
                 PlaylistFilesSearchPatterns.SelectMany(
@@ -48,12 +51,13 @@ namespace Oleg_ivo.MeloManager.Repairers
                 categoryToRepair.AddChild(playlist);
             }*/
 
-            var fileInfos =
-                categoryToRepair.ChildContainers.Cast<Playlist>()
-                    .SelectMany(
-                        playlist =>
-                            playlist.ChildContainers.Cast<MediaFile>()
-                                .SelectMany(mediaFile => mediaFile.Files.Select(file => file.FileInfo))).ToList();
+            var winampMediaFiles =
+                winampPlaylists.SelectMany(playlist => playlist.MediaFiles).ToList();
+            var filesSelector = winampMediaFiles.SelectMany(mediaFile => mediaFile.Files);
+            var fileInfosSelector = filesSelector.Select(file => file.FileInfo);
+            // ReSharper disable PossibleMultipleEnumeration
+            var fileInfos = fileInfosSelector.ToList();//multyple enumeration - это норма, т.к. она должна вычисляться каждый раз заново (при починке файлы заменяются)
+            // ReSharper restore PossibleMultipleEnumeration
 
             var count1 = fileInfos.Count();
             var distinctFilesCount = fileInfos.Select(fi => fi.FullName).Distinct().Count();
@@ -79,46 +83,53 @@ namespace Oleg_ivo.MeloManager.Repairers
                         .ToList();
                 log.Debug("Получено файлов: {0}", files.Count);
 
-                categoryToRepair.BatchRepair(files, true, mediaCache);
+                foreach (var winampPlaylist in winampPlaylists)
+                {
+                    winampPlaylist.BatchRepair(files, true, mediaCache);
+                }
                 var files2 =
-                    categoryToRepair.ChildContainers.Cast<Playlist>()
+                    winampPlaylists
                         .SelectMany(
                             playlist =>
-                                playlist.ChildContainers.Cast<MediaFile>()
-                                    .SelectMany(mediaFile => mediaFile.Files)).ToList();
-                fileInfos = files2.Select(f => f.FileInfo).ToList();
+                                playlist.MediaFiles
+                                    .SelectMany(mediaFile => mediaFile.Files).Select(file => new { PlaylistName = playlist.Name, File = file })).ToList();
+                // ReSharper disable PossibleMultipleEnumeration
+                fileInfos = fileInfosSelector.ToList();//multyple enumeration - это норма, т.к. она должна вычисляться каждый раз заново (при починке файлы заменяются)
+                // ReSharper restore PossibleMultipleEnumeration
                 var count2 = fileInfos.Count();
                 var existsCount2 = fileInfos.Count(fi => fi.Exists);
                 var notExistsCount2 = fileInfos.Count(fi => !fi.Exists);
-                var notExistsFiles = files2.Where(fi => !fi.FileInfo.Exists).Distinct().ToList();
+                var notExistsFiles = files2.Where(f => !f.File.FileInfo.Exists).GroupBy(f => f.File).ToList();
                 var notExistsDirs = notExistsFiles
                     .Select(
-                        fi =>
+                        f =>
                             new
                             {
-                                Dir = fi.FileInfo.Directory.FullName,
-                                FileName = fi.FileInfo.FullName,
-                                Playlists = fi.MediaContainers.Single().ParentContainers
+                                Dir = f.Key.FileInfo.Directory.FullName,
+                                FileName = f.Key.FileInfo.FullName,
+                                Playlists = f.Select(item => item.PlaylistName).Distinct().JoinToStringFormat("\n", "\t{0}")
                             })
                     .GroupBy(s => s.Dir, EqualityComparer<string>.Default)
                     .OrderBy(dir => dir.Key)
                     .Select(
-                        group =>
-                            string.Format("{0}: {1}\n{2}", group.Key, group.Count(),
-                                group.Select(item => string.Format("{0}\nв плейлистах \n{1}", item.FileName, item.Playlists.Select(mc => mc.ToString()).JoinToString("\n")))
-                                    .JoinToStringFormat("\n", "\t{0}")))
+                        group => string.Format("В папке {0}: {1} шт.\n{2}",
+                            group.Key,
+                            group.Count(),
+                            group.Select(item => string.Format("{0}\nв плейлистах \n{1}", item.FileName, item.Playlists))
+                                .JoinToString("\n")))
                     .ToList();
 
                 log.Info("Всего файлов: {0}, было сломано: {1}, осталось сломано: {2}", count2, notExistsCount1, notExistsCount2);
                 log.Debug(notExistsDirs.JoinToString("\n"));
 
-                var playlists = categoryToRepair.ChildContainers.OfType<Playlist>().Where(playlist => playlist.IsRepaired).ToList();
+                var playlists = winampPlaylists.Where(playlist => playlist.IsRepaired).ToList();
                 log.Info("Сохранение плейлистов {0}", playlists.Count);
                 EnsureBackupPath("AutoRepair");
                 foreach (var playlist in playlists)
                 {
-                    File.Copy(playlist.OriginalFileName, Path.Combine(BackupPath, Path.GetFileName(playlist.OriginalFileName)));
-                    WinampM3UPlaylistFileAdapter.PlaylistToFile(playlist, playlist.OriginalFileName);
+                    var originalFileName = playlist.Filename;
+                    File.Copy(originalFileName, Path.Combine(BackupPath, Path.GetFileName(originalFileName)));
+                    WinampM3UPlaylistFileAdapter.PlaylistToFile(playlist, originalFileName);
                 }
             }
 

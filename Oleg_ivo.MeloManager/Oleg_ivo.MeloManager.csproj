@@ -186,6 +186,7 @@
     </Compile>
     <Compile Include="PlaylistFileAdapters\Diff.cs" />
     <Compile Include="PlaylistFileAdapters\ExtInfo.cs" />
+    <Compile Include="PlaylistFileAdapters\IMediaFilesContainer.cs" />
     <Compile Include="PlaylistFileAdapters\M3UPlaylistFileAdapter.cs" />
     <Compile Include="PlaylistFileAdapters\PlaylistFileAdapter.cs" />
     <Compile Include="MainWindow.xaml.cs">

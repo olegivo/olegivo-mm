@@ -12,7 +12,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     /// Медиа-контейнер
     /// </summary>
     [DebuggerDisplay("Медиа-контейнер [{Name}]")]
-    public class MediaContainer
+    public class MediaContainer : IRepairable
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
