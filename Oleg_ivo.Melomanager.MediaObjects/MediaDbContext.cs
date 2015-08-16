@@ -98,6 +98,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                     .Include(mc => mc.ParentContainers)
                     .Include(mc => mc.ChildContainers)
                     .Load();
+                //var mediaContainers = Playlists.ToList();
                 var d = Files//.ToList()
                     .Select(file =>
                         new
@@ -214,11 +215,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                         c.MapRightKey("ParentId");
                         c.ToTable("MediaContainersParentChilds");
                     });
-
-                //TODO: TPH -> TPT
-                Map<Category>(c => c.Requires("Type").HasValue("Category"));
-                Map<Playlist>(c => c.Requires("Type").HasValue("Playlist"));
-                Map<MediaFile>(c => c.Requires("Type").HasValue("MediaFile"));
             }
         }
 
@@ -243,7 +239,30 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             /// </summary>
             public CategoryConfiguration()
             {
+                ToTable("Categories");
                 Ignore(item => item.ParentCategory);
+            }
+        }
+
+        internal class PlaylistConfiguration : EntityTypeConfiguration<Playlist>
+        {
+            /// <summary>
+            /// Initializes a new instance of EntityTypeConfiguration
+            /// </summary>
+            public PlaylistConfiguration()
+            {
+                ToTable("Playlists");
+            }
+        }
+
+        internal class MediaFileConfiguration : EntityTypeConfiguration<MediaFile>
+        {
+            /// <summary>
+            /// Initializes a new instance of EntityTypeConfiguration
+            /// </summary>
+            public MediaFileConfiguration()
+            {
+                ToTable("MediaFiles");
             }
         }
 
