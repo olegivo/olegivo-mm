@@ -30,6 +30,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects.Extensions
 
             public void LogChangesInfo()
             {
+                dbContext.ChangeTracker.DetectChanges();
                 var changeSet =
                     dbContext.ChangeTracker.Entries()
                         .Where(entry => entry.State != EntityState.Unchanged)
