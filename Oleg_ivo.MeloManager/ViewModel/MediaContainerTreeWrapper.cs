@@ -74,10 +74,9 @@ namespace Oleg_ivo.MeloManager.ViewModel
             }
 
             //в случае сиротства удаляем сам элемент контейнера из базы
-            if (!UnderlyingItem.ParentContainers.Any())
+            if (UnderlyingItem.ParentContainers==null || !UnderlyingItem.ParentContainers.Any())
             {
                 //if (UnderlyingItem.Id > 0) 
-                dbContext.MediaContainers.Remove(UnderlyingItem);
 
                 //удаление связи с файлами и самих файлов, если это единственая связь
                 if (UnderlyingItem.Files.Any())
@@ -85,12 +84,15 @@ namespace Oleg_ivo.MeloManager.ViewModel
                     dbContext.Files.RemoveRange(UnderlyingItem.Files.Where(file => file.MediaContainers.Count == 1));
                 }
 
+                dbContext.MediaContainers.Remove(UnderlyingItem);
+
                 //рекурсивное удаление дочерних элементов
                 foreach (var childItem in ChildItems.ToList())
                 {
                     childItem.DeleteWithChildren(dbContext);
                     ChildItems.Remove(childItem);
                 }
+
             }
 
         }
