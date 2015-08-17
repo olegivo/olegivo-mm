@@ -29,8 +29,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             }
         }
 
-        [Obsolete("Должен быть protected")]
-        private Playlist()
+        public Playlist()
         {
         }
 
