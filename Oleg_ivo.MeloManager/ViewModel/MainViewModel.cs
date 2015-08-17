@@ -18,7 +18,6 @@ using Oleg_ivo.MeloManager.MediaObjects.Extensions;
 using Oleg_ivo.MeloManager.Prism;
 using Oleg_ivo.MeloManager.Winamp;
 using Oleg_ivo.MeloManager.Winamp.Tracking;
-using Oleg_ivo.Tools.Utils;
 using Reactive.Bindings;
 
 namespace Oleg_ivo.MeloManager.ViewModel
@@ -42,6 +41,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private MediaListViewModel children;
 
         private string statusText;
+        private MediaDbContext mediaDbContext;
 
         #endregion
 
@@ -117,10 +117,15 @@ namespace Oleg_ivo.MeloManager.ViewModel
         }
 
         [Dependency(Required = true)]
-        public MediaDbContext DbContext
+        public MediaDbContext MediaDbContext
         {
-            get { return MediaTree.DbContext; }
-            set { MediaTree.DbContext = value; }
+            get { return mediaDbContext; }
+            set
+            {
+                if(Equals(mediaDbContext, value)) return;
+                mediaDbContext = value;
+                MediaTree.MediaRepository = value;
+            }
         }
 
         [Dependency(Required = true)]
@@ -267,7 +272,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 {
                     //DataContext.ActionWithLog(dataContext => dataContext.RefreshCache());
                     MediaTree.InitSource(
-                        DbContext.Categories.Where(category => category.IsRoot));
+                        MediaDbContext.Categories.Where(category => category.IsRoot));
                     log.Info(StatusText = "Загрузка из БД завершена");
                     CanWorkWithDataContext.Value = true;
                 });
@@ -287,10 +292,12 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private void Save()
         {
+            if (!MediaDbContext.HasChanges()) return;
+            
             log.Info(StatusText = "Сохранение в процесе...");
             CanWorkWithDataContext.Value = false;
             //var changeSet = DataContext.GetChangeSet();
-            DbContext.SubmitChangesWithLog(log.Debug);
+            MediaDbContext.SubmitChangesWithLog();
             //DataContext.SubmitChanges();
             log.Info(StatusText = "Сохранение завершено");
             CanWorkWithDataContext.Value = true;
@@ -339,7 +346,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                             string.Format(
                                 "Импортировать в существующую категорию {0}?\nЕсли нет, будет создана новая категория",
                                 root.Name);
-                        var result = MessageBox.Show(messageBoxText, "Импорт плейлистов", MessageBoxButton.YesNoCancel);
+                        var result = MessageBox.Show(messageBoxText, "Импорт плейлистов и последующее сохранение", MessageBoxButton.YesNoCancel);
                         switch (result)
                         {
                             case MessageBoxResult.No:
@@ -362,7 +369,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 .ContinueWith(task =>
                 {
                     CanWorkWithDataContext.Value = true;
-                    if(task.Result) LoadFromDb();
+                    if(task.Result) SaveAndLoad();
                 })
                 .ContinueWith(task => StatusText = "Импорт плейлистов из Winamp завершён");
         }
@@ -370,7 +377,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private void InitDataSource()
         {
             StatusText = "Тестовая инициализация";
-            var f1 = new MediaFile { Name = "Файл 1" };
+            /*var f1 = new MediaFile { Name = "Файл 1" };
             var f2 = new MediaFile { Name = "Файл 2" };
             var f3 = new MediaFile { Name = "Файл 3" };
             var f4 = new MediaFile { Name = "Файл 4" };
@@ -399,7 +406,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             MediaTree.AddMediaContainer(c1, null);
             MediaTree.AddMediaContainer(c2, null);
             c1.AddChild(c2);
-            MediaTree.AddMediaContainer(c3, null);
+            MediaTree.AddMediaContainer(c3, null);*/
         }
 
         private void Test()
@@ -534,7 +541,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         {
             log.Info(StatusText = "Инициализация в процессе...");
             Task.Factory.StartNew(() => { })
-                .ContinueWith(task => DbContext.RefreshCache())
+                .ContinueWith(task => MediaDbContext.RefreshCache())
                 .ContinueWith(task => LoadFromDb())
                 .ContinueWith(task => RunServices())
                 .ContinueWith(task => log.Info(StatusText = "Инициализация завершена"));

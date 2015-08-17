@@ -18,25 +18,22 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
     {
         private readonly Logger log = LogManager.GetCurrentClassLogger();
 
-        public PlaylistImporter(IComponentContext context, MediaDbContext dbContext, MeloManagerOptions options, IMediaCache mediaCache)
+        public PlaylistImporter(IComponentContext context, IMediaRepository mediaRepository, MeloManagerOptions options)
         {
             Adapter = context.ResolveUnregistered<TPlaylistFileAdapter>();
-            DbContext = Enforce.ArgumentNotNull(dbContext, "dataContext");
+            MediaRepository = Enforce.ArgumentNotNull(mediaRepository, "mediaRepository");
             Options = Enforce.ArgumentNotNull(options, "options");
-            MediaCache = Enforce.ArgumentNotNull(mediaCache, "mediaCache");
         }
 
         public TPlaylistFileAdapter Adapter { get; private set; }
-        
-        public MediaDbContext DbContext { get; private set; }
+
+        public IMediaRepository MediaRepository { get; private set; }
 
         public MeloManagerOptions Options { get; private set; }
 
-        public IMediaCache MediaCache { get; private set; }
-
         /// <summary>
         /// Импорт файлов плейлистов.
-        /// Если при импорте над плейлистами были произведены действительные действия импорта, будет вызвано <see cref="DbContext"/>.SaveChanges
+        /// Если при импорте над плейлистами были произведены действительные действия импорта, будет вызвано <see cref="MediaRepository"/>.SaveChanges
         /// </summary>
         /// <param name="playlistFilenames"></param>
         /// <param name="winampCategory"></param>
@@ -51,7 +48,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
             if (importResult.Any())
             {
                 if (winampCategory.Id == 0)
-                    DbContext.MediaContainers.Add(winampCategory);
+                    MediaRepository.MediaContainers.Add(winampCategory);
 
                 /*var files =
                 DataContext.GetChangeSet()
@@ -71,7 +68,6 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                     .Where(mf => mf.MediaContainerFiles.Count > 1)
                     .ToList();*/
                 log.Debug("При импорте файлов плейлистов ({0} шт.) было импортировано {1}", filenames.Count, importResult.Count);
-                DbContext.SubmitChangesWithLog(log.Debug);
             }
             else
             {
@@ -93,7 +89,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                 var otherUsers = Options.Users.OfType<string>().Where(user => user != currentUser).ToList();
 
                 var wrappedFilename = environmentVariableUsage.WrapPathWithVariable(filename);
-                playlists = DbContext.Playlists
+                playlists = MediaRepository.Playlists
                     .AsEnumerable()
                     .Where(p => p.Files.Any(file =>
                     {
@@ -107,20 +103,22 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                     }))
                     .ToList();
                 playlist = playlists.SingleOrDefault();
-                if (playlist != null
-                    &&
-                    (playlist.OriginalFileName == null ||
-                     environmentVariableUsage.WrapPathWithVariable(playlist.OriginalFileName) != wrappedFilename))
+                if (playlist != null)
                 {
-                    playlist.Files.Add(MediaCache.GetOrAddCachedFile(filename));
+                    var originalFileName = playlist.GetOriginalFileName(MediaRepository);
+                    if (originalFileName == null ||
+                        environmentVariableUsage.WrapPathWithVariable(originalFileName) != wrappedFilename)
+                    {
+                        playlist.Files.Add(MediaRepository.GetOrAddCachedFile(filename));
+                    }
                 }
             }
             else
             {
-                playlists = DbContext.MediaContainers.OfType<Playlist>()
+                playlists = MediaRepository.Playlists
                     .Where(p => p != null)
                     .AsEnumerable()
-                    .Where(p => p.OriginalFileName == filename)
+                    .Where(p => p.GetOriginalFileName(MediaRepository) == filename)
                     .ToList();
                 playlist = playlists.SingleOrDefault();
             }
@@ -143,12 +141,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
         {
             Func<IEnumerable<MediaFile>, string, MediaFile> getMediaFile =
                 (mediaFiles, filename) =>
-                    mediaFiles.First(
-                        mf =>
-                            mf.Files.Any(
-                                file =>
-                                    string.Compare(file.FullFileName, filename,
-                                        StringComparison.InvariantCultureIgnoreCase) == 0));
+                    mediaFiles.First(mf => mf.Files.Any(file => file.Equals(filename)));
 
             Func<string, IDiffAction> onAdd = filename => new DiffAction<Playlist, MediaFile>(() => playlist,
                 () => getMediaFile(playlistFromFile.MediaFiles, filename),
@@ -162,7 +155,8 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                 () => getMediaFile(playlist.MediaFiles, filename),
                 (pl, mediaFile) =>
                 {
-                    DbContext.RemoveRelation(playlist, mediaFile);
+                    MediaRepository.RemoveRelation(playlist, mediaFile);
+                    MediaRepository.RemoveIfOrphan(mediaFile);
                     log.Debug("Удалён: {0}", mediaFile);
                 }, DiffType.Deleted);
             Func<string, string, IDiffAction> onEquals = (filename1, filename2) =>
@@ -174,8 +168,8 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                     }, DiffType.None);
 
             //compare old and new version
-            var filesWas = GetFilenames(playlist.MediaFiles);
-            var filesNow = GetFilenames(playlistFromFile.MediaFiles);
+            var filesWas = GetFilenames(playlist);
+            var filesNow = GetFilenames(playlistFromFile);
             var collectionDiff = DiffCreator.CreateCollectionDiff(filesWas, filesNow, onAdd, onDelete, onEquals);
             
             return new ContainerDiffAction<Playlist>(() => playlist, collectionDiff, DiffType.Modified)
@@ -191,13 +185,13 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                 () =>
                 {
                     var rootCategory = importCategory ??
-                                       DbContext.Categories.FirstOrDefault(c => c.IsRoot);
+                                       MediaRepository.Categories.FirstOrDefault(c => c.IsRoot);
                     if (rootCategory == null)
                     {
                         log.Debug("Добавление корневой категории");
 
                         rootCategory = new Category {Name = "Плейлисты Winamp"};
-                        DbContext.Categories.Add(rootCategory);
+                        MediaRepository.Categories.Add(rootCategory);
                     }
                     return rootCategory;
                 },
@@ -205,7 +199,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                 (category, playlist) =>
                 {
                     category.AddChild(playlist);
-                    DbContext.Playlists.Add(playlist);
+                    MediaRepository.Playlists.Add(playlist);
                 },
                 DiffType.Added)
             {
@@ -220,6 +214,68 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
                     .Select(f => f.FileInfo)
                     //.Where(f => f.Exists)
                     .Select(f => f.FullName.ToLower());
+        }
+
+
+        public IDiffAction GetExportDiffAction(Playlist playlist, string exportFilename)
+        {
+            if (!System.IO.File.Exists(exportFilename))
+            {
+                return new SimpleDiffAction(
+                    () =>
+                    {
+                        Adapter.PlaylistToFile(playlist, exportFilename);
+                        if (!playlist.Files.Any(file => file.Equals(exportFilename)))
+                            playlist.Files.Add(MediaRepository.GetOrAddCachedFile(exportFilename));
+                    },
+                    DiffType.Added);
+            }
+
+            var playlistFromFile = Adapter.FileToPlaylist(exportFilename);
+
+            Func<IEnumerable<MediaFile>, string, MediaFile> getMediaFile =
+                (mediaFiles, filename) =>
+                    mediaFiles.First(mf => mf.Files.Any(file => file.Equals(filename)));
+
+            Func<string, IDiffAction> onAdd =
+                filename => new DiffAction<PrePlaylist, MediaFile>(() => playlistFromFile,
+                    () => getMediaFile(playlistFromFile.MediaFiles, filename),
+                    (pl, mediaFile) =>
+                    {
+                        pl.MediaFiles.Add(mediaFile);
+                        log.Debug("Добавлен: {0}", mediaFile);
+                    }, DiffType.Added);
+
+            Func<string, IDiffAction> onDelete =
+                filename => new DiffAction<PrePlaylist, MediaFile>(() => playlistFromFile,
+                    () => getMediaFile(playlist.MediaFiles, filename),
+                    (pl, mediaFile) =>
+                    {
+                        pl.MediaFiles.Remove(mediaFile);
+                        log.Debug("Удалён: {0}", mediaFile);
+                    }, DiffType.Deleted);
+            Func<string, string, IDiffAction> onEquals = (filename1, filename2) =>
+                new DiffAction<PrePlaylist, string>(() => playlistFromFile,
+                    () => filename1,
+                    (pl, filename) => { log.Trace("Без изменения: {0}", filename); }, DiffType.None);
+
+            //compare old and new version
+            var oldVersion = GetFilenames(playlistFromFile);
+            var newVersion = GetFilenames(playlist);
+            var collectionDiff = DiffCreator.CreateCollectionDiff(oldVersion, newVersion, onAdd, onDelete, onEquals);
+
+            var diffAction = new ContainerDiffAction<PrePlaylist>(() => playlistFromFile, collectionDiff,
+                DiffType.Modified)
+            {
+                PreAction = () => log.Debug("Обновление плейлиста {0}", collectionDiff),
+                PostAction = () =>
+                {
+                    Adapter.PlaylistToFile(playlistFromFile, exportFilename);
+                    log.Debug("Обновление плейлиста {0} завершено", playlist);
+                }
+            };
+
+            return diffAction;
         }
 
         private class FileComparer : IEqualityComparer<File>

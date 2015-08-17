@@ -13,26 +13,24 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     public class Playlist : MediaContainer, IEnumerable<MediaFile>
     {
         private string originalFileName;
-        private readonly IMediaCache mediaCache;
 
         /// <summary>
-        /// Создаёт плейлист и инициализирует <see cref="OriginalFileName"/>, а также на основе него добавляет связанный элемент в коллекцию <see cref="MediaContainer.Files"/>
+        /// Создаёт плейлист и инициализирует внутренне поле <see cref="originalFileName"/>, а также на основе него добавляет связанный элемент в коллекцию <see cref="MediaContainer.Files"/>
         /// </summary>
         /// <param name="originalFileName"></param>
         /// <param name="mediaCache"></param>
         public Playlist(string originalFileName, IMediaCache mediaCache)
         {
             this.originalFileName = originalFileName;
-            this.mediaCache = mediaCache;
             if (System.IO.File.Exists(originalFileName) && !Files.Any())
             {
-                var file = MediaCache.GetOrAddCachedFile(originalFileName);
+                var file = mediaCache.GetOrAddCachedFile(originalFileName);
                 Files.Add(file);
             }
         }
 
         [Obsolete("Должен быть protected")]
-        public Playlist()
+        private Playlist()
         {
         }
 
@@ -55,20 +53,12 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <summary>
         /// Файл-источник плейлиста (в случае отсутствия вычисляется как первый из существующих файлов данного медиа-контейнера)
         /// </summary>
-        public string OriginalFileName
+        public string GetOriginalFileName(IMediaCache mediaCache)
         {
-            get
-            {
-                return originalFileName ??
-                       (originalFileName =
-                           Files.Select(file => file.FullFileName)
-                               .FirstOrDefault(System.IO.File.Exists/*TODO: кеширование признака "существует"? (например, в MediaCache)*/));
-            }
-        }
-
-        public IMediaCache MediaCache
-        {
-            get { return mediaCache; }
+            return originalFileName ??
+                   (originalFileName =
+                       Files.Select(file => file.FullFileName)
+                           .FirstOrDefault(filename => mediaCache.GetOrAddFileExists(filename)));
         }
 
         /// <summary>

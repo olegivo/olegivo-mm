@@ -8,7 +8,7 @@ using NLog;
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
     //[DebuggerDisplay("{FullFileName}")]
-    public class File : IEquatable<File>
+    public class File : IEquatable<File>, IEquatable<string>
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
 
@@ -69,10 +69,23 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             return string.Equals(fullFileName, other.fullFileName);
         }
 
+        /// <summary>
+        /// Indicates whether the current object is equal to another object of the same type.
+        /// </summary>
+        /// <returns>
+        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
+        /// </returns>
+        /// <param name="other">An object to compare with this object.</param>
+        public bool Equals(string other)
+        {
+            return string.Compare(FullFileName, other, StringComparison.InvariantCultureIgnoreCase) == 0;
+        }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
+            if (obj is string) return Equals((string)obj);
             if (obj.GetType() != this.GetType()) return false;
             return Equals((File) obj);
         }

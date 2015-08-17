@@ -6,5 +6,6 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         File GetOrAddCachedFile(string fullFilename);
         MediaFile GetOrAddCachedMediaFile(string filename);
         Playlist GetOrAddCachedPlaylist(string filename, string playlistName = null);
+        bool GetOrAddFileExists(string fullFilename, bool refreshExists = false);
     }
 }

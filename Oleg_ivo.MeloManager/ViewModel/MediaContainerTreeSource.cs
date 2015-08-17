@@ -22,7 +22,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         /// <summary>
         /// 
         /// </summary>
-        public MediaDbContext MediaDbContext { get; set; }
+        public IMediaRepository MediaRepository { get; set; }
 
         /// <summary>
         /// 
@@ -91,14 +91,14 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private void RemoveRelation(MediaContainer parent, MediaContainer child)
         {
-            MediaDbContext.RemoveRelation(parent, child);
+            MediaRepository.RemoveRelation(parent, child);
         }
 
         private void RemoveIfNoParent(MediaContainer mediaContainer)
         {
             if (!mediaContainer.ParentContainers.Any())
             {
-                MediaDbContext.MediaContainers.Remove(mediaContainer);
+                MediaRepository.MediaContainers.Remove(mediaContainer);
             }
         }
 

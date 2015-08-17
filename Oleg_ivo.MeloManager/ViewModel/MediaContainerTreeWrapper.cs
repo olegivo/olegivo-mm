@@ -63,7 +63,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             return string.Format("{0}", UnderlyingItem!=null ? UnderlyingItem.ToString() : "пустое содержимое");
         }
 
-        public void DeleteWithChildren(MediaDbContext dbContext)
+        public void DeleteWithChildren(IMediaRepository mediaRepository)
         {
             if (Parent != null)
             {
@@ -73,28 +73,15 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 UnderlyingItem.ParentContainers.Remove(parentContainer);
             }
 
-            //в случае сиротства удаляем сам элемент контейнера из базы
-            if (UnderlyingItem.ParentContainers==null || !UnderlyingItem.ParentContainers.Any())
+            if (mediaRepository.RemoveIfOrphan(UnderlyingItem))
             {
-                //if (UnderlyingItem.Id > 0) 
-
-                //удаление связи с файлами и самих файлов, если это единственая связь
-                if (UnderlyingItem.Files.Any())
-                {
-                    dbContext.Files.RemoveRange(UnderlyingItem.Files.Where(file => file.MediaContainers.Count == 1));
-                }
-
-                dbContext.MediaContainers.Remove(UnderlyingItem);
-
                 //рекурсивное удаление дочерних элементов
                 foreach (var childItem in ChildItems.ToList())
                 {
-                    childItem.DeleteWithChildren(dbContext);
+                    childItem.DeleteWithChildren(mediaRepository);
                     ChildItems.Remove(childItem);
                 }
-
             }
-
         }
 
         //public IEnumerable<MediaContainerTreeWrapper> GetAllChilds(){}

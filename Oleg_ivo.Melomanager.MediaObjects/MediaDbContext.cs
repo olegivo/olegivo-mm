@@ -10,7 +10,7 @@ using Oleg_ivo.Tools.Utils;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
-    public class MediaDbContext : DbContext, IMediaCache
+    public class MediaDbContext : DbContext, IMediaRepository
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
         public MediaDbContext() : base("MeloManagerEF")
@@ -81,6 +81,23 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             //child.ParentMediaContainers.Remove(childRelation);
             //MediaContainersParentChilds.DeleteOnSubmit(parentRelation);
             //MediaContainersParentChilds.DeleteOnSubmit(childRelation);
+        }
+
+        public bool RemoveIfOrphan(MediaContainer mediaContainer)
+        {
+            //в случае сиротства удаляем сам элемент контейнера из базы
+            if (mediaContainer.ParentContainers != null && mediaContainer.ParentContainers.Any()) return false;
+
+            //if (UnderlyingItem.Id > 0) 
+
+            //удаление связи с файлами и самих файлов, если это единственая связь
+            if (mediaContainer.Files.Any())
+            {
+                Files.RemoveRange(mediaContainer.Files.Where(file => file.MediaContainers.Count == 1));
+            }
+
+            MediaContainers.Remove(mediaContainer);
+            return true;
         }
 
         private class FileExt
@@ -176,15 +193,16 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                     var extension = Path.GetExtension(fullFilename);
                     var drive = Path.GetPathRoot(fullFilename);
                     var path = Path.GetDirectoryName(fullFilename);
-                    return new FileExt(new File
-                    {
-                        FullFileName = fullFilename,
-                        Drive = drive,
-                        Path = path,
-                        Filename = fileName,
-                        FileNameWithoutExtension = fileNameWithoutExtension,
-                        Extention = extension
-                    });
+                    return new FileExt(
+                        new File
+                        {
+                            FullFileName = fullFilename,
+                            Drive = drive,
+                            Path = path,
+                            Filename = fileName,
+                            FileNameWithoutExtension = fileNameWithoutExtension,
+                            Extention = extension
+                        });
                 });
         }
 

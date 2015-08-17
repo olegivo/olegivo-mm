@@ -16,11 +16,11 @@ namespace Oleg_ivo.MeloManager.MediaObjects.Extensions
             /// <summary>
             /// Initializes a new instance of the <see cref="T:System.Object"/> class.
             /// </summary>
-            public DbContextLogHelper(DbContext dbContext, Action<string> logger)
+            public DbContextLogHelper(DbContext dbContext, Action<string> logger = null)
                 : base(() =>
                 {
                     var old = dbContext.Database.Log;
-                    dbContext.Database.Log = logger;
+                    dbContext.Database.Log = logger ?? Console.WriteLine;
                     return old;
                 }, 
                 oldState => dbContext.Database.Log = oldState)
@@ -49,7 +49,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects.Extensions
 
         }
 
-        public static void ActionWithLog<TDataContext>(this TDataContext dataContext, Action<TDataContext> action, Action<string> logger) where TDataContext : DbContext
+        public static void ActionWithLog<TDataContext>(this TDataContext dataContext, Action<TDataContext> action, Action<string> logger = null) where TDataContext : DbContext
         {
             using (new DbContextLogHelper(dataContext, logger))
             {
@@ -57,7 +57,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects.Extensions
             }
         }
 
-        public static void ActionWithLog(this DbContext dataContext, Action action, Action<string> logger)
+        public static void ActionWithLog(this DbContext dataContext, Action action, Action<string> logger = null)
         {
             using (new DbContextLogHelper(dataContext, logger))
             {
@@ -65,7 +65,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects.Extensions
             }
         }
 
-        public static TResult FuncWithLog<TResult>(this DbContext dataContext, Func<TResult> func, Action<string> logger)
+        public static TResult FuncWithLog<TResult>(this DbContext dataContext, Func<TResult> func, Action<string> logger = null)
         {
             using (new DbContextLogHelper(dataContext, logger))
             {
@@ -73,12 +73,17 @@ namespace Oleg_ivo.MeloManager.MediaObjects.Extensions
             }
         }
 
-        public static void SubmitChangesWithLog(this DbContext dataContext, Action<string> logger)
+        public static void SubmitChangesWithLog(this DbContext dataContext, Action<string> logger = null)
         {
             using (var helper = new DbContextLogHelper(dataContext, logger))
             {
                 helper.SubmitChanges();
             }
+        }
+
+        public static bool HasChanges(this DbContext dataContext)
+        {
+            return dataContext.ChangeTracker.HasChanges();
         }
     }
 }

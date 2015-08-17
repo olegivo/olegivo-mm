@@ -28,7 +28,7 @@ namespace Oleg_ivo.MeloManager.Prism
                 //mediaDataContext.ObjectTrackingEnabled = true;
                 return mediaDataContext;
             }).SingleInstance();
-            builder.Register(context => context.Resolve<MediaDbContext>()).As<IMediaCache>();
+            builder.Register(context => context.Resolve<MediaDbContext>()).As<IMediaCache>().As<IMediaRepository>();
 
             builder.RegisterType<WinampControl>().SingleInstance();
             builder.RegisterType<WinampFileAdapterService>().SingleInstance();

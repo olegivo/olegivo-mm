@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using Autofac;
 using NLog;
+using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
@@ -17,14 +20,16 @@ namespace Oleg_ivo.MeloManager.Winamp
     public class WinampFileAdapterService : IFileAdapterService
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
+        private readonly MediaDbContext dbContext;
         private readonly PlaylistImporter<WinampM3UPlaylistFileAdapter> importer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:System.Object"/> class.
         /// </summary>
-        public WinampFileAdapterService(IComponentContext context)
+        public WinampFileAdapterService(IComponentContext context, MediaDbContext dbContext)
         {
             importer = context.ResolveUnregistered<PlaylistImporter<WinampM3UPlaylistFileAdapter>>();
+            this.dbContext = Enforce.ArgumentNotNull(dbContext, "dbContext");
         }
 
         private readonly ConcurrentDictionary<string, LockState> locks = new ConcurrentDictionary<string, LockState>();
@@ -115,7 +120,16 @@ namespace Oleg_ivo.MeloManager.Winamp
 
         public void RequestExport(Playlist playlist, string exportFilename)
         {
-            AcquireLock(exportFilename, LockState.Exporting, () => importer.Adapter.PlaylistToFile(playlist, exportFilename));
+            AcquireLock(exportFilename, LockState.Exporting, () => Export(playlist, exportFilename));
+        }
+
+        private void Export(Playlist playlist, string exportFilename)
+        {
+            var diffAction = importer.GetExportDiffAction(playlist, exportFilename);
+            if (diffAction.DiffType == DiffType.None)
+                log.Debug("При попытке экспорта плейлиста {0} в файл [{1}] не обнаружилось различий", playlist, exportFilename);
+            else
+                diffAction.Apply();
         }
 
 /*
@@ -195,7 +209,16 @@ namespace Oleg_ivo.MeloManager.Winamp
 
         public void Save()
         {
-            importer.DbContext.SaveChanges();
+            dbContext.ChangeTracker.DetectChanges();
+            var list =
+                dbContext.ChangeTracker.Entries<MediaFile>()
+                    .Where(entry => entry.State == EntityState.Added || entry.State == EntityState.Deleted)
+                    .GroupBy(entry => entry.State)
+                    .ToList();
+            if (list.Any())
+            {
+                dbContext.SaveChanges(); //TODO: перед сохранением следует экспортировать сохраняемые плейлисты
+            }
         }
     }
 

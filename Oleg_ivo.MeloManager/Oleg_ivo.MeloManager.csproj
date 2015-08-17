@@ -191,6 +191,8 @@
     <Compile Include="PlaylistFileAdapters\Diff\DiffType.cs" />
     <Compile Include="PlaylistFileAdapters\Diff\IDiffAction.cs" />
     <Compile Include="PlaylistFileAdapters\Diff\ItemDiffAction.cs" />
+    <Compile Include="PlaylistFileAdapters\Diff\SimpleDiffAction.cs" />
+    <Compile Include="PlaylistFileAdapters\Diff\SimpleItemDiffAction.cs" />
     <Compile Include="PlaylistFileAdapters\ExtInfo.cs" />
     <Compile Include="PlaylistFileAdapters\IFileAdapterService.cs" />
     <Compile Include="PlaylistFileAdapters\M3UPlaylistFileAdapter.cs" />
