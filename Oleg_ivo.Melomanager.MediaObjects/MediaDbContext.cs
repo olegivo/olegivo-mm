@@ -1,17 +1,33 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration;
 using System.IO;
 using System.Linq;
 using NLog;
 using Oleg_ivo.Base.Extensions;
+using Oleg_ivo.MeloManager.MediaObjects.Extensions;
 using Oleg_ivo.Tools.Utils;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
     public class MediaDbContext : DbContext, IMediaRepository
     {
+        public class SaveEventArgs : CancelEventArgs
+        {
+            public DbChangeTracker ChangeTracker { get; private set; }
+
+            public SaveEventArgs(DbChangeTracker changeTracker)
+            {
+                ChangeTracker = changeTracker;
+            }
+        }
+
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
         public MediaDbContext() : base("MeloManagerEF")
         {
@@ -46,6 +62,23 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         public virtual DbSet<Playlist> Playlists { get; set; }
         public virtual DbSet<MediaFile> MediaFiles { get; set; }
         //public DbSet<MediaContainersParentChild> MediaContainersParentChilds { get; set; }
+
+        public event EventHandler<SaveEventArgs> BeforeSave;
+
+        public override int SaveChanges()
+        {
+            if (BeforeSave != null)
+            {
+                var eventArgs = new SaveEventArgs(ChangeTracker);
+                BeforeSave(this, eventArgs);
+                if (eventArgs.Cancel)
+                {
+                    log.Warn("Операция сохранения отменена");
+                    return 0;
+                }
+            }
+            return base.SaveChanges();
+        }
 
         public Category CreateCategory()
         {
@@ -225,6 +258,23 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         {
             return playlistsCache.GetOrAdd(filename.ToLower(),
                 key => new Playlist(filename, this) { Name = playlistName });
+        }
+
+        public List<Playlist> GetAffectedPlaylists()
+        {
+            var objectContext = this.GetObjectContext();
+            var playlists =
+                this.GetObjectStateManager()
+                    .GetObjectStateEntries(EntityState.Deleted | EntityState.Added)
+                    .Where(entry => entry.IsRelationship)
+                    .SelectMany(
+                        entry =>
+                            entry.GetAssociationEnds()
+                                .Select(end => objectContext.GetEntityByKey(entry.GetEndEntityKey(end)))
+                                .OfType<Playlist>()
+                                .Where(playlist => playlist.Id > 0))
+                    .ToList();
+            return playlists;
         }
     }
 

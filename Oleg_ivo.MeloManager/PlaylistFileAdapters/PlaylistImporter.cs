@@ -239,7 +239,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
             Func<string, IDiffAction> onAdd =
                 filename => new DiffAction<PrePlaylist, MediaFile>(() => playlistFromFile,
-                    () => getMediaFile(playlistFromFile.MediaFiles, filename),
+                    () => getMediaFile(playlist.MediaFiles, filename),
                     (pl, mediaFile) =>
                     {
                         pl.MediaFiles.Add(mediaFile);
@@ -248,7 +248,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 
             Func<string, IDiffAction> onDelete =
                 filename => new DiffAction<PrePlaylist, MediaFile>(() => playlistFromFile,
-                    () => getMediaFile(playlist.MediaFiles, filename),
+                    () => getMediaFile(playlistFromFile.MediaFiles, filename),
                     (pl, mediaFile) =>
                     {
                         pl.MediaFiles.Remove(mediaFile);

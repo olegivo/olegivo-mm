@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
@@ -14,22 +15,27 @@ using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.PlaylistFileAdapters;
 using Oleg_ivo.MeloManager.PlaylistFileAdapters.Diff;
+using Oleg_ivo.MeloManager.Prism;
+using File = System.IO.File;
 
 namespace Oleg_ivo.MeloManager.Winamp
 {
     public class WinampFileAdapterService : IFileAdapterService
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
+        private readonly MeloManagerOptions options;
         private readonly MediaDbContext dbContext;
         private readonly PlaylistImporter<WinampM3UPlaylistFileAdapter> importer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:System.Object"/> class.
         /// </summary>
-        public WinampFileAdapterService(IComponentContext context, MediaDbContext dbContext)
+        public WinampFileAdapterService(IComponentContext context, MediaDbContext dbContext, MeloManagerOptions options)
         {
+            this.options = options;
             importer = context.ResolveUnregistered<PlaylistImporter<WinampM3UPlaylistFileAdapter>>();
             this.dbContext = Enforce.ArgumentNotNull(dbContext, "dbContext");
+            dbContext.BeforeSave += dbContext_BeforeSave;
         }
 
         private readonly ConcurrentDictionary<string, LockState> locks = new ConcurrentDictionary<string, LockState>();
@@ -123,6 +129,58 @@ namespace Oleg_ivo.MeloManager.Winamp
             AcquireLock(exportFilename, LockState.Exporting, () => Export(playlist, exportFilename));
         }
 
+        public bool RequestExport(IEnumerable<Tuple<Playlist, string>> playlists)
+        {
+            var list = playlists as IList<Tuple<Playlist, string>> ?? playlists.ToList();
+            return
+                AcquireLock(list.Select(item=>item.Item2),
+                    LockState.Exporting,
+                    () =>
+                    {
+                        foreach (var tuple in list)
+                        {
+                            Export(tuple.Item1, tuple.Item2);
+                        }
+                        return true;
+                    });
+        }
+
+
+        public IList<string> GetPlaylistFiles(bool onlyChanged)
+        {
+            return onlyChanged
+                ? GetChangedPlaylists()
+                : Adapter.Dic.Keys.Select(f => Path.Combine(options.PlaylistsPath, f))
+                    .Where(File.Exists)
+                    .ToList();
+        }
+
+        public void RefreshPlaylistFilesContainer()
+        {
+            Adapter.RefreshDic();
+        }
+
+        private List<string> GetChangedPlaylists()
+        {
+            var now = DateTime.Now;
+            List<string> changedPlaylists;
+            if (options.LastPlaylistsImportDate.Equals(DateTime.MinValue))
+                changedPlaylists = null;
+            else
+            {
+                changedPlaylists =
+                    Adapter.Dic.Keys.Select(f => new FileInfo(Path.Combine(options.PlaylistsPath, f)))
+                        .Where(info => info.LastWriteTime > options.LastPlaylistsImportDate)
+                        .Select(info => info.FullName)
+                        .ToList();
+                log.Debug("Обнаружено изменённых плейлистов: {0} (с {1})\n{2}", changedPlaylists.Count,
+                    options.LastPlaylistsImportDate, changedPlaylists.JoinToString("\n"));
+            }
+            options.LastPlaylistsImportDate = now;
+            return changedPlaylists;
+        }
+
+
         private void Export(Playlist playlist, string exportFilename)
         {
             var diffAction = importer.GetExportDiffAction(playlist, exportFilename);
@@ -207,17 +265,17 @@ namespace Oleg_ivo.MeloManager.Winamp
                 diffAction.Apply();
         }
 
-        public void Save()
+        void dbContext_BeforeSave(object sender, MediaDbContext.SaveEventArgs e)
         {
-            dbContext.ChangeTracker.DetectChanges();
-            var list =
-                dbContext.ChangeTracker.Entries<MediaFile>()
-                    .Where(entry => entry.State == EntityState.Added || entry.State == EntityState.Deleted)
-                    .GroupBy(entry => entry.State)
-                    .ToList();
-            if (list.Any())
+            var affectedPlaylists = dbContext.GetAffectedPlaylists()
+                .Select(playlist => new Tuple<Playlist, string>(playlist, playlist.GetOriginalFileName(dbContext)))
+                .ToList();
+
+            if (affectedPlaylists.Any())
             {
-                dbContext.SaveChanges(); //TODO: перед сохранением следует экспортировать сохраняемые плейлисты
+                var exportResult = RequestExport(affectedPlaylists);
+                log.Debug("Результат экспорта плейлистов в файлы ({0} шт.): {1}", affectedPlaylists.Count, exportResult ? "успешно" : "неудачно");
+                e.Cancel = !exportResult;
             }
         }
     }
