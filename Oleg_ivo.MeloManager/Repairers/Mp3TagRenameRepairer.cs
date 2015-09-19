@@ -3,8 +3,8 @@ using System.IO;
 using System.Linq;
 using Autofac;
 using NLog;
+using Oleg_ivo.MeloManager.DependencyInjection;
 using Oleg_ivo.MeloManager.PlaylistFileAdapters;
-using Oleg_ivo.MeloManager.Prism;
 
 namespace Oleg_ivo.MeloManager.Repairers
 {

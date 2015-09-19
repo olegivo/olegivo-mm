@@ -4,7 +4,7 @@ using Microsoft.Win32;
 using Oleg_ivo.MeloManager.Properties;
 using Oleg_ivo.Tools.Utils;
 
-namespace Oleg_ivo.MeloManager.Prism
+namespace Oleg_ivo.MeloManager.DependencyInjection
 {
     public class MeloManagerOptions
     {

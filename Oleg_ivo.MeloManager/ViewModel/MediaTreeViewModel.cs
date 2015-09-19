@@ -8,7 +8,6 @@ using System.Reactive.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using Autofac;
-using Reactive.Bindings;
 using GalaSoft.MvvmLight.Command;
 using NLog;
 using Oleg_ivo.Base.Autofac;
@@ -17,8 +16,11 @@ using Oleg_ivo.Base.WPF.Dialogs;
 using Oleg_ivo.Base.WPF.Extensions;
 using Oleg_ivo.Base.WPF.ViewModels;
 using Oleg_ivo.MeloManager.Dialogs;
+using Oleg_ivo.MeloManager.Dialogs.ParentsChildsEdit;
 using Oleg_ivo.MeloManager.MediaObjects;
+using Oleg_ivo.MeloManager.PlaylistFileAdapters.Diff;
 using Oleg_ivo.MeloManager.Winamp;
+using Reactive.Bindings;
 
 namespace Oleg_ivo.MeloManager.ViewModel
 {
@@ -166,6 +168,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
         #region Commands
 
         public ICommand CommandDeleteItem { get; private set; }
+        public ICommand CommandEditParents { get; private set; }
+        public ICommand CommandEditChildren { get; private set; }
         public ReactiveCommand CommandDeleteCurrent { get; private set; }
         public ReactiveCommand CommandAddCategoryToCurrent { get; private set; }
         public ReactiveCommand CommandAddPlaylistToCurrent { get; private set; }
@@ -174,12 +178,16 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private void InitCommands()
         {
             CommandDeleteItem = new RelayCommand<MediaContainerTreeWrapper>(DeleteItem);
+            CommandEditParents = new RelayCommand<MediaContainerTreeWrapper>(EditParents);
+            CommandEditChildren = new RelayCommand<MediaContainerTreeWrapper>(EditChildren);
+            
             CommandDeleteCurrent = new ReactiveCommand(CurrentContainer.Select(c => c != null), false).AddHandler(() => DeleteItem(CurrentWrapper.Value));
 
             CommandAddCategoryToCurrent = new ReactiveCommand(CurrentContainer.Select(c => c == null || c is Category)).AddHandler(() => AddCategory(CurrentWrapper.Value));
             CommandAddPlaylistToCurrent = new ReactiveCommand(CurrentContainer.Select(c => c is Category), false).AddHandler(() => AddPlaylist(CurrentWrapper.Value));
             CommandAddMediaFileToCurrent = new ReactiveCommand(CurrentContainer.Select(c => c is Category || c is Playlist), false).AddHandler(() => AddMediaFile(CurrentWrapper.Value));
         }
+
         #endregion
 
         #region Methods
@@ -317,6 +325,147 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 });
         }
 
+        private void EditParents(MediaContainerTreeWrapper item)
+        {
+            var underlyingItem = item.UnderlyingItem;
+            var parentContainers = underlyingItem.ParentContainers;
+            var mediaContainers = MediaRepository.MediaContainers
+                .AsEnumerable()
+                .Where(
+                    mc =>
+                        mc != underlyingItem &&
+                        (mc is Category || (underlyingItem is MediaFile && mc is Playlist)))
+                .ToList();
+            if(!mediaContainers.Any()) return;
+
+            ModalDialogService.CreateAndShowDialog<ParentsChildsEditDialogViewModel>(
+                modalWindow =>
+                {
+                    modalWindow.Width = 400;
+                    modalWindow.Height = 800;
+                    modalWindow.ViewModel.Caption = "Редактирование родительских элементов";
+
+                    modalWindow.ViewModel.ContentViewModel.Items =
+                        new ObservableCollection<SelectableItem<MediaContainer>>(
+                            mediaContainers.Select(
+                                mc => new SelectableItem<MediaContainer>(mc, parentContainers.Contains(mc))));
+                },
+                (model, dialogResult) =>
+                {
+                    if (dialogResult.HasValue && dialogResult.Value)
+                    {
+                        var newParents = model.ContentViewModel.SelectedItems.ToList();
+                        var diffAction = GetUpdateElementsDiffAction(underlyingItem, false, parentContainers, newParents);
+                        if (diffAction.DiffType != DiffType.None &&
+                            ShowDiff(diffAction.ChildDiffActions.Cast<ItemDiffAction<MediaContainer>>()))
+                        {
+                            diffAction.Apply();
+                        }
+                    }
+                });
+        }
+
+        private void EditChildren(MediaContainerTreeWrapper item)
+        {
+            var underlyingItem = item.UnderlyingItem;
+            if(underlyingItem is MediaFile) return;
+            var childContainers = underlyingItem.ChildContainers;
+            var mediaContainers = MediaRepository.MediaContainers
+                .AsEnumerable()
+                .Where(
+                    mc =>
+                        mc != underlyingItem &&
+                        (underlyingItem is Category || (underlyingItem is Playlist && mc is MediaFile)))
+                .ToList();
+            if(!mediaContainers.Any()) return;
+
+            ModalDialogService.CreateAndShowDialog<ParentsChildsEditDialogViewModel>(
+                modalWindow =>
+                {
+                    modalWindow.Width = 400;
+                    modalWindow.Height = 800;
+                    modalWindow.ViewModel.Caption = "Редактирование дочерних элементов";
+
+                    modalWindow.ViewModel.ContentViewModel.Items =
+                        new ObservableCollection<SelectableItem<MediaContainer>>(
+                            mediaContainers.Select(
+                                mc => new SelectableItem<MediaContainer>(mc, childContainers.Contains(mc))));
+                },
+                (model, dialogResult) =>
+                {
+                    if (dialogResult.HasValue && dialogResult.Value)
+                    {
+                        var newChildren = model.ContentViewModel.SelectedItems.ToList();
+                        var diffAction = GetUpdateElementsDiffAction(underlyingItem, true, childContainers, newChildren);
+                        if (diffAction.DiffType != DiffType.None &&
+                            ShowDiff(diffAction.ChildDiffActions.Cast<ItemDiffAction<MediaContainer>>()))
+                        {
+                            diffAction.Apply();
+                        }
+                    }
+                });
+        }
+
+        private bool ShowDiff(IEnumerable<ItemDiffAction<MediaContainer>> diffActions)
+        {
+            var dialogResult = ModalDialogService.CreateAndShowDialog<DiffResultDialogViewModel>(
+                modalWindow =>
+                {
+                    modalWindow.Width = 400;
+                    modalWindow.Height = 400;
+                    modalWindow.ViewModel.Caption = "Результирующая разница";
+                    modalWindow.ViewModel.ContentViewModel.Items =
+                        diffActions.Where(action => action.DiffType != DiffType.None)
+                            .Cast<IDiffAction>()
+                            .OrderBy(action => action.DiffType)
+                            .ThenBy(action => action.ToString())
+                            .ToList();
+                });
+            return dialogResult.HasValue && dialogResult.Value;
+        }
+
+        private ContainerDiffAction<MediaContainer> GetUpdateElementsDiffAction(MediaContainer target, bool isChild, IEnumerable<MediaContainer> oldVersion, IEnumerable<MediaContainer> newVersion)
+        {
+            Func<MediaContainer, IDiffAction> onAdd = addedItem => new DiffAction<MediaContainer, MediaContainer>(() => target,
+                () => addedItem,
+                (mediaContainer, item) =>
+                {
+                    (isChild ? mediaContainer.ChildContainers : mediaContainer.ParentContainers).Add(item);
+                    log.Debug("Добавлен: {0}", item);
+                }, DiffType.Added);
+
+            Func<MediaContainer, IDiffAction> onDelete = deletedItem => new DiffAction<MediaContainer, MediaContainer>(() => target,
+                () => deletedItem,
+                (mediaContainer, item) =>
+                {
+                    if (isChild)
+                    {
+                        MediaRepository.RemoveRelation(target, item);
+                        MediaRepository.RemoveIfOrphan(item);
+                    }
+                    else
+                    {
+                        MediaRepository.RemoveRelation(item, target);
+                    }
+                    log.Debug("Удалён: {0}", item);
+                }, DiffType.Deleted);
+            Func<MediaContainer, MediaContainer, IDiffAction> onEquals = (item1, item2) =>
+                new DiffAction<MediaContainer, MediaContainer>(() => target,
+                    () => item1,
+                    (mediaContainer, item) =>
+                    {
+                        log.Trace("Без изменения: {0}", item);
+                    }, DiffType.None);
+
+            //compare old and new version
+            var collectionDiff = DiffCreator.CreateCollectionDiff(oldVersion, newVersion, onAdd, onDelete, onEquals);
+
+            return new ContainerDiffAction<MediaContainer>(() => target, collectionDiff, DiffType.Modified)
+            {
+                PreAction = () => log.Debug("Обновление элементов {0}", target),
+                PostAction = () => log.Debug("Обновление элементов {0} завершено", target),
+            };
+        }
 
         #endregion
 

@@ -1,19 +1,22 @@
 using Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.Autofac.Modules;
-using Oleg_ivo.Base.WPF.Dialogs;
-using Oleg_ivo.MeloManager.Dialogs;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.PlaylistFileAdapters;
-using Oleg_ivo.MeloManager.View;
-using Oleg_ivo.MeloManager.ViewModel;
 using Oleg_ivo.MeloManager.Winamp;
-using Oleg_ivo.MeloManager.Winamp.Tracking;
 
-namespace Oleg_ivo.MeloManager.Prism
+namespace Oleg_ivo.MeloManager.DependencyInjection
 {
     public class MeloManagerAutofacModule : BaseAutofacModule
     {
+        /// <summary>
+        /// Override to add registrations to the container.
+        /// </summary>
+        /// <remarks>
+        /// Note that the ContainerBuilder parameter is unique to this module.
+        /// </remarks>
+        /// <param name="builder">The builder through which components can be
+        ///             registered.</param>
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
@@ -35,24 +38,7 @@ namespace Oleg_ivo.MeloManager.Prism
             builder.RegisterType<WinampFileAdapterService>().SingleInstance().As<IFileAdapterService>();
             builder.RegisterType<WinampFilesMonitor>().SingleInstance();
 
-            //MVVM registration:
-            builder.RegisterType<MainViewModel>();
-            builder.RegisterType<MainView>();
-
-            builder.RegisterType<MediaListViewModel>();
-            builder.RegisterType<MediaList>();
-
-            builder.RegisterType<MediaTreeViewModel>();
-            builder.RegisterType<MediaTree>();
-
-            builder.RegisterType<TrackingViewModel>();
-
-            //MVVM Dialogs
-            builder.RegisterType<ModalDialogService>().AsImplementedInterfaces().SingleInstance();
-            builder.RegisterGeneric(typeof(DialogViewModel<>));
-
-            builder.RegisterType<SimpleStringDialogViewModel>();
-            builder.RegisterType<SimpleStringDialog>().AsImplementedInterfaces();
+            builder.RegisterModule<MeloManagerMVVMModule>();
         }
     }
 }

@@ -120,6 +120,15 @@
     <Reference Include="ReactiveProperty.NET45">
       <HintPath>$(PackagesPath)\ReactiveProperty.2.1.8.1\lib\net45\ReactiveProperty.NET45.dll</HintPath>
     </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>$(PackagesPath)\reactiveui-core.5.5.1\lib\Portable-Net45+WinRT45+WP8\ReactiveUI.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI.Blend">
+      <HintPath>$(PackagesPath)\reactiveui-platforms.5.5.1\lib\net45\ReactiveUI.Blend.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI.Xaml">
+      <HintPath>$(PackagesPath)\reactiveui-platforms.5.5.1\lib\net45\ReactiveUI.Xaml.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
@@ -175,10 +184,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DependencyInjection\MeloManagerMVVMModule.cs" />
+    <Compile Include="Dialogs\ParentsChildsEdit\DiffResultDialog.xaml.cs">
+      <DependentUpon>DiffResultDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ParentsChildsEdit\DiffResultDialogViewModel.cs" />
+    <Compile Include="Dialogs\ParentsChildsEdit\ParentsChildsEditDialog.xaml.cs">
+      <DependentUpon>ParentsChildsEditDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ParentsChildsEdit\ParentsChildsEditDialogViewModel.cs" />
+    <Compile Include="Dialogs\ParentsChildsEdit\SelectableItem.cs" />
     <Compile Include="Dialogs\SimpleStringDialog.xaml.cs">
       <DependentUpon>SimpleStringDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\FileSystemWatcherExtensions.cs" />
+    <Compile Include="Extensions\ObservableExtensions.cs" />
     <Compile Include="MediaIconsResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -202,12 +222,13 @@
     </Compile>
     <Compile Include="PlaylistFileAdapters\PlaylistImporter.cs" />
     <Compile Include="PlaylistFileAdapters\PrePlaylist.cs" />
+    <Compile Include="Search\SearchViewModel.cs" />
     <Compile Include="Winamp\WinampFileAdapterService.cs" />
     <Compile Include="PlaylistFileAdapters\WinampM3UPlaylistFileAdapter.cs" />
-    <Compile Include="Prism\MeloManagerOptions.cs" />
-    <Compile Include="Prism\MeloManagerBootstrapper.cs" />
-    <Compile Include="Prism\MeloManagerPrismModule.cs" />
-    <Compile Include="Prism\MeloManagerAutofacModule.cs" />
+    <Compile Include="DependencyInjection\MeloManagerOptions.cs" />
+    <Compile Include="DependencyInjection\MeloManagerBootstrapper.cs" />
+    <Compile Include="DependencyInjection\MeloManagerPrismModule.cs" />
+    <Compile Include="DependencyInjection\MeloManagerAutofacModule.cs" />
     <Compile Include="Dialogs\SimpleStringDialogViewModel.cs" />
     <Compile Include="Repairers\AutoRepairer.cs" />
     <Compile Include="Repairers\Mp3TagRenameRepairer.cs" />
@@ -236,6 +257,14 @@
     <Compile Include="Winamp\WinampFilesMonitor.cs" />
     <Compile Include="Winamp\WinampServiceCallback.cs" />
     <Compile Include="Winamp\WinampControl.cs" />
+    <Page Include="Dialogs\ParentsChildsEdit\DiffResultDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ParentsChildsEdit\ParentsChildsEditDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\SimpleStringDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

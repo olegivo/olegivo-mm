@@ -17,7 +17,7 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters.Diff
 
         protected override void ApplySelf()
         {
-            Item = itemProvider();
+            if(Item==null) Item = itemProvider();
         }
 
         public TItem ApplyAndReturnItem()
@@ -29,6 +29,18 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters.Diff
         public static ItemDiffAction<TItem> CreateEmptyStub()
         {
             return new ItemDiffAction<TItem>(() => default(TItem), new IDiffAction[]{});
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        public override string ToString()
+        {
+            ApplySelf();
+            return string.Format("{0}", Item);
         }
     }
 }

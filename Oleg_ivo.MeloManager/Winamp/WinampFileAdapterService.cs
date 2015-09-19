@@ -12,10 +12,10 @@ using NLog;
 using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 using Oleg_ivo.Base.Extensions;
+using Oleg_ivo.MeloManager.DependencyInjection;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.PlaylistFileAdapters;
 using Oleg_ivo.MeloManager.PlaylistFileAdapters.Diff;
-using Oleg_ivo.MeloManager.Prism;
 using File = System.IO.File;
 
 namespace Oleg_ivo.MeloManager.Winamp

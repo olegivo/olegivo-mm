@@ -61,6 +61,16 @@
                             <Image Source="/Oleg_ivo.MeloManager;component/Resources/delete2.ico"   /><!--TODO:вынести в ресурс-->
                         </MenuItem.Icon>
                     </MenuItem>
+                    <Button 
+                        Command="{Binding ElementName=mediaTree, Path=DataContext.CommandEditParents}" 
+                        CommandParameter="{Binding}"
+                        ToolTip="Редактировать родительские элементы" 
+                        Content="Родители"/>
+                    <Button 
+                        Command="{Binding ElementName=mediaTree, Path=DataContext.CommandEditChildren}" 
+                        CommandParameter="{Binding}"
+                        ToolTip="Редактировать дочерние элементы" 
+                        Content="Дети"/>
                 </ToolBarPanel>
                 <TextBlock 
                     Text="{Binding Name}" 

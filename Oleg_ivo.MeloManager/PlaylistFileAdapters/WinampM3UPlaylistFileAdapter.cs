@@ -5,8 +5,8 @@ using System.Xml.Linq;
 using NLog;
 using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Extensions;
+using Oleg_ivo.MeloManager.DependencyInjection;
 using Oleg_ivo.MeloManager.MediaObjects;
-using Oleg_ivo.MeloManager.Prism;
 
 namespace Oleg_ivo.MeloManager.PlaylistFileAdapters
 {

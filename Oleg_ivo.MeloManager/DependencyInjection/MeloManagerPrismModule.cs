@@ -3,7 +3,7 @@ using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.Regions;
 using Oleg_ivo.MeloManager.View;
 
-namespace Oleg_ivo.MeloManager.Prism
+namespace Oleg_ivo.MeloManager.DependencyInjection
 {
     public class MeloManagerPrismModule : IModule
     {

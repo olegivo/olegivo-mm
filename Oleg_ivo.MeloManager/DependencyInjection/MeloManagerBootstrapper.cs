@@ -4,10 +4,10 @@ using System.Windows.Threading;
 using Autofac;
 using NLog;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
-using Oleg_ivo.Base.Autofac.Modules;
 using Oleg_ivo.MeloManager.Repairers;
+using Oleg_ivo.Prism;
 
-namespace Oleg_ivo.MeloManager.Prism
+namespace Oleg_ivo.MeloManager.DependencyInjection
 {
     public class MeloManagerBootstrapper : AutofacBootstrapperBase<MainWindow,MeloManagerOptions,MeloManagerPrismModule,MeloManagerAutofacModule>
     {

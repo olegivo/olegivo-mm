@@ -13,9 +13,9 @@ using Oleg_ivo.Base.Extensions;
 using Oleg_ivo.Base.WPF.Dialogs;
 using Oleg_ivo.Base.WPF.Extensions;
 using Oleg_ivo.Base.WPF.ViewModels;
+using Oleg_ivo.MeloManager.DependencyInjection;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.MediaObjects.Extensions;
-using Oleg_ivo.MeloManager.Prism;
 using Oleg_ivo.MeloManager.Winamp;
 using Oleg_ivo.MeloManager.Winamp.Tracking;
 using Reactive.Bindings;
@@ -411,6 +411,10 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private void Test()
         {
+            var item = MediaTree.CurrentItem;
+            var wrapper = item.FindChildrenOfType<MediaFile>().FirstOrDefault();
+            if(wrapper!=null)
+                MediaTree.CommandEditParents.Execute(wrapper);
             //TestMethods.TestDialogService(ModalDialogService);
             //TestMethods.TestWinampTrackingWindow(context);
             //winampControl.LoadPlaylist(@"f:\Subversion\MM\Oleg_ivo.MeloManager\bin\Debug\playlist.m3u");

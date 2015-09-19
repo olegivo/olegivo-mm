@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using Oleg_ivo.MeloManager.Prism;
+using Oleg_ivo.MeloManager.DependencyInjection;
 
 namespace Oleg_ivo.MeloManager
 {
