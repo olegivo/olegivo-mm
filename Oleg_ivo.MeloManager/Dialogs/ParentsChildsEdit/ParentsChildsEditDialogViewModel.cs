@@ -44,10 +44,6 @@ namespace Oleg_ivo.MeloManager.Dialogs.ParentsChildsEdit
                 AvailableSearchViewModel = new SelectableSearchViewModel<MediaContainer>(
                     selectableItems,
                     item => !item.IsSelected, filterName, AvailableFilter);
-
-                RaisePropertyChanged(() => Items);
-                RaisePropertyChanged(() => SelectedSearchViewModel);
-                RaisePropertyChanged(() => AvailableSearchViewModel);
             }
         }
 

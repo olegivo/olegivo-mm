@@ -164,7 +164,7 @@ namespace Oleg_ivo.MeloManager.Search
         private void SetSelecteableResults(List<SelectableItem<TItem>> selectableItems)
         {
             SelectableResults = selectableItems;
-            RaisePropertyChanged(() => SelectableResults);
+            RaisePropertyChanged("SelectableResults");
         }
 
         public List<SelectableItem<TItem>> SelectableResults { get; set; }

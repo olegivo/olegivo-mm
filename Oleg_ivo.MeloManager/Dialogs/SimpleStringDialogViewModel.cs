@@ -16,7 +16,7 @@ namespace Oleg_ivo.MeloManager.Dialogs
             {
                 if(this.value == value) return;
                 this.value = value;
-                RaisePropertyChanged(() => Value);
+                RaisePropertyChanged("Value");
             }
         }
 
@@ -27,7 +27,7 @@ namespace Oleg_ivo.MeloManager.Dialogs
             {
                 if (description == value) return;
                 description = value;
-                RaisePropertyChanged(() => Description);
+                RaisePropertyChanged("Description");
             }
         }
     }

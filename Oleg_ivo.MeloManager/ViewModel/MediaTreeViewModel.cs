@@ -54,7 +54,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 if (items == value) return;
 
                 items = value;
-                RaisePropertyChanged(() => Items);
+                RaisePropertyChanged("Items");
             }
         }
 
@@ -69,8 +69,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 if (CurrentItem == value) return;
                 //TODO: история переходов
                 CurrentWrapper.Value = value;
-                RaisePropertyChanged(() => CurrentItem);
-                RaisePropertyChanged(() => CurrentTreeMediaContainer);
+                RaisePropertyChanged("CurrentItem");
+                RaisePropertyChanged("CurrentTreeMediaContainer");
             }
         }
 
@@ -92,7 +92,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             {
                 if (parentListDataSource == value) return;
                 parentListDataSource = value;
-                RaisePropertyChanged(() => ParentListDataSource);
+                RaisePropertyChanged("ParentListDataSource");
                 OnParentListDataSourceChanged();
             }
         }
@@ -117,7 +117,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 view.Filter = filter;
                 foreach (MediaContainerTreeWrapper wrapper in view)
                     wrapper.Filter = filter;
-                RaisePropertyChanged(() => NameFilter);
+                RaisePropertyChanged("NameFilter");
             }
         }
 
@@ -150,7 +150,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             {
                 if (childListDataSource == value) return;
                 childListDataSource = value;
-                RaisePropertyChanged(() => ChildListDataSource);
+                RaisePropertyChanged("ChildListDataSource");
                 OnChildListDataSourceChanged();
             }
         }
@@ -484,7 +484,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             {
                 if (treeDataSource == value) return;
                 treeDataSource = value;
-                RaisePropertyChanged(() => TreeDataSource);
+                RaisePropertyChanged("TreeDataSource");
             }
         }
 
@@ -520,7 +520,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         void items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            RaisePropertyChanged(() => Items);
+            RaisePropertyChanged("Items");
         }
 
     }

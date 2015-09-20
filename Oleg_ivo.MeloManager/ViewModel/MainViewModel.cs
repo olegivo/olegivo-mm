@@ -68,7 +68,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
                     InitCommands();
                 }
-                RaisePropertyChanged(() => MediaTree);
+                RaisePropertyChanged("MediaTree");
             }
         }
 
@@ -90,7 +90,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                     Parents.RowDoubleClick += Parents_RowDoubleClick;
                     Parents.Deleting += Parents_Deleting;
                 }
-                RaisePropertyChanged(() => Parents);
+                RaisePropertyChanged("Parents");
             }
         }
 
@@ -112,7 +112,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                     Children.RowDoubleClick += Children_RowDoubleClick;
                     Children.Deleting += Children_Deleting;
                 }
-                RaisePropertyChanged(() => Children);
+                RaisePropertyChanged("Children");
             }
         }
 
@@ -144,7 +144,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             {
                 if (statusText == value) return;
                 statusText = value;
-                RaisePropertyChanged(() => StatusText);
+                RaisePropertyChanged("StatusText");
             }
         }
 

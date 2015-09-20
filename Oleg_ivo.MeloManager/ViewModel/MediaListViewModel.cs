@@ -42,7 +42,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             {
                 if (selectedItem == value) return;
                 selectedItem = value;
-                RaisePropertyChanged(() => SelectedItem);
+                RaisePropertyChanged("SelectedItem");
             }
         }
 
@@ -64,7 +64,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
                 var view = CollectionViewSource.GetDefaultView(ListDataSource);
                 view.Filter = filter;
-                RaisePropertyChanged(() => NameFilter);
+                RaisePropertyChanged("NameFilter");
             }
         }
 
@@ -79,7 +79,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 if (listDataSource == value) return;
                 listDataSource = value;
                 NameFilter = null;
-                RaisePropertyChanged(() => ListDataSource);
+                RaisePropertyChanged("ListDataSource");
             }
         }
 

@@ -195,7 +195,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 view.Filter = filter;
                 foreach (MediaContainerTreeWrapper wrapper in view)
                     wrapper.Filter = filter;
-                RaisePropertyChanged(() => Filter);
+                RaisePropertyChanged("Filter");
             }
         }
 
