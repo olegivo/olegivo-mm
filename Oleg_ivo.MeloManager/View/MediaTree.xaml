@@ -45,32 +45,30 @@
                         <Style TargetType="MenuItem">
                             <Setter Property="MaxWidth" Value="24" />
                         </Style>
+                        <Image x:Key="IconPlay" Source="/Oleg_ivo.MeloManager;component/Resources/media_play.ico" />
+                        <Image x:Key="IconDelete" Source="/Oleg_ivo.MeloManager;component/Resources/delete2.ico" />
+                        <Image x:Key="IconEditParents" Source="/Oleg_ivo.MeloManager;component/Resources/branch_up.png" />
+                        <Image x:Key="IconEditChildren" Source="/Oleg_ivo.MeloManager;component/Resources/branch_down.png" />
                     </ToolBarPanel.Resources>
                     <MenuItem 
                         ToolTip="Воспроизвести"
-                        Command="{Binding CommandPlay}">
-                        <MenuItem.Icon>
-                            <Image Source="/Oleg_ivo.MeloManager;component/Resources/media_play.ico"   /><!--TODO:вынести в ресурс-->
-                        </MenuItem.Icon>
+                        Command="{Binding CommandPlay}" Icon="{StaticResource IconPlay}">
                     </MenuItem>
                     <MenuItem 
                         ToolTip="Удалить"
-                        Command="{Binding ElementName=mediaTree, Path=DataContext.CommandDeleteItem}" 
-                        CommandParameter="{Binding}">
-                        <MenuItem.Icon>
-                            <Image Source="/Oleg_ivo.MeloManager;component/Resources/delete2.ico"   /><!--TODO:вынести в ресурс-->
-                        </MenuItem.Icon>
+                        Command="{Binding ElementName=mediaTree, Path=ViewModel.CommandDeleteItem}" 
+                        CommandParameter="{Binding}" Icon="{StaticResource IconDelete}">
                     </MenuItem>
-                    <Button 
-                        Command="{Binding ElementName=mediaTree, Path=DataContext.CommandEditParents}" 
-                        CommandParameter="{Binding}"
-                        ToolTip="Редактировать родительские элементы" 
-                        Content="Родители"/>
-                    <Button 
-                        Command="{Binding ElementName=mediaTree, Path=DataContext.CommandEditChildren}" 
-                        CommandParameter="{Binding}"
-                        ToolTip="Редактировать дочерние элементы" 
-                        Content="Дети"/>
+                    <MenuItem 
+                        ToolTip="Редактировать родительские элементы"
+                        Command="{Binding ElementName=mediaTree, Path=ViewModel.CommandEditParents}" 
+                        CommandParameter="{Binding}" Icon="{StaticResource IconEditParents}">
+                    </MenuItem>
+                    <MenuItem 
+                        ToolTip="Редактировать дочерние элементы"
+                        Command="{Binding ElementName=mediaTree, Path=ViewModel.CommandEditChildren}" 
+                        CommandParameter="{Binding}" Icon="{StaticResource IconEditChildren}">
+                    </MenuItem>
                 </ToolBarPanel>
                 <TextBlock 
                     Text="{Binding Name}" 
