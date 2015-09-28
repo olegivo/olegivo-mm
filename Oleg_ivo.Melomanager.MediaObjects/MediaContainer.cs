@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Data.Entity.Core.Objects;
 using System.Diagnostics;
 using System.Linq;
 using NLog;
+using Oleg_ivo.MeloManager.MediaObjects.Extensions;
 
 namespace Oleg_ivo.MeloManager.MediaObjects
 {
@@ -49,21 +51,8 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <param name="child"></param>
         public void RemoveChild(MediaContainer child)
         {
-            if(ChildContainers.Remove(child))
-                EndRemoveChild(child);
+            ChildContainers.Remove(child);
         }
-
-        private void EndRemoveChild(MediaContainer child)
-        {
-            InvokeChildrenChanged(ListChangedType.ItemDeleted, child);
-        }
-
-/*
-        private void BeginRemoveChild(MediaContainersParentChild mediaContainersParentChild)
-        {
-            
-        }
-*/
 
         /// <summary>
         /// Удаляет родительский элемент
@@ -144,10 +133,11 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         public MediaContainer()
         {
             Files = new HashSet<File>();
-            ChildMediaContainers = new BindingList<MediaContainer>();
-            ChildContainers = ChildMediaContainers;
-
-            ChildMediaContainers.ListChanged += ChildMediaContainers_ListChanged;
+            ChildContainers = (childMediaContainers = new ObservableCollection<MediaContainer>());
+            ParentContainers = (parentMediaContainers = new ObservableCollection<MediaContainer>());
+            
+            childMediaContainers.CollectionChanged += childMediaContainers_CollectionChanged;
+            parentMediaContainers.CollectionChanged += parentMediaContainers_CollectionChanged;
         }
 
         public bool IsRepaired { get; set; }
@@ -158,28 +148,39 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         public DateTime? DateInsert { get; set; }
         public DateTime? DateUpdate { get; set; }
 
-        private BindingList<MediaContainer> ChildMediaContainers { get; set; }
+        private readonly ObservableCollection<MediaContainer> childMediaContainers;
+        private readonly ObservableCollection<MediaContainer> parentMediaContainers;
 
 
-        void ChildMediaContainers_ListChanged(object sender, ListChangedEventArgs e)
+        void childMediaContainers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.ListChangedType == ListChangedType.ItemAdded)
-            {
-                var child = ChildMediaContainers[e.NewIndex];
-                InvokeChildrenChanged(e.ListChangedType, child);
-            }                      
+            if (e.Action == NotifyCollectionChangedAction.Add || e.Action == NotifyCollectionChangedAction.Remove)
+                InvokeChildrenChanged(e.Action, e.GetChange<MediaContainer>());
         }
 
-        private void InvokeChildrenChanged(ListChangedType listChangedType, MediaContainer child)
+        void parentMediaContainers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add || e.Action == NotifyCollectionChangedAction.Remove)
+                InvokeParentsChanged(e.Action, e.GetChange<MediaContainer>());
+        }
+
+        private void InvokeChildrenChanged(NotifyCollectionChangedAction listChangedType, MediaContainer child)
         {
             if (ChildrenChanged != null)
                 ChildrenChanged(this, new MediaListChangedEventArgs(listChangedType, child));
+        }
+
+        private void InvokeParentsChanged(NotifyCollectionChangedAction listChangedType, MediaContainer child)
+        {
+            if (ParentsChanged != null)
+                ParentsChanged(this, new MediaListChangedEventArgs(listChangedType, child));
         }
 
         /// <summary>
         /// 
         /// </summary>
         public event EventHandler<MediaListChangedEventArgs> ChildrenChanged;
+        public event EventHandler<MediaListChangedEventArgs> ParentsChanged;
 
         /// <summary>
         /// Returns a string that represents the current object.
@@ -207,7 +208,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <summary>
         /// 
         /// </summary>
-        public ListChangedType ListChangedType { get; private set; }
+        public NotifyCollectionChangedAction ListChangedType { get; private set; }
 
         /// <summary>
         /// 
@@ -219,7 +220,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// </summary>
         /// <param name="listChangedType"></param>
         /// <param name="mediaContainer"></param>
-        public MediaListChangedEventArgs(ListChangedType listChangedType, MediaContainer mediaContainer)
+        public MediaListChangedEventArgs(NotifyCollectionChangedAction listChangedType, MediaContainer mediaContainer)
         {
             ListChangedType = listChangedType;
             MediaContainer = mediaContainer;

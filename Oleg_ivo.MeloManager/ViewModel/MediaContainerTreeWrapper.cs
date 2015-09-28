@@ -44,6 +44,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             this.context = Enforce.ArgumentNotNull(context, "context");
             UnderlyingItem = Enforce.ArgumentNotNull(underlyingItem, "underlyingItem");
             UnderlyingItem.ChildrenChanged += UnderlyingItem_ChildrenChanged;
+            UnderlyingItem.ParentsChanged += UnderlyingItem_ParentsChanged;
             Parent = parent;
 
             var mediaContainerTreeWrappers = UnderlyingItem.ChildContainers.Select(mc => new MediaContainerTreeWrapper(mc, this, context, winampControl));
@@ -289,14 +290,38 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         void UnderlyingItem_ChildrenChanged(object sender, MediaListChangedEventArgs e)
         {
+            var childWrapper = FindChild(e.MediaContainer, this);
+            switch (e.ListChangedType)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    if (childWrapper == null)
+                    {
+                        childWrapper = new MediaContainerTreeWrapper(e.MediaContainer, this, context, winampControl);
+                        ChildItems.Add(childWrapper);
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    if (childWrapper != null)
+                    {
+                        ChildItems.Remove(childWrapper);
+                    }
+                    break;
+            }
             if (ChildrenChanged != null)
                 ChildrenChanged(this, e);
+        }
+
+        void UnderlyingItem_ParentsChanged(object sender, MediaListChangedEventArgs e)
+        {
+            if (ParentsChanged != null)
+                ParentsChanged(this, e);
         }
 
         /// <summary>
         /// 
         /// </summary>
         internal event EventHandler<MediaListChangedEventArgs> ChildrenChanged;
+        internal event EventHandler<MediaListChangedEventArgs> ParentsChanged;
 
         /// <summary>
         /// Класс для сравнения обёрток по подлежащему элементу

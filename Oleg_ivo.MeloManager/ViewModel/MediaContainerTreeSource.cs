@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using Oleg_ivo.MeloManager.MediaObjects;
@@ -118,11 +119,11 @@ namespace Oleg_ivo.MeloManager.ViewModel
             MediaContainerTreeWrapper child;
             switch (e.ListChangedType)
             {
-                case ListChangedType.ItemAdded:
+                case NotifyCollectionChangedAction.Add:
                     child = new MediaContainerTreeWrapper(GetSourceId, e.MediaContainer, parent);
                     Add(child);
                     break;
-                case ListChangedType.ItemDeleted:
+                case NotifyCollectionChangedAction.Remove:
                     child = FindItem(parent, e.MediaContainer);
                     Remove(child);
                     break;

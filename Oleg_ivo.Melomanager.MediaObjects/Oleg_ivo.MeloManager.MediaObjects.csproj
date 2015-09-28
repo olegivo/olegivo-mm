@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Category.cs" />
+    <Compile Include="Extensions\CollectionsExtensions.cs" />
     <Compile Include="Extensions\DataContextExtensions.cs" />
     <Compile Include="Extensions\DbContextExtensions.cs" />
     <Compile Include="IMediaRepository.cs" />
