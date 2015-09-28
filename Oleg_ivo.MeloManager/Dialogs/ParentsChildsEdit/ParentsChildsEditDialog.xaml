@@ -78,14 +78,14 @@
                 </Style>
             </Grid.Resources>
             <DockPanel>
-                <TextBlock DockPanel.Dock="Right" Foreground="DarkGray">
+                <TextBlock DockPanel.Dock="Right" Foreground="DarkGray" VerticalAlignment="Center">
                     <Run Text="{Binding SelectedSearchViewModel.InnerSearchViewModel.SearchResults.Value.Count, Mode=OneWay}" />
                     <Run>/</Run>
                     <Run Text="{Binding SelectedSearchViewModel.SearchResults.Value.Count, Mode=OneWay}" />
                 </TextBlock>
                 <TextBox Text="{Binding SelectedFilter.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5">
                     <TextBox.InputBindings>
-                        <!--<KeyBinding Key="Escape" Command="SelectedSearchViewModel.ClearFilterCommand"></KeyBinding>-->
+                        <KeyBinding Key="Escape" Command="{Binding SelectedSearchViewModel.ClearFilterCommand}"></KeyBinding>
                     </TextBox.InputBindings>
                 </TextBox>
             </DockPanel>
@@ -93,7 +93,7 @@
                 <HeaderedItemsControl ItemsSource="{Binding SelectedSearchViewModel.InnerSearchViewModel.ResultsViewSource.View}" Header="Выбранные элементы" />
             </ScrollViewer>
             <DockPanel Grid.Row="0" Grid.Column="1" >
-                <TextBlock DockPanel.Dock="Right" Foreground="DarkGray">
+                <TextBlock DockPanel.Dock="Right" Foreground="DarkGray" VerticalAlignment="Center">
                     <Run Text="{Binding AvailableSearchViewModel.InnerSearchViewModel.SearchResults.Value.Count, Mode=OneWay}" />
                     <Run>/</Run>
                     <Run Text="{Binding AvailableSearchViewModel.SearchResults.Value.Count, Mode=OneWay}" />

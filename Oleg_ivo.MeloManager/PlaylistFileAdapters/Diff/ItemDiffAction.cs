@@ -7,7 +7,12 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters.Diff
     public class ItemDiffAction<TItem> : DiffActionBase where TItem : class
     {
         private readonly Func<TItem> itemProvider;
-        protected TItem Item;
+        private TItem item;
+
+        protected TItem Item
+        {
+            get { return item ?? (item = itemProvider()); }
+        }
 
         protected ItemDiffAction(Func<TItem> itemProvider, IList<IDiffAction> childDiffActions, DiffType diffType = DiffType.None)
             : base(childDiffActions, diffType)
@@ -17,7 +22,6 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters.Diff
 
         protected override void ApplySelf()
         {
-            if(Item==null) Item = itemProvider();
         }
 
         public TItem ApplyAndReturnItem()
@@ -39,7 +43,6 @@ namespace Oleg_ivo.MeloManager.PlaylistFileAdapters.Diff
         /// </returns>
         public override string ToString()
         {
-            ApplySelf();
             return string.Format("{0}", Item);
         }
     }

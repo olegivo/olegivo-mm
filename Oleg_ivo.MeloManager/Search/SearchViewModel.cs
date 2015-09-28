@@ -6,9 +6,9 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using Oleg_ivo.Base.WPF.ViewModels;
-using Oleg_ivo.MeloManager.Dialogs.ParentsChildsEdit;
 using Reactive.Bindings;
 using ReactiveUI;
+using ReactiveCommand = Reactive.Bindings.ReactiveCommand;
 
 namespace Oleg_ivo.MeloManager.Search
 {
@@ -19,6 +19,7 @@ namespace Oleg_ivo.MeloManager.Search
         private readonly ReactiveProperty<IList<TItem>> externalSource;
         public ReactiveProperty<IList<TItem>> SearchResults { get; private set; }
         public ReactiveProperty<string> QueryText { get; private set; }
+        public ReactiveCommand ClearFilterCommand { get; private set; }
 
         public CollectionViewSource ResultsViewSource { get; private set; }
 
@@ -44,6 +45,14 @@ namespace Oleg_ivo.MeloManager.Search
                 .Concat()
                 .ObserveOnDispatcher()
                 .Subscribe(SetSearchResults));
+
+            Disposer.Add(ClearFilterCommand = new ReactiveCommand());
+            Disposer.Add(ClearFilterCommand.Subscribe(_ => ClearFilter()));
+        }
+
+        private void ClearFilter()
+        {
+            QueryText.Value = null;
         }
 
         private TimeSpan GetThrottleTime(string query)
@@ -97,22 +106,6 @@ namespace Oleg_ivo.MeloManager.Search
 
     }
 
-    public class SelectableSearchViewModel<TItem> : SearchViewModel<SelectableItem<TItem>> where TItem : class //TODO: вложенность вместо наследования
-    {
-        public SearchViewModel<SelectableItem<TItem>> InnerSearchViewModel { get; private set; }
-
-        public SelectableSearchViewModel(ReactiveList<SelectableItem<TItem>> sourceItems,
-            Func<SelectableItem<TItem>, bool> selectablePredicate,
-            Func<SelectableItem<TItem>, string, bool> searchPredicate, ReactiveProperty<string> queryText = null)
-            : base(sourceItems, (item, _) => selectablePredicate == null || selectablePredicate(item), queryText)
-        {
-            Disposer.Add(
-                InnerSearchViewModel =
-                    new SearchViewModel<SelectableItem<TItem>>(sourceItems, searchPredicate,
-                        externalSource: SearchResults, queryText: queryText));
-        }
-
-    }
 /*
     public class SelectableSearchViewModel2<TItem> : SearchViewModel<SelectableItem<TItem>> where TItem : class //TODO: вложенность вместо наследования
     {
