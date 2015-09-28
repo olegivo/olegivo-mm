@@ -224,6 +224,7 @@
     <Compile Include="PlaylistFileAdapters\PlaylistImporter.cs" />
     <Compile Include="PlaylistFileAdapters\PrePlaylist.cs" />
     <Compile Include="Search\SearchViewModel.cs" />
+    <Compile Include="Search\SelectableSearchViewModel.cs" />
     <Compile Include="Winamp\WinampFileAdapterService.cs" />
     <Compile Include="PlaylistFileAdapters\WinampM3UPlaylistFileAdapter.cs" />
     <Compile Include="DependencyInjection\MeloManagerOptions.cs" />
