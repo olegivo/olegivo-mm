@@ -99,7 +99,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\External\Sharpamp\Sharpamp.csproj">
+    <ProjectReference Include="..\External\Sharpamp\Sharpamp\Sharpamp.csproj">
       <Project>{09460e2b-da70-4667-b592-2c971019e9f2}</Project>
       <Private>true</Private>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>

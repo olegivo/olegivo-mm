@@ -77,7 +77,7 @@
     <Compile Include="WinampWcfPlugin.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\External\Sharpamp\Sharpamp.csproj">
+    <ProjectReference Include="..\External\Sharpamp\Sharpamp\Sharpamp.csproj">
       <Project>{09460E2B-DA70-4667-B592-2C971019E9F2}</Project>
       <Name>Sharpamp</Name>
     </ProjectReference>
