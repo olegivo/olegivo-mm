@@ -32,7 +32,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oleg_ivo.Base", "External\O
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Oleg_ivo.MeloManager.Database", "Oleg_ivo.MeloManager.Database\Oleg_ivo.MeloManager.Database.sqlproj", "{C61D90AE-2808-4ECF-928D-430C9784D996}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharpamp", "External\Sharpamp\Sharpamp.csproj", "{09460E2B-DA70-4667-B592-2C971019E9F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharpamp", "External\Sharpamp\Sharpamp\Sharpamp.csproj", "{09460E2B-DA70-4667-B592-2C971019E9F2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Winamp.Wcf", "Winamp.Wcf\Winamp.Wcf.csproj", "{F9B78D31-2294-48B3-8740-5B4F514B3EAF}"
 EndProject
