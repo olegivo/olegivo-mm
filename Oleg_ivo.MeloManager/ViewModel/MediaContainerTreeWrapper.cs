@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -291,22 +292,26 @@ namespace Oleg_ivo.MeloManager.ViewModel
         void UnderlyingItem_ChildrenChanged(object sender, MediaListChangedEventArgs e)
         {
             var childWrapper = FindChild(e.MediaContainer, this);
+            Action action = null;
             switch (e.ListChangedType)
             {
                 case NotifyCollectionChangedAction.Add:
                     if (childWrapper == null)
                     {
                         childWrapper = new MediaContainerTreeWrapper(e.MediaContainer, this, context, winampControl);
-                        ChildItems.Add(childWrapper);
+                        action = () => ChildItems.Add(childWrapper);
                     }
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     if (childWrapper != null)
                     {
-                        ChildItems.Remove(childWrapper);
+                        action = () => ChildItems.Remove(childWrapper);
                     }
                     break;
             }
+            if (action != null)
+                action.InvokeOnDispatcher();
+            
             if (ChildrenChanged != null)
                 ChildrenChanged(this, e);
         }
@@ -352,7 +357,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             var filename = @"playlist.m3u";
             //Environment.CurrentDirectory
             adapter.MediaFilesToFile(filename, mediaFiles);
-            winampControl.LoadPlaylist(filename);
+            winampControl.LoadPlaylist(filename);//TODO: может полный путь нужен?
             //Process.Start(filename);
         }
 

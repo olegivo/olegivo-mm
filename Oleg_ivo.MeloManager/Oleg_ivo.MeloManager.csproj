@@ -152,6 +152,7 @@
     <Reference Include="System.Reactive.Windows.Threading">
       <HintPath>$(PackagesPath)\Rx-XAML.2.2.5\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
@@ -225,6 +226,7 @@
     <Compile Include="PlaylistFileAdapters\PrePlaylist.cs" />
     <Compile Include="Search\SearchViewModel.cs" />
     <Compile Include="Search\SelectableSearchViewModel.cs" />
+    <Compile Include="ViewModel\Extensions.cs" />
     <Compile Include="Winamp\WinampFileAdapterService.cs" />
     <Compile Include="PlaylistFileAdapters\WinampM3UPlaylistFileAdapter.cs" />
     <Compile Include="DependencyInjection\MeloManagerOptions.cs" />
