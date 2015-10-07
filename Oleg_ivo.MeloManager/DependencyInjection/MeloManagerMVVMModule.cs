@@ -2,6 +2,7 @@ using Autofac;
 using Oleg_ivo.Base.WPF.Dialogs;
 using Oleg_ivo.MeloManager.Dialogs;
 using Oleg_ivo.MeloManager.Dialogs.ParentsChildsEdit;
+using Oleg_ivo.MeloManager.Dialogs.SettingsEdit;
 using Oleg_ivo.MeloManager.View;
 using Oleg_ivo.MeloManager.ViewModel;
 using Oleg_ivo.MeloManager.Winamp.Tracking;
@@ -46,6 +47,9 @@ namespace Oleg_ivo.MeloManager.DependencyInjection
 
             builder.RegisterType<DiffResultDialogViewModel>();
             builder.RegisterType<DiffResultDialog>().AsImplementedInterfaces();
+
+            builder.RegisterType<SettingsEditDialogViewModel>();
+            builder.RegisterType<SettingsEditDialog>().AsImplementedInterfaces();
         }
     }
 }

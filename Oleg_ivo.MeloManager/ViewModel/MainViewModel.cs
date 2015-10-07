@@ -14,6 +14,7 @@ using Oleg_ivo.Base.WPF.Dialogs;
 using Oleg_ivo.Base.WPF.Extensions;
 using Oleg_ivo.Base.WPF.ViewModels;
 using Oleg_ivo.MeloManager.DependencyInjection;
+using Oleg_ivo.MeloManager.Dialogs.SettingsEdit;
 using Oleg_ivo.MeloManager.MediaObjects;
 using Oleg_ivo.MeloManager.MediaObjects.Extensions;
 using Oleg_ivo.MeloManager.Winamp;
@@ -202,6 +203,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             CommandLoadFromDb = new ReactiveCommand(CanWorkWithDataContext).AddHandler(() => LoadFromDb());
             CommandSaveAndLoad = new ReactiveCommand(CanWorkWithDataContext).AddHandler(SaveAndLoad);
             CommandImportWinampPlaylists = new ReactiveCommand(CanWorkWithDataContext).AddHandler(() => ImportWinampPlaylists());
+            CommandSettings = new ReactiveCommand(CanWorkWithDataContext).AddHandler(Settings);
 
             CommandTreeAddCategory = MediaTree.CommandAddCategoryToCurrent.AddHandler(TreeAddCategory);
             CommandTreeAddPlaylist = MediaTree.CommandAddPlaylistToCurrent.AddHandler(TreeAddPlaylist);
@@ -242,6 +244,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
         public ICommand CommandLoadFromDb { get; private set; }
 
         public ICommand CommandSaveAndLoad { get; private set; }
+
+        public ICommand CommandSettings { get; private set; }
 
         public ICommand CommandTreeDeleteCurrent { get; private set; }
         
@@ -301,6 +305,21 @@ namespace Oleg_ivo.MeloManager.ViewModel
             //DataContext.SubmitChanges();
             log.Info(StatusText = "Сохранение завершено");
             CanWorkWithDataContext.Value = true;
+        }
+
+        private void Settings()
+        {
+            ModalDialogService.CreateAndShowDialog<SettingsEditDialogViewModel>(window =>
+            {
+                window.Width = 600;
+                window.Height = 600;
+                window.ViewModel.Caption = "Изменение настроек";
+                window.ViewModel.ContentViewModel.ReadFromOptions(options);
+            }, (viewModel, result) =>
+            {
+                if(result.HasValue && result.Value)
+                    viewModel.ContentViewModel.WriteToOptions(options);
+            });
         }
 
         private void TreeDeleteCurrent()
