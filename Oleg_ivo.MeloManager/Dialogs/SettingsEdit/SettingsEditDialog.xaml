@@ -15,6 +15,8 @@
         </Style>
         <Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource {x:Type FrameworkElement}}" />
         <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type FrameworkElement}}" />
+        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type FrameworkElement}}" />
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type FrameworkElement}}" />
     </ContentControl.Resources>
     <StackPanel>
         <CheckBox IsChecked="{Binding AutoImportPlaylistsOnStart}">Автоматически импортировать плейлисты при старте</CheckBox>
@@ -24,5 +26,21 @@
             <Label DockPanel.Dock="Left">Категория для импорта</Label>
             <ComboBox ItemsSource="{Binding RootCategories}" SelectedValue="{Binding WinampImportCategoryId}" DisplayMemberPath="Name" SelectedValuePath="Id" />
         </DockPanel>
+        <GroupBox Header="Источник файлов">
+            <DockPanel>
+                <Button DockPanel.Dock="Top" Command="{Binding CommandAddDirectory}">Добавить папку</Button>
+                <ListBox ItemsSource="{Binding MusicFilesSource}" HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type settingsEdit:DirectoryViewModel}">
+                            <DockPanel>
+                                <Button Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListBox}}, Path=DataContext.CommandRemoveDirectory}" Padding="5" CommandParameter="{Binding}" Content="x" DockPanel.Dock="Right" />
+                                <Button Command="{Binding CommandChangeDirectory}" Content="..." Padding="5" DockPanel.Dock="Right"/>
+                                <TextBox Text="{Binding Path, Mode=TwoWay}" VerticalContentAlignment="Center" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </GroupBox>
     </StackPanel>
 </dialogs:DialogContentControl>

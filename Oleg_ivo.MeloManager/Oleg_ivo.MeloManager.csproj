@@ -202,10 +202,11 @@
     </Compile>
     <Compile Include="Dialogs\ParentsChildsEdit\ParentsChildsEditDialogViewModel.cs" />
     <Compile Include="Dialogs\ParentsChildsEdit\SelectableItem.cs" />
+    <Compile Include="Dialogs\SettingsEdit\DirectoryViewModel.cs" />
     <Compile Include="Dialogs\SettingsEdit\SettingsEditDialog.xaml.cs">
       <DependentUpon>SettingsEditDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\SettingsEdit\SimpleStringDialogViewModel.cs" />
+    <Compile Include="Dialogs\SettingsEdit\SettingsEditDialogViewModel.cs" />
     <Compile Include="Dialogs\SimpleStringDialog.xaml.cs">
       <DependentUpon>SimpleStringDialog.xaml</DependentUpon>
     </Compile>

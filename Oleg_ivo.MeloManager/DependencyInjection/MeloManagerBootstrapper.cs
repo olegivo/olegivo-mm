@@ -77,7 +77,7 @@ namespace Oleg_ivo.MeloManager.DependencyInjection
 
         private void UpdateUsers()
         {
-            log.Debug("Обновление списка пользователей");
+            log.Debug("Обновление списка пользователей");//TODO: список пользователей в секции ApplicationSettings нельзя сохранять, поэтому пока все пользователи забиты хардкодом.
             var userName = Environment.UserName.ToLower();
             if (!options.Users.Contains(userName))
             {
