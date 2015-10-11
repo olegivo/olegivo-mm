@@ -268,7 +268,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private Task LoadFromDb()
         {
             //Clear();
-            log.Info(StatusText = "Загрузка из БД в процессе...");
+            ChangeStatus("Загрузка из БД в процессе...");
             CanWorkWithDataContext.Value = false;
             MediaTree.Items = new ObservableCollection<MediaContainerTreeWrapper>();
             var task = Task.Factory.StartNew(
@@ -277,14 +277,14 @@ namespace Oleg_ivo.MeloManager.ViewModel
                     //DataContext.ActionWithLog(dataContext => dataContext.RefreshCache());
                     MediaTree.InitSource(
                         MediaDbContext.Categories.Where(category => category.IsRoot));
-                    log.Info(StatusText = "Загрузка из БД завершена");
+                    ChangeStatus("Загрузка из БД завершена");
                     CanWorkWithDataContext.Value = true;
                 });
             /*foreach (var mc in categories)
             {
                 MediaTree.AddMediaContainer(mc, null);
             }*/
-            log.Info(StatusText = "Загрузка из БД в процессе...");
+            ChangeStatus("Загрузка из БД в процессе...");
             return task;
         }
 
@@ -297,13 +297,13 @@ namespace Oleg_ivo.MeloManager.ViewModel
         private void Save()
         {
             if (!MediaDbContext.HasChanges()) return;
-            
-            log.Info(StatusText = "Сохранение в процесе...");
+
+            ChangeStatus("Сохранение в процесе...");
             CanWorkWithDataContext.Value = false;
             //var changeSet = DataContext.GetChangeSet();
             MediaDbContext.SubmitChangesWithLog();
             //DataContext.SubmitChanges();
-            log.Info(StatusText = "Сохранение завершено");
+            ChangeStatus("Сохранение завершено");
             CanWorkWithDataContext.Value = true;
         }
 
@@ -324,22 +324,22 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private void TreeDeleteCurrent()
         {
-            StatusText = "Удаление текущего элемента";
+            ChangeStatus("Удаление текущего элемента");
         }
 
         private void TreeAddCategory()
         {
-            StatusText = "Добавить категорию";
+            ChangeStatus("Добавить категорию");
         }
 
         private void TreeAddPlaylist()
         {
-            StatusText = "Добавить плейлист";
+            ChangeStatus("Добавить плейлист");
         }
 
         private void TreeAddMediaFile()
         {
-            StatusText = "Добавить медиа-файл";
+            ChangeStatus("Добавить медиа-файл");
         }
 
         /// <summary>
@@ -352,7 +352,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 .ContinueWith(task =>
                 {
                     CanWorkWithDataContext.Value = false;
-                    StatusText = "Импорт плейлистов из Winamp в процессе...";
+                    ChangeStatus("Импорт плейлистов из Winamp в процессе...");
                     var root = MediaTree.Items.FirstOrDefault(item => item.UnderlyingItem.Id == options.WinampImportCategoryId)
                                ?? (MediaTree.CurrentItem != null
                                    ? MediaTree.CurrentItem.ParentsRecursive.LastOrDefault()
@@ -390,12 +390,12 @@ namespace Oleg_ivo.MeloManager.ViewModel
                     CanWorkWithDataContext.Value = true;
                     if(task.Result) SaveAndLoad();
                 })
-                .ContinueWith(task => StatusText = "Импорт плейлистов из Winamp завершён");
+                .ContinueWith(task => ChangeStatus("Импорт плейлистов из Winamp завершён"));
         }
 
         private void InitDataSource()
         {
-            StatusText = "Тестовая инициализация";
+            ChangeStatus("Тестовая инициализация");
             /*var f1 = new MediaFile { Name = "Файл 1" };
             var f2 = new MediaFile { Name = "Файл 2" };
             var f3 = new MediaFile { Name = "Файл 3" };
@@ -545,30 +545,30 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 = Task.Factory.StartNew(
                     () =>
                     {
-                        log.Info(StatusText = "Запуск служб в процессе...");
-                        
-                        log.Info("WinampBinding: {0}", !options.DisableWinampBinding ? "on" : "off");
-                        if (!options.DisableWinampBinding) winampControl.LaunchBind();
+                        ChangeStatus("Запуск служб в процессе...");
                         
                         log.Info("AutoImportPlaylistsOnStart: {0}", options.AutoImportPlaylistsOnStart ? "on" : "off");
                         if (options.AutoImportPlaylistsOnStart) ImportWinampPlaylists(true);
+                        if (!options.DisableWinampBinding) winampControl.LaunchBind();
 
-                        log.Info("DisableMonitorFilesChanges: {0}", !options.DisableMonitorFilesChanges ? "on" : "off");
-                        if (!options.DisableMonitorFilesChanges) winampFilesMonitor.MonitorFilesChanges();
+                        winampFilesMonitor.MonitorFilesChanges();
                     })
-                    .ContinueWith(t => log.Info(StatusText = "Запуск служб завершён"));
+                    .ContinueWith(t => ChangeStatus("Запуск служб завершён"));
             return task;
         }
 
         public void Init()
         {
-            log.Info(StatusText = "Инициализация в процессе...");
-            Task.Factory.StartNew(() => { })
+            Task.Factory.StartNew(() => ChangeStatus("Инициализация в процессе..."))
                 .ContinueWith(task => MediaDbContext.RefreshCache())
                 .ContinueWith(task => LoadFromDb())
                 .ContinueWith(task => RunServices())
-                .ContinueWith(task => log.Info(StatusText = "Инициализация завершена"));
+                .ContinueWith(task => ChangeStatus("Инициализация завершена"));
         }
 
+        private void ChangeStatus(string newStatus)
+        {
+            log.Info(StatusText = newStatus);
+        }
     }
 }

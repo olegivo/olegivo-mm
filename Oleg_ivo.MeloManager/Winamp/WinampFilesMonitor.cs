@@ -76,9 +76,17 @@ namespace Oleg_ivo.MeloManager.Winamp
             var observablePlaylistDelete = fileWatcherPlaylists.ToObservable(WatcherChangeTypes.Deleted, playlistFileThrottleTime);
 
             //disposer.Add(observablePlaylistsContainerChanged.Subscribe(OnPlaylistXmlChanged));
-            disposer.Add(observablePlaylistAdd.Subscribe(OnAdded));//TODO: почему-то не срабатывает сразу
-            disposer.Add(observablePlaylistChange.Subscribe(OnChanged));
-            disposer.Add(observablePlaylistDelete.Subscribe(OnDeleted));
+            disposer.Add(OnlyWhenImportEnabled(observablePlaylistAdd).Subscribe(OnAdded));//TODO: почему-то не срабатывает сразу
+            disposer.Add(OnlyWhenImportEnabled(observablePlaylistChange).Subscribe(OnChanged));
+            disposer.Add(OnlyWhenImportEnabled(observablePlaylistDelete).Subscribe(OnDeleted));
+        }
+
+        private IObservable<T> OnlyWhenImportEnabled<T>(IObservable<T> source)
+        {
+            return source.CombineLatest(options.DisableMonitorFilesChangesProperty,
+                (sourceItem, isMonitorFileChangesDisabled) => new {sourceItem, isMonitorFileChangesDisabled})
+                .Where(item => !item.isMonitorFileChangesDisabled)
+                .Select(item => item.sourceItem);
         }
 
         private void OnPlaylistXmlChanged(string filename)

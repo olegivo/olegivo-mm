@@ -6,12 +6,14 @@ using System.ServiceModel.Channels;
 using System.Threading.Tasks;
 using Reactive.Bindings;
 using NLog;
+using Oleg_ivo.MeloManager.DependencyInjection;
 using Oleg_ivo.MeloManager.ServiceReference1;
 
 namespace Oleg_ivo.MeloManager.Winamp
 {
     public class WinampControl: IDisposable
     {
+        private readonly MeloManagerOptions options;
         private readonly Logger log = LogManager.GetCurrentClassLogger();
         private readonly CompositeDisposable disposer = new CompositeDisposable();
         private WinampServiceClient client;
@@ -21,8 +23,9 @@ namespace Oleg_ivo.MeloManager.Winamp
         /// <summary>
         /// Initializes a new instance of the <see cref="T:System.Object"/> class.
         /// </summary>
-        public WinampControl()
+        public WinampControl(MeloManagerOptions options)
         {
+            this.options = options;
             winampServiceCallback = new WinampServiceCallback();
             CurrentSong = winampServiceCallback.CurrentSong;
             IsConnected = 
@@ -30,10 +33,23 @@ namespace Oleg_ivo.MeloManager.Winamp
                     .Select(l => client != null && client.State == CommunicationState.Opened)
                     //.DistinctUntilChanged()
                     .ToReactiveProperty();
+            disposer.Add(options.DisableWinampBindingProperty.Subscribe(isBindingDisabled => OnWinampBindingEnabilityChanged(!isBindingDisabled)));
             disposer.Add(IsConnected);
        }
 
-        public void LaunchBind()
+        private void OnWinampBindingEnabilityChanged(bool isBindingEnabled)
+        {
+            if (isBindingEnabled)
+            {
+                //TODO: LaunchBind
+            }
+            else
+            {
+                //TODO: UnBind
+            }
+        }
+
+        public void LaunchBind()//TODO: private
         {
             var endpointAddress = new EndpointAddress("net.tcp://localhost:9000/winamp_wcf");
             var netTcpBinding = new NetTcpBinding {OpenTimeout = TimeSpan.FromSeconds(1)};

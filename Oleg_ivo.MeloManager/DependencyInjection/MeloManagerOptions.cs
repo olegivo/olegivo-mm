@@ -1,17 +1,50 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using Microsoft.Win32;
+using NLog;
 using Oleg_ivo.MeloManager.Properties;
 using Oleg_ivo.Tools.Utils;
+using Reactive.Bindings;
 
 namespace Oleg_ivo.MeloManager.DependencyInjection
 {
-    public class MeloManagerOptions
+    public class MeloManagerOptions : IDisposable
     {
+        private static readonly Logger log = LogManager.GetCurrentClassLogger();
+
         private string mp3TagRenamePreviewFileName;
 
-        public bool DisableMonitorFilesChanges { get; set; }
-        public bool DisableWinampBinding { get; set; }
+        private readonly CompositeDisposable disposer;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:System.Object"/> class.
+        /// </summary>
+        public MeloManagerOptions()
+        {
+            disposer = new CompositeDisposable(
+                DisableMonitorFilesChangesProperty = new ReactiveProperty<bool>(),
+                DisableMonitorFilesChangesProperty.DistinctUntilChanged().Subscribe(b => log.Info("MonitorFilesChanges: {0}", !b ? "on" : "off")),
+                DisableWinampBindingProperty = new ReactiveProperty<bool>(),
+                DisableWinampBindingProperty.DistinctUntilChanged().Subscribe(b => log.Info("WinampBinding: {0}", !b ? "on" : "off")));
+        }
+
+        public ReactiveProperty<bool> DisableMonitorFilesChangesProperty { get; private set; }
+
+        public bool DisableMonitorFilesChanges
+        {
+            get { return DisableMonitorFilesChangesProperty.Value; }
+            set { DisableMonitorFilesChangesProperty.Value = value; }
+        }
+
+        public ReactiveProperty<bool> DisableWinampBindingProperty { get; private set; }
+
+        public bool DisableWinampBinding
+        {
+            get { return DisableWinampBindingProperty.Value; }
+            set { DisableWinampBindingProperty.Value = value; }
+        }
 
         /// <summary>
         /// Название конфигурации
@@ -80,7 +113,12 @@ namespace Oleg_ivo.MeloManager.DependencyInjection
         public bool AutoImportPlaylistsOnStart
         {
             get { return Settings.Default.AutoImportPlaylistsOnStart; }
-            set { Settings.Default.AutoImportPlaylistsOnStart = value; }
+            set
+            {
+                if(Settings.Default.AutoImportPlaylistsOnStart == value) return;
+                Settings.Default.AutoImportPlaylistsOnStart = value;
+                log.Info("AutoImportPlaylistsOnStart: {0}", value ? "on" : "off");
+            }
         }
 
         public long WinampImportCategoryId
@@ -97,6 +135,14 @@ namespace Oleg_ivo.MeloManager.DependencyInjection
         public void Save()
         {
             Settings.Default.Save();
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            disposer.Dispose();
         }
     }
 }
