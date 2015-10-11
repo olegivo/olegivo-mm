@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Specialized;
 using Microsoft.Win32;
 using Oleg_ivo.MeloManager.Properties;
@@ -14,12 +14,12 @@ namespace Oleg_ivo.MeloManager.DependencyInjection
         public bool DisableWinampBinding { get; set; }
 
         /// <summary>
-        /// Название конфигурации
+        /// РќР°Р·РІР°РЅРёРµ РєРѕРЅС„РёРіСѓСЂР°С†РёРё
         /// </summary>
         public string ConfigName { get; set; }
 
         /// <summary>
-        /// Путь, по которому располагаются плейлисты, которые необходимо починить (без конечного "\")
+        /// РџСѓС‚СЊ, РїРѕ РєРѕС‚РѕСЂРѕРјСѓ СЂР°СЃРїРѕР»Р°РіР°СЋС‚СЃСЏ РїР»РµР№Р»РёСЃС‚С‹, РєРѕС‚РѕСЂС‹Рµ РЅРµРѕР±С…РѕРґРёРјРѕ РїРѕС‡РёРЅРёС‚СЊ (Р±РµР· РєРѕРЅРµС‡РЅРѕРіРѕ "\")
         /// </summary>
         public string PlaylistsPath
         {
@@ -27,17 +27,21 @@ namespace Oleg_ivo.MeloManager.DependencyInjection
         }
 
         /// <summary>
-        /// Пути (через ";"), содержащие музыкальные файлы (без конечных "\")
+        /// РџСѓС‚Рё (С‡РµСЂРµР· ";"), СЃРѕРґРµСЂР¶Р°С‰РёРµ РјСѓР·С‹РєР°Р»СЊРЅС‹Рµ С„Р°Р№Р»С‹ (Р±РµР· РєРѕРЅРµС‡РЅС‹С… "\")
         /// </summary>
-        public string MusicFilesSource { get { return Settings.Default.MusicFilesSource; } }
+        public string MusicFilesSource
+        {
+            get { return Settings.Default.MusicFilesSource; }
+            set { Settings.Default.MusicFilesSource = value; }
+        }
 
         /// <summary>
-        /// Режим автоматической починки. Для данного режима следует указывать также параметры <see cref="PlaylistsPath"/> и <see cref="MusicFilesSource"/>
+        /// Р РµР¶РёРј Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРѕР№ РїРѕС‡РёРЅРєРё. Р”Р»СЏ РґР°РЅРЅРѕРіРѕ СЂРµР¶РёРјР° СЃР»РµРґСѓРµС‚ СѓРєР°Р·С‹РІР°С‚СЊ С‚Р°РєР¶Рµ РїР°СЂР°РјРµС‚СЂС‹ <see cref="PlaylistsPath"/> Рё <see cref="MusicFilesSource"/>
         /// </summary>
         public bool RepairMode { get; set; }
 
         /// <summary>
-        /// Режим переименования
+        /// Р РµР¶РёРј РїРµСЂРµРёРјРµРЅРѕРІР°РЅРёСЏ
         /// </summary>
         public bool Mp3TagRenameMode { get; set; }
 

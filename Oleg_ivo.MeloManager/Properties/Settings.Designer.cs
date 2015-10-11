@@ -23,12 +23,16 @@ namespace Oleg_ivo.MeloManager.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("D:\\Music")]
+        [global::System.Configuration.SettingsManageabilityAttribute(global::System.Configuration.SettingsManageability.Roaming)]
         public string MusicFilesSource {
             get {
                 return ((string)(this["MusicFilesSource"]));
+            }
+            set {
+                this["MusicFilesSource"] = value;
             }
         }
         
@@ -85,6 +89,7 @@ namespace Oleg_ivo.MeloManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SettingsManageabilityAttribute(global::System.Configuration.SettingsManageability.Roaming)]
         public long WinampImportCategoryId {
             get {
                 return ((long)(this["WinampImportCategoryId"]));

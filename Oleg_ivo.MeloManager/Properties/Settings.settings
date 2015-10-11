@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Oleg_ivo.MeloManager.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="MusicFilesSource" Roaming="true" Type="System.String" Scope="Application">
+    <Setting Name="MusicFilesSource" Roaming="true" Type="System.String" Scope="User">
       <Value Profile="(Default)">D:\Music</Value>
     </Setting>
     <Setting Name="LastPlaylistsImportDate" Roaming="true" GenerateDefaultValueInCode="false" Type="System.DateTime" Scope="User">
@@ -24,7 +24,7 @@
     <Setting Name="AutoImportPlaylistsOnStart" Roaming="true" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="WinampImportCategoryId" GenerateDefaultValueInCode="false" Type="System.Int64" Scope="User">
+    <Setting Name="WinampImportCategoryId" Roaming="true" GenerateDefaultValueInCode="false" Type="System.Int64" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
