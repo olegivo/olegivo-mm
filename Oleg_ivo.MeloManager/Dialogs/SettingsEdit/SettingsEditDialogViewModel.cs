@@ -50,7 +50,8 @@ namespace Oleg_ivo.MeloManager.Dialogs.SettingsEdit
 
         private void RemoveDirectory(DirectoryViewModel item)
         {
-            if (MessageBox.Show("Удалить папку из списка?", "Удаление источника файлов", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) ==
+            var text = string.Format("Удалить папку [{0}] из списка?", item.Path);
+            if (MessageBox.Show(text, "Удаление источника файлов", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) ==
                 MessageBoxResult.Yes)
             {
                 MusicFilesSource.Remove(item);

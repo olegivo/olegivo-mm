@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Oleg_ivo.Base.WPF.ViewModels;
@@ -51,7 +53,7 @@ namespace Oleg_ivo.MeloManager.Dialogs.SettingsEdit
                 ShowPlacesList = true
             };
 
-            var result = dlg.ShowDialog() == CommonFileDialogResult.Ok;
+            var result = dlg.ShowDialog(Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive)) == CommonFileDialogResult.Ok;
             if (result)
             {
                 Path = dlg.FileName;

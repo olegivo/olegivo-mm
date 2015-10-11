@@ -19,16 +19,18 @@
         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type FrameworkElement}}" />
     </ContentControl.Resources>
     <StackPanel>
-        <CheckBox IsChecked="{Binding AutoImportPlaylistsOnStart}">Автоматически импортировать плейлисты при старте</CheckBox>
-        <CheckBox IsChecked="{Binding DisableMonitorFilesChanges}">Отключить мониторинг изменений файлов</CheckBox>
-        <CheckBox IsChecked="{Binding DisableWinampBinding}">Отключить соединение с Winamp</CheckBox>
-        <DockPanel>
-            <Label DockPanel.Dock="Left">Категория для импорта</Label>
-            <ComboBox ItemsSource="{Binding RootCategories}" SelectedValue="{Binding WinampImportCategoryId}" DisplayMemberPath="Name" SelectedValuePath="Id" />
-        </DockPanel>
+        <GroupBox Header="Импорт из Winamp">
+            <StackPanel>
+                <CheckBox IsChecked="{Binding AutoImportPlaylistsOnStart}">Автоматически импортировать плейлисты при старте</CheckBox>
+                <DockPanel>
+                    <Label DockPanel.Dock="Left">Категория для импорта</Label>
+                    <ComboBox ItemsSource="{Binding RootCategories}" SelectedValue="{Binding WinampImportCategoryId}" DisplayMemberPath="Name" SelectedValuePath="Id" />
+                </DockPanel>
+            </StackPanel>
+        </GroupBox>
         <GroupBox Header="Источник файлов">
             <DockPanel>
-                <Button DockPanel.Dock="Top" Command="{Binding CommandAddDirectory}">Добавить папку</Button>
+                <Button DockPanel.Dock="Bottom" Command="{Binding CommandAddDirectory}">Добавить папку</Button>
                 <ListBox ItemsSource="{Binding MusicFilesSource}" HorizontalContentAlignment="Stretch">
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type settingsEdit:DirectoryViewModel}">
@@ -42,5 +44,13 @@
                 </ListBox>
             </DockPanel>
         </GroupBox>
+        <Expander Header="Несохраняемые параметры" IsExpanded="False">
+            <GroupBox>
+                <StackPanel>
+                    <CheckBox IsChecked="{Binding DisableMonitorFilesChanges}">Отключить мониторинг изменений файлов</CheckBox>
+                    <CheckBox IsChecked="{Binding DisableWinampBinding}" IsEnabled="False">Отключить соединение с Winamp</CheckBox>
+                </StackPanel>
+            </GroupBox>
+        </Expander>
     </StackPanel>
 </dialogs:DialogContentControl>
