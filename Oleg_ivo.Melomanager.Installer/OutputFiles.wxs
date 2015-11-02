@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="Output.Content">
+            <Component Id="cmp2342ADE45072C63E8FDE499E2383FEE1" Guid="{3C04F448-51B9-4A7A-A095-525E05FC21B4}">
+                <File Id="fil51C597757CA555CFDD7A8DCEC23F6AC7" Source="..\Oleg_ivo.Melomanager\bin\Debug\Oleg_ivo.MeloManager.exe.config" />
+            </Component>
+            <Component Id="cmpCDC38C9F76B9DBCEE072B1DB2F24FDDA" Guid="{3C7FE9CF-0BD8-451F-A3DB-A8B4E396131F}">
+                <File Id="filEFF16F1B31404930A425E593FEE0D8CC" Source="..\Oleg_ivo.Melomanager\bin\Debug\NLog.config" />
+            </Component>
+        </DirectoryRef>
+        <DirectoryRef Id="Output.Binaries">
+            <Component Id="cmp0C66C7E7AA085393449179F38A72DB11" Guid="{E2F9A52C-C713-428D-8655-A1EA08F1CE0F}">
+                <File Id="fil5C343C556F151C5941807AC852DCCC74" Source="..\Oleg_ivo.Melomanager\bin\Debug\EntityFramework.SqlServer.dll" />
+            </Component>
+            <Component Id="cmp0F96C96C48B5B8FF3AE16A3DF465E0D9" Guid="{A5CE0E59-479E-49B5-802C-01DE9719E065}">
+                <File Id="fil2AD15D22FF6F7663E8B219DA958B5C6E" Source="..\Oleg_ivo.Melomanager\bin\Debug\ReactiveProperty.DataAnnotations.dll" />
+            </Component>
+            <Component Id="cmp1045723A35E898B7613863558A362ED5" Guid="{F5F82F6A-79D1-4C2D-9DA0-016C223CF7D8}">
+                <File Id="fil146B6298C244E9B645415DE8D69F3220" Source="..\Oleg_ivo.Melomanager\bin\Debug\EntityFramework.dll" />
+            </Component>
+            <Component Id="cmp139A2581ACC986F97973D2DC92AF243D" Guid="{819C33E3-354B-4086-AC0B-880DC766C4F5}">
+                <File Id="fil51B54B2497AA3CD1909F878D217FE5A9" Source="..\Oleg_ivo.Melomanager\bin\Debug\Telerik.Windows.Controls.Input.dll" />
+            </Component>
+            <Component Id="cmp14F6BE031B04CE18417B16EE3C68A41C" Guid="{B7E25750-BDEB-4730-B508-3A41419661E0}">
+                <File Id="fil4973C5A7F66504B3ABEECE17FD9A016E" Source="..\Oleg_ivo.Melomanager\bin\Debug\GalaSoft.MvvmLight.dll" />
+            </Component>
+            <Component Id="cmp16CAB30EC0DEB1CB1E1C2E4B9AD2E9BF" Guid="{06C3A69E-B346-4A12-A866-8D9BA4E71290}">
+                <File Id="fil807E749C45460DE3D2C25DF8CABFBD83" Source="..\Oleg_ivo.Melomanager\bin\Debug\GalaSoft.MvvmLight.Extras.dll" />
+            </Component>
+            <Component Id="cmp1F21AAA7BF7FE0A807BAC4EA78548545" Guid="{EDA99B50-3D27-4B33-AD4B-F2E4EC160EAB}">
+                <File Id="fil2F4635D7B91B055F772E14C119147933" Source="..\Oleg_ivo.Melomanager\bin\Debug\telerik.windows.controls.navigation.dll" />
+            </Component>
+            <Component Id="cmp226967CF327B7AEDC69BDDE5ABB263F1" Guid="{B52CF3B2-4CA1-4929-92D2-7D52B5B2B3BA}">
+                <File Id="filCCC2EB676339BD2144598C5AF0090CE6" Source="..\Oleg_ivo.Melomanager\bin\Debug\System.Reactive.PlatformServices.dll" />
+            </Component>
+            <Component Id="cmp290DFF1CDCA986D94F15E29D41088662" Guid="{91ED39FF-F506-4539-96F1-42514449BDBF}">
+                <File Id="fil58C35D877BC2AAEFD6AB5FF4342F1192" Source="..\Oleg_ivo.Melomanager\bin\Debug\Prism.AutofacExtension.dll" />
+            </Component>
+            <Component Id="cmp30D37D824DAAE00121E04DB7F99B26C7" Guid="{8634CAFD-8DF1-45B7-BB96-FAEB6F2D744F}">
+                <File Id="fil25125227CF0EACDCF1FCE7A6FC4D2654" Source="..\Oleg_ivo.Melomanager\bin\Debug\ReactiveProperty.dll" />
+            </Component>
+            <Component Id="cmp3DFB59C0E695CD51B73E7A4761722E06" Guid="{7D962D1E-1A18-492F-9290-B93BA6A18647}">
+                <File Id="fil7445ECB52D36F29DB40D6EDE2F47E182" Source="..\Oleg_ivo.Melomanager\bin\Debug\Microsoft.WindowsAPICodePack.dll" />
+            </Component>
+            <Component Id="cmp447305D0CE24E5F2F61C25D43EB80203" Guid="{BA205601-A028-46D5-93FF-FB07D05514C0}">
+                <File Id="fil718E678A08EEFCC218FB60E48DEAAB00" Source="..\Oleg_ivo.Melomanager\bin\Debug\Oleg_ivo.MeloManager.MediaObjects.dll" />
+            </Component>
+            <Component Id="cmp47323B62880E0E6E622AD7E2F2DAB4EE" Guid="{628F17DB-B771-40B9-B05A-0370857EF873}">
+                <File Id="fil3D6D0759F99B2D2828ABE10A9A1CE0F2" Source="..\Oleg_ivo.Melomanager\bin\Debug\Microsoft.WindowsAPICodePack.Shell.dll" />
+            </Component>
+            <Component Id="cmp47DDA01513E7F7342F8EAE83BB6EC39D" Guid="{E8A28E0E-A750-478E-9868-212975C979C4}">
+                <File Id="fil5415D600AF2A09E4BFA5F04F51966787" Source="..\Oleg_ivo.Melomanager\bin\Debug\Oleg_ivo.Tools.dll" />
+            </Component>
+            <Component Id="cmp5780E9ABB9F9EA73D54346825FDF9D52" Guid="{89C77C96-6D97-48F3-BD83-DC416C399C52}">
+                <File Id="filB530AD69B6A8184D71032D492347DEB9" Source="..\Oleg_ivo.Melomanager\bin\Debug\System.Reactive.Core.dll" />
+            </Component>
+            <Component Id="cmp5AF26045992B9E30CC899E9B28EB0824" Guid="{9859C3AD-AF51-4B70-B5CE-AF5FFBF62C5E}">
+                <File Id="filC8177B0A303E2A8CCF40C414A1BD7C7C" Source="..\Oleg_ivo.Melomanager\bin\Debug\System.Reactive.Windows.Threading.dll" />
+            </Component>
+            <Component Id="cmp5DD537672DD64A4048A0AFAB3527995D" Guid="{65F30F5C-5D90-4F6A-858E-53C6B9591033}">
+                <File Id="filFE4B6B11699CF9F243BDC90ACB30FA22" Source="..\Oleg_ivo.Melomanager\bin\Debug\System.Reactive.Linq.dll" />
+            </Component>
+            <Component Id="cmp628326D1644B5F5676D21CE29095D38E" Guid="{324DCDF2-FDE3-4FAA-99B5-D7898B3E64BF}">
+                <File Id="filA47A8B08B03D29764668F65E69F227A5" Source="..\Oleg_ivo.Melomanager\bin\Debug\ReactiveUI.Blend.dll" />
+            </Component>
+            <Component Id="cmp6322863C1056881CD7DF531BE66BFD3E" Guid="{DB3CFE58-654E-4379-94E6-9D1A9127EA1A}">
+                <File Id="filEF26F397DE64BDFF946179FB196B3BE4" Source="..\Oleg_ivo.Melomanager\bin\Debug\ReactiveUI.Xaml.dll" />
+            </Component>
+            <Component Id="cmp7AFFF8A60076FF1FB8B82670CA820799" Guid="{EEE1CEBD-C409-4C83-BCB0-BD24FC8EC9D6}">
+                <File Id="fil0C204EA8249B5CEB3E4D2BC7E9665C72" Source="..\Oleg_ivo.Melomanager\bin\Debug\Oleg_ivo.Prism.dll" />
+            </Component>
+            <Component Id="cmp864018E9D0CE26A0975FBF58B78FFB62" Guid="{233C4AA1-2BC6-44AD-91B9-BE78B425022A}">
+                <File Id="fil856CC9AA1B000803F4C9B03CD9AC8CBA" Source="..\Oleg_ivo.Melomanager\bin\Debug\Hardcodet.Wpf.TaskbarNotification.dll" />
+            </Component>
+            <Component Id="cmp89A229E7EDD6902C0242EB523F928DE9" Guid="{6300D560-D534-406A-8D3D-DA3664B776C4}">
+                <File Id="filAE73B22A34DADD07E4C5645E653D5F8C" Source="..\Oleg_ivo.Melomanager\bin\Debug\Autofac.dll" />
+            </Component>
+            <Component Id="cmp8A1A18D8CC6638B1FFB4E7CF2E248368" Guid="{C69590C5-0729-4C6E-B90B-2F1CF6C27DDB}">
+                <File Id="filB3733ED3EA3AD80BE71AAE79B58ED133" Source="..\Oleg_ivo.Melomanager\bin\Debug\Microsoft.Expression.Interactions.dll" />
+            </Component>
+            <Component Id="cmp8AF0C8E19A3C67CCE47243431B809539" Guid="{F2DBDBFD-FB74-4614-8E40-9C0DE1AA29D6}">
+                <File Id="fil33A36649DCBC62B67371167E673DD72F" Source="..\Oleg_ivo.Melomanager\bin\Debug\Microsoft.Practices.Prism.Interactivity.dll" />
+            </Component>
+            <Component Id="cmp8FA1E4E8A2D2FB88BA5D267DF282B694" Guid="{994DBCF9-9E80-4093-9DE9-A43D07698173}">
+                <File Id="fil0DA30B59F9278FFD2D89DD6D9DC8BDA6" Source="..\Oleg_ivo.Melomanager\bin\Debug\Microsoft.Practices.ServiceLocation.dll" />
+            </Component>
+            <Component Id="cmp93C81AC46B70E4A7108E107CED95644C" Guid="{88F85270-F69D-4E33-B796-CFB6616589AA}">
+                <File Id="fil5EE522119F8F5423209EDEEAA36D1FF7" Source="..\Oleg_ivo.Melomanager\bin\Debug\NLog.dll" />
+            </Component>
+            <Component Id="cmpA1788E67DCDF015555B785874156378D" Guid="{B1A08611-136F-458F-88AF-CEA23069BBB7}">
+                <File Id="fil9DC69CE1487CD3F19C6ECEF1FD56FB23" Source="..\Oleg_ivo.Melomanager\bin\Debug\Microsoft.Practices.Prism.dll" />
+            </Component>
+            <Component Id="cmpA8D303497812F0E1B0D3668752378F3A" Guid="{ACBF8F8F-DD05-43E9-A6E1-02E7FDA54C87}">
+                <File Id="fil95E42C251CD1AAF4C1426932B9596253" Source="..\Oleg_ivo.Melomanager\bin\Debug\System.Reactive.Interfaces.dll" />
+            </Component>
+            <Component Id="cmpB02094160D9C6C6FCE5D0D2B0699A0C2" Guid="{6DDF473E-4044-4D52-B9FA-97E2AA30B6CD}">
+                <File Id="fil908BF973241ACB904A7CB1AFE345FF55" Source="..\Oleg_ivo.Melomanager\bin\Debug\Daniel15.Sharpamp.dll" />
+            </Component>
+            <Component Id="cmpB3199E29C25803512B08B18D8ABC00F3" Guid="{DDF95EB8-F769-43DE-8FD3-0C765500047C}">
+                <File Id="fil11ECBA9AF3F04F5559927214D3EDA39C" Source="..\Oleg_ivo.Melomanager\bin\Debug\GalaSoft.MvvmLight.Platform.dll" />
+            </Component>
+            <Component Id="cmpB5830396966C68E97D96A482FBFFBA53" Guid="{0029DCEB-6579-4559-BEC3-74FB409D3F34}">
+                <File Id="fil7F27871876E3A5AA546638588FF69D6C" Source="..\Oleg_ivo.Melomanager\bin\Debug\Args.dll" />
+            </Component>
+            <Component Id="cmpBD2FD9B13752FE179DA2106DE954389C" Guid="{688BDF17-1D26-4F3D-AD62-C2F2B2FA464D}">
+                <File Id="filF3C92AEBA73DE961472B7B295FE7F23D" Source="..\Oleg_ivo.Melomanager\bin\Debug\Oleg_ivo.MeloManager.exe" />
+            </Component>
+            <Component Id="cmpCB0745676F233FF268225B5E5FFDE83A" Guid="{DBF99136-7C73-40A2-968E-950FF9523DC7}">
+                <File Id="filC287BB7C830C70D3E77ED34579955634" Source="..\Oleg_ivo.Melomanager\bin\Debug\Telerik.Windows.Data.dll" />
+            </Component>
+            <Component Id="cmpCD8F4E9B22782C3519C876604109314A" Guid="{BAC4D393-04B1-4303-8781-D37DC3C9A0BB}">
+                <File Id="filF631F4F3F645FA19269D59E2D4236A99" Source="..\Oleg_ivo.Melomanager\bin\Debug\Telerik.Windows.Controls.dll" />
+            </Component>
+            <Component Id="cmpCF09E4BB7A2054DA7EBE8E0C673FA4FC" Guid="{081DDAEF-3ACB-4B03-89EC-A34CB9D3542D}">
+                <File Id="fil2094D688D9714B46C2D06FD74BBDD676" Source="..\Oleg_ivo.Melomanager\bin\Debug\telerik.windows.controls.gridview.dll" />
+            </Component>
+            <Component Id="cmpE231918A35C5565F7AE616F40B85BC77" Guid="{B71D245B-5759-41B3-A2FE-1E3974645CFB}">
+                <File Id="filB7742172848549854CCF9C74A0E38FA9" Source="..\Oleg_ivo.Melomanager\bin\Debug\Oleg_ivo.Base.WPF.dll" />
+            </Component>
+            <Component Id="cmpE8FC4036248F60A326C1C1398D3BC8B8" Guid="{C7478194-4234-4169-A4AD-8FF185C9AE56}">
+                <File Id="fil1AE08A7762FA28535705A26385B80BA7" Source="..\Oleg_ivo.Melomanager\bin\Debug\System.Windows.Interactivity.dll" />
+            </Component>
+            <Component Id="cmpEA0ABA2FC7E351F32CE6815FD25B0834" Guid="{2E1DFC7E-9942-4286-8279-84EB0968634E}">
+                <File Id="fil7D42A84DFE38EA62988CEF4EDEFC7DE8" Source="..\Oleg_ivo.Melomanager\bin\Debug\Oleg_ivo.Base.dll" />
+            </Component>
+            <Component Id="cmpFC6C450FA66D85FB6E2192AAC277EAB0" Guid="{510FAB52-0A9F-4F20-B4BD-2929568CB88F}">
+                <File Id="filE406180D94B8058AEAC15FEF019B7AC6" Source="..\Oleg_ivo.Melomanager\bin\Debug\ReactiveProperty.NET45.dll" />
+            </Component>
+            <Component Id="cmpFEB2E8BA8196765794C65FE955372996" Guid="{424AE5F1-62C4-4EBC-9AFF-4428555B490F}">
+                <File Id="fil42BAE61F68897E5B968FB797FD07CF60" Source="..\Oleg_ivo.Melomanager\bin\Debug\ReactiveUI.dll" />
+            </Component>
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="Output.Content">
+            <ComponentRef Id="cmp2342ADE45072C63E8FDE499E2383FEE1" />
+            <ComponentRef Id="cmpCDC38C9F76B9DBCEE072B1DB2F24FDDA" />
+        </ComponentGroup>
+        <ComponentGroup Id="Output.Binaries">
+            <ComponentRef Id="cmp0C66C7E7AA085393449179F38A72DB11" />
+            <ComponentRef Id="cmp0F96C96C48B5B8FF3AE16A3DF465E0D9" />
+            <ComponentRef Id="cmp1045723A35E898B7613863558A362ED5" />
+            <ComponentRef Id="cmp139A2581ACC986F97973D2DC92AF243D" />
+            <ComponentRef Id="cmp14F6BE031B04CE18417B16EE3C68A41C" />
+            <ComponentRef Id="cmp16CAB30EC0DEB1CB1E1C2E4B9AD2E9BF" />
+            <ComponentRef Id="cmp1F21AAA7BF7FE0A807BAC4EA78548545" />
+            <ComponentRef Id="cmp226967CF327B7AEDC69BDDE5ABB263F1" />
+            <ComponentRef Id="cmp290DFF1CDCA986D94F15E29D41088662" />
+            <ComponentRef Id="cmp30D37D824DAAE00121E04DB7F99B26C7" />
+            <ComponentRef Id="cmp3DFB59C0E695CD51B73E7A4761722E06" />
+            <ComponentRef Id="cmp447305D0CE24E5F2F61C25D43EB80203" />
+            <ComponentRef Id="cmp47323B62880E0E6E622AD7E2F2DAB4EE" />
+            <ComponentRef Id="cmp47DDA01513E7F7342F8EAE83BB6EC39D" />
+            <ComponentRef Id="cmp5780E9ABB9F9EA73D54346825FDF9D52" />
+            <ComponentRef Id="cmp5AF26045992B9E30CC899E9B28EB0824" />
+            <ComponentRef Id="cmp5DD537672DD64A4048A0AFAB3527995D" />
+            <ComponentRef Id="cmp628326D1644B5F5676D21CE29095D38E" />
+            <ComponentRef Id="cmp6322863C1056881CD7DF531BE66BFD3E" />
+            <ComponentRef Id="cmp7AFFF8A60076FF1FB8B82670CA820799" />
+            <ComponentRef Id="cmp864018E9D0CE26A0975FBF58B78FFB62" />
+            <ComponentRef Id="cmp89A229E7EDD6902C0242EB523F928DE9" />
+            <ComponentRef Id="cmp8A1A18D8CC6638B1FFB4E7CF2E248368" />
+            <ComponentRef Id="cmp8AF0C8E19A3C67CCE47243431B809539" />
+            <ComponentRef Id="cmp8FA1E4E8A2D2FB88BA5D267DF282B694" />
+            <ComponentRef Id="cmp93C81AC46B70E4A7108E107CED95644C" />
+            <ComponentRef Id="cmpA1788E67DCDF015555B785874156378D" />
+            <ComponentRef Id="cmpA8D303497812F0E1B0D3668752378F3A" />
+            <ComponentRef Id="cmpB02094160D9C6C6FCE5D0D2B0699A0C2" />
+            <ComponentRef Id="cmpB3199E29C25803512B08B18D8ABC00F3" />
+            <ComponentRef Id="cmpB5830396966C68E97D96A482FBFFBA53" />
+            <ComponentRef Id="cmpBD2FD9B13752FE179DA2106DE954389C" />
+            <ComponentRef Id="cmpCB0745676F233FF268225B5E5FFDE83A" />
+            <ComponentRef Id="cmpCD8F4E9B22782C3519C876604109314A" />
+            <ComponentRef Id="cmpCF09E4BB7A2054DA7EBE8E0C673FA4FC" />
+            <ComponentRef Id="cmpE231918A35C5565F7AE616F40B85BC77" />
+            <ComponentRef Id="cmpE8FC4036248F60A326C1C1398D3BC8B8" />
+            <ComponentRef Id="cmpEA0ABA2FC7E351F32CE6815FD25B0834" />
+            <ComponentRef Id="cmpFC6C450FA66D85FB6E2192AAC277EAB0" />
+            <ComponentRef Id="cmpFEB2E8BA8196765794C65FE955372996" />
+        </ComponentGroup>
+    </Fragment>
+</Wix>

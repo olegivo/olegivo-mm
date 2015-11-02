@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <?define ProductId="*" ?>
+  <?define ProductName="Melomanager" ?>
+  <?define ProductVersion="1.0.0" ?>
+  <?define UpgradeCode="502277dd-b400-4c77-8c5b-07064f2c5890"?>
+
+  <?define ProductFullName="$(var.ProductName) $(var.ProductVersion)" ?>
+  <?define ProductFolderName="$(var.ProductName)" ?>
+  <!--<?define ProductStartMenuFolderName="$(var.ProductName)" ?>-->
+  <?define ProductDescription="Программа для управления плейлистами" ?>
+
+  <?define CompanyName="olegivo" ?>
+  <?define CompanyFolderName="$(var.CompanyName)" ?>
+  <?define CompanyName.Loc="$(var.CompanyName)" ?>
+  <?define ProductRegistryKey="Software\$(var.CompanyName)\$(var.ProductName)" ?>
+
+  <?define CompanyContact=" " ?>
+  <?define CompanyUrl=" " ?>
+  <?define HelpLink="$(var.CompanyUrl)" ?>
+  <?define HelpTelephone=" " ?>
+  <?define AuthorizedCDFPrefix="$(var.CompanyUrl)" ?>
+  <?define UrlInfoAbout="$(var.CompanyUrl)" ?>
+  <?define UrlUpdateInfo="$(var.CompanyUrl)" ?>
+</Include>

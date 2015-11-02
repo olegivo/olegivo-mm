@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <Property Id="ARPCOMMENTS" Value="$(var.ProductDescription)" />
+  <Property Id="ARPHELPLINK" Value="$(var.HelpLink)" />
+  <!--URL where users can find your support phone number-->
+  <Property Id="ARPHELPTELEPHONE" Value="$(var.HelpTelephone)" />
+  <!--URL of the update channel for the application-->
+  <Property Id="ARPAUTHORIZEDCDFPREFIX" Value="$(var.AuthorizedCDFPrefix)" />
+  <Property Id="ARPURLINFOABOUT" Value="$(var.UrlInfoAbout)" />
+  <Property Id="ARPURLUPDATEINFO" Value="$(var.UrlUpdateInfo)" />
+</Include>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix
+  xmlns="http://schemas.microsoft.com/wix/2006/wi"
+	xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <?include ..\ProductInfo.wxi ?>
+
+  <!-- Основной список компонентов, групп компонентов и файлов  -->
+  <Fragment>
+    <!-- Группы компонентов -->
+    <ComponentGroup Id="OutputGroup">
+      <ComponentGroupRef Id="Output.Binaries"/>
+      <ComponentGroupRef Id="Output.Content"/>
+    </ComponentGroup>
+
+    <ComponentGroup Id="MelomanagerGroup">
+      <ComponentGroupRef Id="OutputGroup" />
+      <!-- Other folders -->
+      <ComponentRef Id="DesktopShortcut" />
+      <ComponentRef Id="StartMenuShortcuts" />
+
+    </ComponentGroup>
+  </Fragment>
+
+  <!--  Состав компонентов -->
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR">
+      <!-- Referenced -->
+      <!--<Component Id="DataService.dll" Guid="{39A64B0B-6288-4406-B362-9B99C4D6DD52}">
+        <File Id="DataService.dll" KeyPath="yes" Source="$(var.ApplicationDevelopment.TargetDir)\DataService.dll" />
+      </Component>-->
+    </DirectoryRef>
+
+    <!--  Ярлыки на рабочий стол (non-advertized)  -->
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="DesktopShortcut" Guid="{99C82266-7DC4-4F44-94D9-DCB8606FD218}">
+        <RegistryValue KeyPath="yes" Root="HKCU" Key="$(var.ProductRegistryKey)\Shortcuts" Name="DesktopShortcut" Type="integer" Value="1"/>
+        <Shortcut Id="MeloManager.exe.Shortcut"
+				          Name="$(var.ProductName)"
+				          Description="$(var.ProductDescription)"
+				          Target="[INSTALLDIR]WebMediaClient.exe" WorkingDirectory="INSTALLDIR"  />
+      </Component>
+    </DirectoryRef>
+
+    <!--  Ярлыки в меню Пуск (non-advertized)  -->
+    <DirectoryRef Id="ProductStartMenuFolder">
+      <Component Id="StartMenuShortcuts" Guid="{C541FC0D-D6C5-4727-BDB6-ABF0DFBE8948}">
+        <!-- create folders -->
+        <CreateFolder Directory="ProductStartMenuFolder" />
+        <!-- remove folder -->
+        <RemoveFolder Id="RemoveStartMenuFolder"
+				              Directory="ProductStartMenuFolder"
+				              On="uninstall" />
+
+        <!-- собственно ярлыки -->
+        <Shortcut Id="StartMenuShortcut"
+				          Name="$(var.ProductName)"
+				          Description="$(var.ProductDescription)"
+				          Target="[INSTALLDIR]Oleg_ivo.MeloManager.exe" WorkingDirectory="INSTALLDIR"  />
+
+        <Shortcut Id="UninstallProduct"
+				          Name="Uninstall"
+				          Description="Uninstall"
+				          Target="[System32Folder]msiexec.exe"
+				          Arguments="/x [ProductCode]"/>
+
+        <RegistryValue KeyPath="yes" Root="HKCU" Key="$(var.ProductRegistryKey)\Shortcuts" Name="StartMenuShortcuts" Type="integer" Value="1"/>
+      </Component>
+
+    </DirectoryRef>
+
+  </Fragment>
+
+  <Fragment>
+    <!-- Установка прав для пользователей -->
+    <DirectoryRef Id="APPLICATIONFOLDER">
+      <Component Id="InstallDirectoryPermission" KeyPath="yes" Guid="{1141360E-9149-4EDC-B878-A5FF4D464D6B}" >
+        <CreateFolder Directory="INSTALLDIR" >
+          <util:PermissionEx
+						 User="Administrators"
+						 GenericAll="yes"
+					/>
+          <util:PermissionEx
+						 User="Users"
+						 GenericRead="yes"
+						 GenericExecute="yes"
+						 GenericWrite="yes"
+						 Delete="yes"
+					/>
+        </CreateFolder>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+
+</Wix>

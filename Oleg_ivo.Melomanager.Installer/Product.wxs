@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix
+  xmlns="http://schemas.microsoft.com/wix/2006/wi"
+	xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <!-- Информация о продукте -->
+  <?include ProductInfo.wxi ?>
+
+  <Product 
+    Id="$(var.ProductId)"
+    UpgradeCode="$(var.UpgradeCode)"
+    Name="$(var.ProductFullName)"
+    Version="$(var.ProductVersion)"
+    Manufacturer="$(var.CompanyName.Loc)"
+    Language="1049"
+    Codepage="1251">
+    <Package
+      InstallerVersion="200"
+			Keywords='Installer'
+			Compressed="yes"
+			Languages="1049"
+			SummaryCodepage="1251"
+      InstallScope="perMachine" />
+
+    <!-- Информация о программе для установки/удаления программ -->
+    <?include ControlPanel.wxi ?>
+
+    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+    <!--  Структура каталогов  -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="COMPANYFOLDERNAME" Name="$(var.CompanyFolderName)" >
+          <Directory Id="APPLICATIONFOLDER" Name="$(var.ProductFolderName)" >
+            <Directory Id="INSTALLDIR">
+              <Directory Id="Output.Binaries" />
+              <Directory Id="Output.Content" />
+            </Directory>
+
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" />
+
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ProductStartMenuFolder" Name="$(var.ProductFolderName)" />
+      </Directory>
+    </Directory>
+
+
+    <!--  Поиск каталога предыдущей установки, чтобы поставить обновленную версию в то же место -->
+    <Property Id="INSTALLDIR">
+      <RegistrySearch Id="FindInstallDir" Root="HKLM" Key="$(var.ProductRegistryKey)" Name="InstallLocation" Type="raw" />
+    </Property>
+
+
+    <!--  Структура фич  -->
+    <Feature Id="Melomanager"
+		         Title="$(var.ProductDescription)"
+		         Level="1"
+		         InstallDefault="local"
+		         ConfigurableDirectory="INSTALLDIR"
+		         Absent="disallow"
+		         AllowAdvertise="no"
+		         Description="$(var.ProductDescription)">
+
+      <ComponentRef Id="RegisterInstallDir" />
+      <ComponentRef Id="RegisterClientFeature" />
+      <ComponentRef Id="InstallDirectoryPermission" />
+      <ComponentGroupRef Id="MelomanagerGroup"/>
+    </Feature>
+
+    <!--  Интерфейс  -->
+    <UIRef Id="WixUI_FeatureTree_NoLicense" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+
+    <!--  Регистрация пути установки в реестре  -->
+    <DirectoryRef Id="TARGETDIR">
+      <Component Id="RegisterInstallDir" Guid="D292201A-A2BF-442F-8B0C-14C84ED87126">
+        <RegistryValue KeyPath="yes"
+				               Root="HKLM"
+				               Key="$(var.ProductRegistryKey)"
+				               Type="string"
+				               Name="InstallLocation"
+				               Value="[INSTALLDIR]" />
+      </Component>
+
+      <Component Id="RegisterClientFeature" Guid="2910BF7C-2937-41C3-9A21-31C65C91F120">
+        <RegistryValue KeyPath="yes"
+				               Root="HKLM"
+				               Key="$(var.ProductRegistryKey)\InstalledFeatures"
+				               Type="integer"
+				               Name="Melomanager"
+				               Value="1" />
+      </Component>
+    </DirectoryRef>
+
+    <!--  Удаление любой установленной версии (а не только более старых).
+		Для этого отключили предупреждение ICE61  -->
+    <Upgrade Id="$(var.UpgradeCode)">
+      <UpgradeVersion OnlyDetect='no' Property="ANYVERSIONEXISTS" Minimum="0.0.0.0" IncludeMinimum="no" />
+    </Upgrade>
+    <!-- минимальная версия Windows 2000 -->
+    <Condition Message="Для установки требуется Windows 7 или выше.">
+      <![CDATA[VersionNT >= 601]]>
+    </Condition>
+
+
+    <InstallUISequence>
+      <MigrateFeatureStates />
+
+    </InstallUISequence>
+
+    <InstallExecuteSequence>
+      <MigrateFeatureStates />
+
+      <RemoveExistingProducts After="InstallInitialize" ></RemoveExistingProducts>
+
+    </InstallExecuteSequence>
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" ></Property>
+  </Product>
+</Wix>
