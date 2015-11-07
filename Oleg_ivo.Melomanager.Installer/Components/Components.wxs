@@ -37,7 +37,7 @@
         <Shortcut Id="MeloManager.exe.Shortcut"
 				          Name="$(var.ProductName)"
 				          Description="$(var.ProductDescription)"
-				          Target="[INSTALLDIR]WebMediaClient.exe" WorkingDirectory="INSTALLDIR"  />
+				          Target="[INSTALLDIR]Oleg_ivo.MeloManager.exe" WorkingDirectory="INSTALLDIR"  />
       </Component>
     </DirectoryRef>
 
