@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -75,4 +75,9 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
+  <Target Name="BeforeBuild">
+    <Exec ContinueOnError="False" Command="&quot;%WIX%\bin\heat.exe&quot; dir &quot;$(ProjectDir)..\Oleg_ivo.Melomanager\bin\Debug&quot; -t &quot;$(ProjectDir)Wix.xslt&quot; -o &quot;$(ProjectDir)OutputFiles.wxs&quot; -gg –sfrag">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+  </Target>
 </Project>

@@ -1,4 +1,10 @@
 #################
+## Custom ignores
+#################
+Oleg_ivo.Melomanager.Installer/OutputFiles.wxs
+
+
+#################
 ## Visual Studio
 #################
 
