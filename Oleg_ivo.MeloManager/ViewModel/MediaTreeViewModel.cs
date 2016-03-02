@@ -71,6 +71,8 @@ namespace Oleg_ivo.MeloManager.ViewModel
                 CurrentWrapper.Value = value;
                 RaisePropertyChanged("CurrentItem");
                 RaisePropertyChanged("CurrentTreeMediaContainer");
+                ChildListDataSource = new ObservableCollection<MediaContainer>(value.UnderlyingItem.ChildContainers);
+                ParentListDataSource = new ObservableCollection<MediaContainer>(value.UnderlyingItem.ParentContainers);
             }
         }
 
