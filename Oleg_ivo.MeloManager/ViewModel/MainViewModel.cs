@@ -527,16 +527,7 @@ namespace Oleg_ivo.MeloManager.ViewModel
             Disposer.Add(winampControl);
             Disposer.Add(winampFilesMonitor);
 
-            //InitializeComponents();
-            if (IsInDesignMode)
-            {
-                // Code runs in Blend --> create design time data.
-            }
-            else
-            {
-                // Code runs "for real"
-                mainWindow = Application.Current.MainWindow;
-            }
+            mainWindow = Application.Current.MainWindow;
         }
 
         private Task RunServices()

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Windows.Input;
-using GalaSoft.MvvmLight.Command;
 using Oleg_ivo.Base.WPF.ViewModels;
 using Oleg_ivo.MeloManager.MediaObjects;
+using Reactive.Bindings;
 
 namespace Oleg_ivo.MeloManager.ViewModel
 {
@@ -27,8 +27,13 @@ namespace Oleg_ivo.MeloManager.ViewModel
         {
             get
             {
-                return commandDeleteItem ??
-                       (commandDeleteItem = new RelayCommand<MediaContainer>(DeleteItem));
+                if (commandDeleteItem == null)
+                {
+                    var command = new ReactiveCommand<MediaContainer>();
+                    Disposer.Add(command.Subscribe(DeleteItem));
+                    commandDeleteItem = command;
+                }
+                return commandDeleteItem;
             }
         }
 

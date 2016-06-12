@@ -261,7 +261,6 @@
     <Compile Include="ViewModel\MediaListViewModel.cs" />
     <Compile Include="ViewModel\MediaTreeViewModel.cs" />
     <Compile Include="ViewModel\TestMethods.cs" />
-    <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="Winamp\Tracking\TrackingViewModel.cs" />
     <Compile Include="Winamp\Tracking\WinampTrackingView.xaml.cs">
       <DependentUpon>WinampTrackingView.xaml</DependentUpon>

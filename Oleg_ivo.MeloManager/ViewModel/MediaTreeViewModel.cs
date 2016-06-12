@@ -8,7 +8,6 @@ using System.Reactive.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using Autofac;
-using GalaSoft.MvvmLight.Command;
 using NLog;
 using Oleg_ivo.Base.Autofac;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
@@ -179,9 +178,15 @@ namespace Oleg_ivo.MeloManager.ViewModel
 
         private void InitCommands()
         {
-            CommandDeleteItem = new RelayCommand<MediaContainerTreeWrapper>(DeleteItem);
-            CommandEditParents = new RelayCommand<MediaContainerTreeWrapper>(EditParents);
-            CommandEditChildren = new RelayCommand<MediaContainerTreeWrapper>(EditChildren);
+            var commandDeleteItem = new ReactiveCommand<MediaContainerTreeWrapper>();
+            commandDeleteItem.Subscribe(DeleteItem);
+            CommandDeleteItem = commandDeleteItem;
+            var commandEditParents = new ReactiveCommand<MediaContainerTreeWrapper>();
+            commandEditParents.Subscribe(EditParents);
+            CommandEditParents = commandEditParents;
+            var commandEditChildren = new ReactiveCommand<MediaContainerTreeWrapper>();
+            commandEditChildren.Subscribe(EditChildren);
+            CommandEditChildren = commandEditChildren;
             
             CommandDeleteCurrent = new ReactiveCommand(CurrentContainer.Select(c => c != null), false).AddHandler(() => DeleteItem(CurrentWrapper.Value));
 
