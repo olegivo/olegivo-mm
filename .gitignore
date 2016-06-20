@@ -2,7 +2,9 @@
 ## Custom ignores
 #################
 Oleg_ivo.Melomanager.Installer/OutputFiles.wxs
-
+*.VC.db
+*.VC.opendb
+.vs/
 
 #################
 ## Visual Studio
