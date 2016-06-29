@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{37A5A35A-5C84-4021-9EDA-58DAD90B43AF}"
 	ProjectSection(SolutionItems) = preProject
+		Common.build.config = Common.build.config
 		Local.testsettings = Local.testsettings
+		MeloManager.sln.build.config = MeloManager.sln.build.config
 		MeloManager.vsmdi = MeloManager.vsmdi
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
@@ -47,6 +49,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oleg_ivo.Base.WPF", "External\Oleg_ivo.Tools\Oleg_ivo.Base.WPF\Oleg_ivo.Base.WPF.csproj", "{EFCA38A8-EC7B-4947-80B6-9D9579BB19CC}"
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Oleg_ivo.Melomanager.Installer", "Oleg_ivo.Melomanager.Installer\Oleg_ivo.Melomanager.Installer.wixproj", "{2B6B6321-7C5C-4E70-9D78-10E74E13AC57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeloManager.Api", "MeloManager.Api\MeloManager.Api.csproj", "{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -330,6 +334,26 @@ Global
 		{2B6B6321-7C5C-4E70-9D78-10E74E13AC57}.WinampPlugin|Win32.Build.0 = Release|x86
 		{2B6B6321-7C5C-4E70-9D78-10E74E13AC57}.WinampPlugin|x86.ActiveCfg = Release|x86
 		{2B6B6321-7C5C-4E70-9D78-10E74E13AC57}.WinampPlugin|x86.Build.0 = Release|x86
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Debug|Win32.Build.0 = Debug|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Debug|x86.Build.0 = Debug|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Release|Win32.ActiveCfg = Release|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Release|Win32.Build.0 = Release|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Release|x86.ActiveCfg = Release|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.Release|x86.Build.0 = Release|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.WinampPlugin|Any CPU.ActiveCfg = Release|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.WinampPlugin|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.WinampPlugin|Win32.ActiveCfg = Release|Any CPU
+		{9F2D8C41-0758-4CCA-B4C5-423F4157AD15}.WinampPlugin|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
