@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Spatial;
 using System.IO;
 using System.Linq;
 using NLog;
