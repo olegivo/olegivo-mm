@@ -25,7 +25,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         private List<string> fullFileNameElements;
         private string fullFileName;
 
-        public FileInfo FileInfo
+        public virtual FileInfo FileInfo
         {
             get
             {
@@ -36,17 +36,17 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         }
 
         public virtual ICollection<MediaContainer> MediaContainers { get; set; }
-        public long Id { get; set; }
+        public virtual long Id { get; set; }
 
-        public string Drive { get; set; }
+        public virtual string Drive { get; set; }
 
-        public string Path { get; set; }
+        public virtual string Path { get; set; }
 
-        public string Filename { get; set; }
+        public virtual string Filename { get; set; }
 
-        public string Extention { get; set; }
+        public virtual string Extention { get; set; }
 
-        public string FullFileName
+        public virtual string FullFileName
         {
             get { return fullFileName; }
             set
@@ -57,11 +57,11 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             }
         }
 
-        public string FileNameWithoutExtension { get; set; }
-        public DateTime? DateInsert { get; set; }
-        public DateTime? DateUpdate { get; set; }
+        public virtual string FileNameWithoutExtension { get; set; }
+        public virtual DateTime? DateInsert { get; set; }
+        public virtual DateTime? DateUpdate { get; set; }
 
-        public bool Equals(File other)
+        public virtual bool Equals(File other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -75,7 +75,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public bool Equals(string other)
+        public virtual bool Equals(string other)
         {
             return string.Compare(FullFileName, other, StringComparison.InvariantCultureIgnoreCase) == 0;
         }
@@ -138,7 +138,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             }
         }
 
-        public File Repair(IEnumerable<string> foundFiles, IMediaCache mediaCache)
+        public virtual File Repair(IEnumerable<string> foundFiles, IMediaCache mediaCache)
         {
             //создание списка найденных файлов:
             var filename = Filename.ToLower();

@@ -31,7 +31,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Добавляет дочерний элемент
         /// </summary>
         /// <param name="child"></param>
-        protected void AddChild(MediaContainer child)
+        protected virtual void AddChild(MediaContainer child)
         {
             ChildContainers.Add(child);
         }
@@ -40,7 +40,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Добавляет родительский элемент
         /// </summary>
         /// <param name="parent"></param>
-        protected void AddParent(MediaContainer parent)
+        protected virtual void AddParent(MediaContainer parent)
         {
             ParentContainers.Add(parent);
         }
@@ -49,7 +49,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Удаляет дочерний элемент
         /// </summary>
         /// <param name="child"></param>
-        public void RemoveChild(MediaContainer child)
+        public virtual void RemoveChild(MediaContainer child)
         {
             ChildContainers.Remove(child);
         }
@@ -58,7 +58,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Удаляет родительский элемент
         /// </summary>
         /// <param name="parent"></param>
-        public void RemoveParent(MediaContainer parent)
+        public virtual void RemoveParent(MediaContainer parent)
         {
             ParentContainers.Remove(parent);
         }
@@ -68,7 +68,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// </summary>
         /// <param name="oldParent"></param>
         /// <param name="newParent"></param>
-        protected void MoveBetweenParents(MediaContainer oldParent, MediaContainer newParent)
+        protected virtual void MoveBetweenParents(MediaContainer oldParent, MediaContainer newParent)
         {
             newParent.AddChild(this);
             oldParent.RemoveChild(this);
@@ -79,7 +79,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// </summary>
         /// <param name="oldChild"></param>
         /// <param name="newChild"></param>
-        protected void MoveBetweenChildren(MediaContainer oldChild, MediaContainer newChild)
+        protected virtual void MoveBetweenChildren(MediaContainer oldChild, MediaContainer newChild)
         {
             newChild.AddParent(this);
             oldChild.RemoveParent(this);
@@ -140,37 +140,37 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             parentMediaContainers.CollectionChanged += parentMediaContainers_CollectionChanged;
         }
 
-        public bool IsRepaired { get; set; }
+        public virtual bool IsRepaired { get; set; }
         public virtual ICollection<File> Files { get; set; }
-        public long Id { get; set; }
-        public string Name { get; set; }
-        public bool IsRoot { get; set; }
-        public DateTime? DateInsert { get; set; }
-        public DateTime? DateUpdate { get; set; }
+        public virtual long Id { get; set; }
+        public virtual string Name { get; set; }
+        public virtual bool IsRoot { get; set; }
+        public virtual DateTime? DateInsert { get; set; }
+        public virtual DateTime? DateUpdate { get; set; }
 
         private readonly ObservableCollection<MediaContainer> childMediaContainers;
         private readonly ObservableCollection<MediaContainer> parentMediaContainers;
 
 
-        void childMediaContainers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected virtual void childMediaContainers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add || e.Action == NotifyCollectionChangedAction.Remove)
                 InvokeChildrenChanged(e.Action, e.GetChange<MediaContainer>());
         }
 
-        void parentMediaContainers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected virtual void parentMediaContainers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add || e.Action == NotifyCollectionChangedAction.Remove)
                 InvokeParentsChanged(e.Action, e.GetChange<MediaContainer>());
         }
 
-        private void InvokeChildrenChanged(NotifyCollectionChangedAction listChangedType, MediaContainer child)
+        protected virtual void InvokeChildrenChanged(NotifyCollectionChangedAction listChangedType, MediaContainer child)
         {
             if (ChildrenChanged != null)
                 ChildrenChanged(this, new MediaListChangedEventArgs(listChangedType, child));
         }
 
-        private void InvokeParentsChanged(NotifyCollectionChangedAction listChangedType, MediaContainer child)
+        protected virtual void InvokeParentsChanged(NotifyCollectionChangedAction listChangedType, MediaContainer child)
         {
             if (ParentsChanged != null)
                 ParentsChanged(this, new MediaListChangedEventArgs(listChangedType, child));
@@ -179,8 +179,8 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <summary>
         /// 
         /// </summary>
-        public event EventHandler<MediaListChangedEventArgs> ChildrenChanged;
-        public event EventHandler<MediaListChangedEventArgs> ParentsChanged;
+        public virtual event EventHandler<MediaListChangedEventArgs> ChildrenChanged;
+        public virtual event EventHandler<MediaListChangedEventArgs> ParentsChanged;
 
         /// <summary>
         /// Returns a string that represents the current object.
@@ -194,7 +194,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             return Name;
         }
 
-        public Type GetRealType()
+        public virtual Type GetRealType()
         {
             return ObjectContext.GetObjectType(GetType());
         }
