@@ -42,6 +42,34 @@ namespace MeloManager.Api.Models
                     .Table("MediaContainerFiles");
             }
         }
+
+        public class CategoryMap : SubclassMap<Category>
+        {
+            public CategoryMap()
+            {
+                Table("Categories");
+                KeyColumn("Id");
+            }
+        }
+
+        public class PlaylistMap : SubclassMap<Playlist>
+        {
+            public PlaylistMap()
+            {
+                Table("Playlists");
+                KeyColumn("Id");
+            }
+        }
+
+        public class MediaFileMap : SubclassMap<MediaFile>
+        {
+            public MediaFileMap()
+            {
+                Table("MediaFiles");
+                KeyColumn("Id");
+            }
+        }
+
         public class FileMap : ClassMap<File>
         {
             /// <summary>

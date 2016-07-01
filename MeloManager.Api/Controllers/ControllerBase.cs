@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using MeloManager.Api.Models;
+using NHibernate;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
 
 namespace MeloManager.Api.Controllers
@@ -19,12 +20,19 @@ namespace MeloManager.Api.Controllers
             {
                 using (var session = sessionFactory.OpenSession())
                 {
-                    var query = session.QueryOver<TEntity>();
-                    parameters.ApplyDbFilters(query);
+                    var query = Query(parameters, session);
                     var entities = parameters.ApplyLocalFilters(query.Future());
-                    return entities.Select(Projection).ToList();
+                    var list = entities.Select(Projection).ToList();
+                    return list;
                 }
             }
+        }
+
+        protected virtual IQueryOver<TEntity, TEntity> Query(TSearchParameter parameters, ISession session)
+        {
+            var query = session.QueryOver<TEntity>();
+            parameters.ApplyDbFilters(query);
+            return query;
         }
 
         protected abstract object Projection(TEntity mediaContainer);

@@ -13,7 +13,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <summary>
         /// Родительская категория
         /// </summary>
-        public Category ParentCategory
+        public virtual Category ParentCategory
         {
             get { return ParentContainers != null ? ParentContainers.OfType<Category>().FirstOrDefault() : null; }
             set
@@ -27,7 +27,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Добавить дочерний элемент
         /// </summary>
         /// <param name="child"></param>
-        public new void AddChild(MediaContainer child)
+        public new virtual void AddChild(MediaContainer child)
         {
             base.AddChild(child);
         }
@@ -36,7 +36,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Добавить дочерний элемент
         /// </summary>
         /// <param name="children"></param>
-        public void AddChildren(IEnumerable<MediaContainer> children)
+        public virtual void AddChildren(IEnumerable<MediaContainer> children)
         {
             foreach (var child in children)
             {
@@ -48,7 +48,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Удалить дочерний элемент
         /// </summary>
         /// <param name="child"></param>
-        public new void RemoveChild(MediaContainer child)
+        public new virtual void RemoveChild(MediaContainer child)
         {
             base.RemoveChild(child);
         }

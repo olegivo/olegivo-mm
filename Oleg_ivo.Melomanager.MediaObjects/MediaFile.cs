@@ -86,7 +86,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// </summary>
         /// <param name="parent"></param>
         /// <exception cref="ArgumentException">Если аргумент - не категория или плейлист</exception>
-        public void AddParentElement(MediaContainer parent)
+        public virtual void AddParentElement(MediaContainer parent)
         {
             if (!(parent is Category || parent is Playlist))
                 throw new ArgumentException("ожидается категория или плейлист", "parent");
@@ -97,7 +97,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Удалить родительский элемент
         /// </summary>
         /// <param name="parent"></param>
-        public void RemoveParentElement(MediaContainer parent)
+        public virtual void RemoveParentElement(MediaContainer parent)
         {
             RemoveParent(parent);
         }

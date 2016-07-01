@@ -35,7 +35,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <summary>
         /// Родительские категории
         /// </summary>
-        public IEnumerable<Category> ParentCategories
+        public virtual IEnumerable<Category> ParentCategories
         {
             get { return ParentContainers != null ? ParentContainers.OfType<Category>() : null; }
         }
@@ -43,7 +43,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <summary>
         /// Дочерние файлы
         /// </summary>
-        public IEnumerable<MediaFile> MediaFiles
+        public virtual IEnumerable<MediaFile> MediaFiles
         {
             get { return ChildContainers != null ? ChildContainers.OfType<MediaFile>() : null; }
         }
@@ -51,7 +51,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <summary>
         /// Файл-источник плейлиста (в случае отсутствия вычисляется как первый из существующих файлов данного медиа-контейнера)
         /// </summary>
-        public string GetOriginalFileName(IMediaCache mediaCache)
+        public virtual string GetOriginalFileName(IMediaCache mediaCache)
         {
             return originalFileName ??
                    (originalFileName =
@@ -63,7 +63,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Добавить дочерний медиа-файл
         /// </summary>
         /// <param name="child"></param>
-        public void AddChildMediaFile(MediaFile child)
+        public virtual void AddChildMediaFile(MediaFile child)
         {
             AddChild(child);
         }
@@ -71,7 +71,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Удалить дочерний медиа-файл
         /// </summary>
         /// <param name="child"></param>
-        public void RemoveChildMediaFile(MediaFile child)
+        public virtual void RemoveChildMediaFile(MediaFile child)
         {
             RemoveChild(child);
         }
@@ -80,7 +80,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Добавить родительскую категорию
         /// </summary>
         /// <param name="parent"></param>
-        public void AddParentCategory(Category parent)
+        public virtual void AddParentCategory(Category parent)
         {
             AddParent(parent);
         }
@@ -89,7 +89,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// Удалить родительскую категорию
         /// </summary>
         /// <param name="parent"></param>
-        public void RemoveParentCategory(Category parent)
+        public virtual void RemoveParentCategory(Category parent)
         {
             RemoveParent(parent);
         }
@@ -100,7 +100,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <returns>
         /// An enumerator that can be used to iterate through the collection.
         /// </returns>
-        public IEnumerator<MediaFile> GetEnumerator()
+        public virtual IEnumerator<MediaFile> GetEnumerator()
         {
             return ChildContainers.OfType<MediaFile>().GetEnumerator();
         }

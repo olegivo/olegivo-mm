@@ -1,7 +1,5 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using MeloManager.Api.Models;
 using NHibernate;
 using NHibernate.Criterion;
 using Oleg_ivo.MeloManager.MediaObjects;
@@ -12,14 +10,36 @@ namespace MeloManager.Api.Controllers
     {
         private static readonly NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
+        public enum MediaContainerTypes
+        {
+            Category,
+            Playlist,
+            MediaFile
+        }
+
         public class MediaContainerParameters : SearchParameters<MediaContainer>
         {
+
             public long? Id { get; set; }
             public bool? IsRoot { get; set; }
             public long? ParentId { get; set; }
+            public MediaContainerTypes? Type { get; set; }
+
+            private static readonly Dictionary<MediaContainerTypes, Type> types =
+                new Dictionary<MediaContainerTypes, Type>
+                {
+                    {MediaContainerTypes.Category, typeof (Category)},
+                    {MediaContainerTypes.Playlist, typeof (Playlist)},
+                    {MediaContainerTypes.MediaFile, typeof (MediaFile)},
+                };
 
             public override void ApplyDbFilters(IQueryOver<MediaContainer, MediaContainer> query)
             {
+                if (Type != null)
+                {
+                    var type = types[Type.Value];
+                    query.Where(mc => mc.GetType() == type);
+                }
                 if (Id != null)
                 {
                     query.Where(container => container.Id == Id);
@@ -33,8 +53,7 @@ namespace MeloManager.Api.Controllers
                     var parentIdsQuery = QueryOver.Of<MediaContainer>().Where(p => p.Id == ParentId).Select(p => p.Id);
 
                     MediaContainer parentContainer = null;
-                    query.JoinAlias(mc => mc.ParentContainers, () => parentContainer)
-                        .WithSubquery.WhereProperty(() => parentContainer.Id).In(parentIdsQuery);
+                    query.JoinAlias(mc => mc.ParentContainers, () => parentContainer).WithSubquery.WhereProperty(() => parentContainer.Id).In(parentIdsQuery);
                 }
             }
         }
@@ -44,6 +63,7 @@ namespace MeloManager.Api.Controllers
             return new
             {
                 mediaContainer.Id,
+                Type = mediaContainer.GetType().Name.ToLower(),
                 mediaContainer.Name,
                 mediaContainer.IsRoot,
                 mediaContainer.DateUpdate,
