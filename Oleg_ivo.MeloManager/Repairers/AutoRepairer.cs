@@ -73,14 +73,7 @@ namespace Oleg_ivo.MeloManager.Repairers
                     log.Trace(notExists[i].FullName);
 
                 log.Debug("Получение списка файлов, используемых для починки");
-                string musicFilesSource = Options.MusicFilesSource;
-                var files =
-                    musicFilesSource.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
-                        .SelectMany(
-                            path =>
-                                MusicFilesSearchPatterns.SelectMany(
-                                    searchPattern => Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories)))
-                        .ToList();
+                var files = GetAllFiles();
                 log.Debug("Получено файлов: {0}", files.Count);
 
                 foreach (var winampPlaylist in winampPlaylists)

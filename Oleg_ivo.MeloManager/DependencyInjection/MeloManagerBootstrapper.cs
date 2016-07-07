@@ -4,6 +4,7 @@ using System.Windows.Threading;
 using Autofac;
 using NLog;
 using Oleg_ivo.Base.Autofac.DependencyInjection;
+using Oleg_ivo.MeloManager.Id3;
 using Oleg_ivo.MeloManager.Repairers;
 using Oleg_ivo.Prism;
 
@@ -49,18 +50,27 @@ namespace Oleg_ivo.MeloManager.DependencyInjection
 
             try
             {
+                var alternativeMode = false;
                 if (options.Mp3TagRenameMode)
                 {
+                    alternativeMode = true;
                     var mp3TagRenameRepairer = Container.ResolveUnregistered<Mp3TagRenameRepairer>();
                     mp3TagRenameRepairer.Repair();
                 }
                 if (options.RepairMode)
                 {
+                    alternativeMode = true;
                     var autoRepairer = Container.ResolveUnregistered<AutoRepairer>();
                     //autoRepairer.Repair(@"C:\Users\oleg\AppData\Roaming\Winamp\Plugins\ml\playlists\", @"D:\Music");
                     autoRepairer.Repair();
                 }
-                if (options.RepairMode || options.Mp3TagRenameMode)
+                if (options.Id3Mode)
+                {
+                    alternativeMode = true;
+                    var id3Updater = Container.ResolveUnregistered<Id3Updater>();
+                    id3Updater.Run();
+                }
+                if (alternativeMode)
                 {
                     log.Debug("В командной строке заданы альтернативные режимы работы приложения, поэтому главное окно запущено не будет");
                     return false;

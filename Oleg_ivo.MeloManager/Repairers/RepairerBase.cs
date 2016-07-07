@@ -8,19 +8,15 @@ using Oleg_ivo.MeloManager.PlaylistFileAdapters;
 
 namespace Oleg_ivo.MeloManager.Repairers
 {
-    public abstract class RepairerBase
+    public abstract class RepairerBase : ProcessorBase
     {
         public abstract void Repair();
 
-        protected static readonly string[] MusicFilesSearchPatterns = { "*.mp3", "*.wma", "*.ogg", "*.flac", "*.aac" };
-
-        protected readonly MeloManagerOptions Options;
         protected string BackupPath;
         protected readonly WinampM3UPlaylistFileAdapter WinampM3UPlaylistFileAdapter;
 
-        protected RepairerBase(MeloManagerOptions options, IComponentContext context)
+        protected RepairerBase(MeloManagerOptions options, IComponentContext context) : base(options, context)
         {
-            Options = Enforce.ArgumentNotNull(options, "options");
             WinampM3UPlaylistFileAdapter = Enforce.NotNull(Enforce.ArgumentNotNull(context, "context").ResolveUnregistered<WinampM3UPlaylistFileAdapter>());
         }
 
@@ -32,6 +28,5 @@ namespace Oleg_ivo.MeloManager.Repairers
             if (!Directory.Exists(BackupPath))
                 Directory.CreateDirectory(BackupPath);
         }
-
     }
 }

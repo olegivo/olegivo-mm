@@ -79,6 +79,11 @@ namespace Oleg_ivo.MeloManager.DependencyInjection
         public bool Mp3TagRenameMode { get; set; }
 
         /// <summary>
+        /// Режим сканирования медиа-файлов и обновления IDV3-тегов
+        /// </summary>
+        public bool Id3Mode { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         public string Mp3TagRenamePreviewFileName
