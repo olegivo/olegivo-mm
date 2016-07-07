@@ -13,6 +13,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     public class MediaFile : MediaContainer
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
+        public const string MMId = "MMID";
 
         private bool isProcessed;
 

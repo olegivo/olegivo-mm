@@ -114,6 +114,9 @@
       <HintPath>$(PackagesPath)\NLog.4.3.5\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="policy.2.0.taglib-sharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
+      <HintPath>$(PackagesPath)\taglib.2.1.0.0\lib\policy.2.0.taglib-sharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Prism.AutofacExtension, Version=1.0.40.0, Culture=neutral, PublicKeyToken=151cd86bf24ad997, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -175,6 +178,10 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="taglib-sharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
+      <HintPath>..\packages\taglib.2.1.0.0\lib\taglib-sharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Telerik.Windows.Controls" />
     <Reference Include="telerik.windows.controls.gridview" />
     <Reference Include="Telerik.Windows.Controls.Input" />
@@ -194,6 +201,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Id3\Id3Extensions.cs" />
+    <Compile Include="Id3\Id3Updater.cs" />
     <Compile Include="DependencyInjection\MeloManagerMVVMModule.cs" />
     <Compile Include="Dialogs\ParentsChildsEdit\DiffResultDialog.xaml.cs">
       <DependentUpon>DiffResultDialog.xaml</DependentUpon>
@@ -237,6 +246,7 @@
     </Compile>
     <Compile Include="PlaylistFileAdapters\PlaylistImporter.cs" />
     <Compile Include="PlaylistFileAdapters\PrePlaylist.cs" />
+    <Compile Include="Repairers\ProcessorBase.cs" />
     <Compile Include="Search\SearchViewModel.cs" />
     <Compile Include="Search\SelectableSearchViewModel.cs" />
     <Compile Include="ViewModel\Extensions.cs" />
