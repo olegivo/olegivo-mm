@@ -29,7 +29,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         }
 
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
-        public MediaDbContext() : base("MeloManagerEF")
+        public MediaDbContext() : base("MeloManager")
         {
             //Disable initializer
             Database.SetInitializer<MediaDbContext>(null);
