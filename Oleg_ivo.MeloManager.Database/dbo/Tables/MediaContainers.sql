@@ -1,9 +1,10 @@
 ﻿CREATE TABLE [dbo].[MediaContainers] (
-    [Id]         BIGINT        IDENTITY (1, 1) NOT NULL,
-    [Name]       VARCHAR (255) NOT NULL,
-    [IsRoot]     BIT           CONSTRAINT [DF_MediaContainers_IsRoot] DEFAULT ((1)) NOT NULL,
-    [DateUpdate] DATETIME      CONSTRAINT [DF_MediaContainers_DateUpdate] DEFAULT (getdate()) NOT NULL,
-    [DateInsert] DATETIME      CONSTRAINT [DF_MediaContainers_DateInsert] DEFAULT (getdate()) NOT NULL,
+    [Id]         BIGINT           IDENTITY (1, 1) NOT NULL,
+    [Name]       VARCHAR (255)    NOT NULL,
+    [IsRoot]     BIT              CONSTRAINT [DF_MediaContainers_IsRoot] DEFAULT ((1)) NOT NULL,
+    [DateUpdate] DATETIME         CONSTRAINT [DF_MediaContainers_DateUpdate] DEFAULT (getdate()) NOT NULL,
+    [DateInsert] DATETIME         CONSTRAINT [DF_MediaContainers_DateInsert] DEFAULT (getdate()) NOT NULL,
+    [RowGuid]    UNIQUEIDENTIFIER CONSTRAINT [DF_MediaContainers_RowGuid] DEFAULT (newid()) NOT NULL,
     CONSTRAINT [PK_MediaContainer] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 
@@ -24,8 +25,8 @@ GO
 -- Create date: 2015-08-08
 -- Description:	Обновление поля DateUpdate
 -- =============================================
-CREATE TRIGGER dbo.MediaContainers_DateUpdate 
-   ON  dbo.MediaContainers
+CREATE TRIGGER [dbo].[MediaContainers_DateUpdate] 
+   ON  [dbo].[MediaContainers]
    AFTER INSERT,UPDATE
 AS 
 BEGIN
@@ -42,13 +43,15 @@ BEGIN
 		
 		UPDATE MC SET DateUpdate = @DT
 		FROM INSERTED I
+			LEFT OUTER JOIN DELETED D ON D.Id = I.Id
 			INNER JOIN dbo.MediaContainers MC ON MC.Id = I.Id
 		WHERE 1=1
 			AND NOT
 			( 
 				1=1
-				AND MC.Name = I.Name
-				AND MC.IsRoot = I.IsRoot
+				AND D.Id IS NOT NULL
+				AND D.Name = I.Name
+				AND D.IsRoot = I.IsRoot
 			)
 	END
 END

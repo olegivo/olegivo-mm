@@ -13,7 +13,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 
         public File()
         {
-            MediaContainers = new HashSet<MediaContainer>();
+            //MediaContainers = new HashSet<MediaContainer>();
         }
 
         public override string ToString()
