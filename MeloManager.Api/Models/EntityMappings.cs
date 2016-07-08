@@ -19,6 +19,7 @@ namespace MeloManager.Api.Models
 
                 Map(x => x.Name);
                 Map(x => x.IsRoot);
+                Map(x => x.RowGuid).Generated.Insert();
                 Map(x => x.DateInsert).Generated.Insert();
                 Map(x => x.DateUpdate).ReadOnly();
 
@@ -67,6 +68,14 @@ namespace MeloManager.Api.Models
             {
                 Table("MediaFiles");
                 KeyColumn("Id");
+
+                Map(x => x.Album);
+                Map(x => x.Artist);
+                Map(x => x.Length);
+                Map(x => x.Title);
+                Map(x => x.Track);
+                Map(x => x.TrackCount);
+                Map(x => x.Year);
             }
         }
 

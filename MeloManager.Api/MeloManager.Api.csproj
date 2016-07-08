@@ -154,6 +154,7 @@
     <Compile Include="Controllers\MediaConainerFileController.cs" />
     <Compile Include="Controllers\MediaConainerParentChildController.cs" />
     <Compile Include="Controllers\MediaContainerController.cs" />
+    <Compile Include="Controllers\MediaFilesController.cs" />
     <Compile Include="Controllers\SearchParameters.cs" />
     <Compile Include="Filters\ExceptionFilters.cs" />
     <Compile Include="Filters\LoggingFilters.cs" />
