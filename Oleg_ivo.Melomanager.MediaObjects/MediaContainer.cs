@@ -132,12 +132,12 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 
         public MediaContainer()
         {
-            Files = new HashSet<File>();
-            ChildContainers = (childMediaContainers = new ObservableCollection<MediaContainer>());
-            ParentContainers = (parentMediaContainers = new ObservableCollection<MediaContainer>());
+            //Files = new HashSet<File>();
+            //ChildContainers = (childMediaContainers = new ObservableCollection<MediaContainer>());
+            //ParentContainers = (parentMediaContainers = new ObservableCollection<MediaContainer>());
             
-            childMediaContainers.CollectionChanged += childMediaContainers_CollectionChanged;
-            parentMediaContainers.CollectionChanged += parentMediaContainers_CollectionChanged;
+            //childMediaContainers.CollectionChanged += childMediaContainers_CollectionChanged;
+            //parentMediaContainers.CollectionChanged += parentMediaContainers_CollectionChanged;
         }
 
         public virtual bool IsRepaired { get; set; }
