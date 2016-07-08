@@ -13,7 +13,17 @@ namespace Oleg_ivo.MeloManager.MediaObjects
     public class MediaFile : MediaContainer
     {
         private static readonly Logger log = LogManager.GetCurrentClassLogger();
+
         private bool isProcessed;
+
+        public virtual string Artist { get; set; }
+        public virtual string Album { get; set; }
+        public virtual int? Length { get; set; }
+        public virtual string Title { get; set; } //TODO: Конфликт между MediaContainer.Name и MediaFile.Title
+        public virtual int? Year { get; set; }
+        public virtual int? Track { get; set; }
+        public virtual int? TrackCount { get; set; }
+
         public override void BatchRepair(IEnumerable<string> foundFiles, bool optionRepairOnlyBadFiles, IMediaCache mediaCache)
         {
             //base.BatchRepair(foundFiles, optionRepairOnlyBadFiles);

@@ -292,6 +292,8 @@ namespace Oleg_ivo.MeloManager.MediaObjects
                     .HasKey(item => item.Id)
                     .Ignore(item => item.IsRepaired);
 
+                Property(item => item.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+                Property(item => item.RowGuid).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Computed);
                 Property(item => item.DateInsert).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Computed);
                 Property(item => item.DateUpdate).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Computed);
                 
@@ -359,6 +361,13 @@ namespace Oleg_ivo.MeloManager.MediaObjects
             public MediaFileConfiguration()
             {
                 ToTable("MediaFiles");
+                Property(item => item.Album);
+                Property(item => item.Artist);
+                Property(item => item.Length);
+                Property(item => item.Title);
+                Property(item => item.Track);
+                Property(item => item.TrackCount);
+                Property(item => item.Year);
             }
         }
 

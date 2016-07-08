@@ -143,6 +143,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         public virtual bool IsRepaired { get; set; }
         public virtual ICollection<File> Files { get; set; }
         public virtual long Id { get; set; }
+        public virtual Guid RowGuid { get; set; }
         public virtual string Name { get; set; }
         public virtual bool IsRoot { get; set; }
         public virtual DateTime? DateInsert { get; set; }
