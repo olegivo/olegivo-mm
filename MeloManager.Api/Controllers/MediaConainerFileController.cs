@@ -25,12 +25,12 @@ namespace MeloManager.Api.Controllers
             }
         }
 
-        protected override object Projection(MediaConainerFile mediaContainer)
+        protected override object Projection(MediaConainerFile entity)
         {
             return new
             {
-                mediaContainer.MediaContainerId,
-                mediaContainer.FileId,
+                entity.MediaContainerId,
+                entity.FileId,
             };
         }
     }

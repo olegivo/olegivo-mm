@@ -35,6 +35,6 @@ namespace MeloManager.Api.Controllers
             return query;
         }
 
-        protected abstract object Projection(TEntity mediaContainer);
+        protected abstract object Projection(TEntity entity);
     }
 }

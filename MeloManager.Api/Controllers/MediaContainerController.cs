@@ -58,18 +58,18 @@ namespace MeloManager.Api.Controllers
             }
         }
 
-        protected override object Projection(MediaContainer mediaContainer)
+        protected override object Projection(MediaContainer entity)
         {
             return new
             {
-                mediaContainer.Id,
-                Type = mediaContainer.GetType().Name.ToLower(),
-                mediaContainer.Name,
-                mediaContainer.IsRoot,
-                mediaContainer.DateUpdate,
-                ChildContainersCount = mediaContainer.ChildContainers.Count,
-                ParentContainersCount = mediaContainer.ParentContainers.Count,
-                FilesCount = mediaContainer.Files.Count,
+                entity.Id,
+                Type = entity.GetType().Name.ToLower(),
+                entity.Name,
+                entity.IsRoot,
+                entity.DateUpdate,
+                ChildContainersCount = entity.ChildContainers.Count,
+                ParentContainersCount = entity.ParentContainers.Count,
+                FilesCount = entity.Files.Count,
             };
         }
     }
