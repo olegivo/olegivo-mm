@@ -41,12 +41,17 @@ namespace MeloManager.Api.Controllers
 
         protected override object Projection(MediaFile entity)
         {
+            return GetProjection(entity);
+        }
+
+        internal static object GetProjection(MediaFile entity)
+        {
             return new
             {
                 entity.Id,
+                Type = entity.GetType().Name.ToLower(),
                 entity.RowGuid,
                 entity.Name,
-
                 entity.Album,
                 entity.Artist,
                 entity.Length,
@@ -54,7 +59,6 @@ namespace MeloManager.Api.Controllers
                 entity.Track,
                 entity.TrackCount,
                 entity.Year,
-
                 entity.IsRoot,
                 entity.DateUpdate,
                 ParentContainersCount = entity.ParentContainers.Count,

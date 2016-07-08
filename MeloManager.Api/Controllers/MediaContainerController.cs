@@ -60,6 +60,12 @@ namespace MeloManager.Api.Controllers
 
         protected override object Projection(MediaContainer entity)
         {
+            var mediaFile = entity as MediaFile;
+            if (mediaFile != null)
+            {
+                return MediaFilesController.GetProjection(mediaFile);
+            }
+
             return new
             {
                 entity.Id,
