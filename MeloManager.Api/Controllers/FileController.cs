@@ -1,9 +1,17 @@
-﻿using NHibernate;
+﻿using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Web.Http;
+using NHibernate;
 using NHibernate.Criterion;
 using Oleg_ivo.MeloManager.MediaObjects;
+using File = Oleg_ivo.MeloManager.MediaObjects.File;
 
 namespace MeloManager.Api.Controllers
 {
+    [RoutePrefix("files")]
     public class FilesController : ControllerBase<File, FilesController.FileParameters>
     {
         private static readonly NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
@@ -33,11 +41,41 @@ namespace MeloManager.Api.Controllers
 
         protected override object Projection(File entity)
         {
+            var fileInfo = new FileInfo(entity.FullFileName);
             return new
             {
                 entity.Id,
-                entity.FullFileName
+                entity.Filename,
+                fileInfo.CreationTimeUtc,
+                fileInfo.LastWriteTimeUtc,
             };
+        }
+
+        [HttpGet]
+        [Route("download")]
+        public HttpResponseMessage Download([FromUri] FileParameters parameters)
+        {
+            var files = GetEntities(parameters).ToList();
+            var file = files.Single();
+
+            var stream = new FileStream(file.FullFileName, FileMode.Open);
+            var result = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content =
+                    new StreamContent(stream)
+                    {
+                        Headers =
+                        {
+                            ContentType = new MediaTypeHeaderValue("application/octet-stream"),
+                            ContentDisposition = new ContentDispositionHeaderValue("attachment")
+                            {
+                                FileName = file.Filename
+                            }
+                        }
+                    }
+            };
+            return result;
+
         }
     }
 }

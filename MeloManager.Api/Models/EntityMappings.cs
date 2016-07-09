@@ -89,6 +89,7 @@ namespace MeloManager.Api.Models
                 Table("Files");
                 Id(x => x.Id).GeneratedBy.Identity();
 
+                Map(x => x.Filename);
                 Map(x => x.FullFileName);
                 Map(x => x.DateInsert).Generated.Insert();
                 Map(x => x.DateUpdate).ReadOnly();

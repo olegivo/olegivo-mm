@@ -42,12 +42,12 @@ namespace MeloManager.Api
                 defaults: new { id = RouteParameter.Optional }
                 );
 
-            routes.MapHttpRoute(
+            /*routes.MapHttpRoute(
                 name: "ApiControllerAction",
                 routeTemplate: "{controller}/{action}",
                 defaults: new { action = "default" },
-                constraints: new { controller = "auth" }
-            );
+                constraints: new { controller = "files" }
+            );*/
 
             routes.MapHttpRoute(
                name: "ApiController",
