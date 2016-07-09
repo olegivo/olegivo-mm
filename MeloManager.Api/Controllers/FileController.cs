@@ -4,11 +4,11 @@ using Oleg_ivo.MeloManager.MediaObjects;
 
 namespace MeloManager.Api.Controllers
 {
-    public class FilesController : ControllerBase<File, FilesController.MediaContainerParameters>
+    public class FilesController : ControllerBase<File, FilesController.FileParameters>
     {
         private static readonly NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
-        public class MediaContainerParameters : SearchParameters<File>
+        public class FileParameters : SearchParameters<File>
         {
             public long? Id { get; set; }
             public long? MediaContainerId { get; set; }

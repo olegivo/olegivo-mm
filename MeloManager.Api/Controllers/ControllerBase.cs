@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -14,16 +15,34 @@ namespace MeloManager.Api.Controllers
         [Dependency(Required = true)]
         public NHibernateHelper NHibernateHelper { get; set; }
 
+        [Route("")]
         public IEnumerable<object> Get([FromUri] TSearchParameter parameters)
+        {
+            var entities = GetEntities(parameters, Projection).ToList();
+            return entities;
+        }
+
+        protected IEnumerable<TResult> GetEntities<TResult>(TSearchParameter parameters, Func<TEntity, TResult> selector)
+        {
+            return DbRequest(session =>
+            {
+                var query = Query(parameters, session);
+                return parameters.ApplyLocalFilters(query.Future()).Select(selector).ToList();
+            });
+        }
+
+        protected IEnumerable<TEntity> GetEntities(TSearchParameter parameters)
+        {
+            return GetEntities(parameters, entity => entity);
+        }
+
+        protected TResult DbRequest<TResult>(Func<ISession, TResult> request)
         {
             using (var sessionFactory = NHibernateHelper.CreateSessionFactory<MediaContainerParentChildsController>())
             {
                 using (var session = sessionFactory.OpenSession())
                 {
-                    var query = Query(parameters, session);
-                    var entities = parameters.ApplyLocalFilters(query.Future());
-                    var list = entities.Select(Projection).ToList();
-                    return list;
+                    return request(session);
                 }
             }
         }
