@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
 using Oleg_ivo.MeloManager.MediaObjects;
+using File = System.IO.File;
 
 namespace MeloManager.Api.Controllers
 {
@@ -46,6 +48,11 @@ namespace MeloManager.Api.Controllers
 
         internal static object GetProjection(MediaFile entity)
         {
+            var files = entity.Files
+                .AsEnumerable()
+                .Where(f => File.Exists(f.FullFileName))
+                .ToList();
+
             return new
             {
                 entity.Id,
@@ -63,6 +70,7 @@ namespace MeloManager.Api.Controllers
                 entity.DateUpdate,
                 ParentContainersCount = entity.ParentContainers.Count,
                 FilesCount = entity.Files.Count,
+                File = files.Count == 1 ? FilesController.GetProjection(files.Single()) : null
             };
         }
     }

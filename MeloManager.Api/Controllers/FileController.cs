@@ -41,6 +41,11 @@ namespace MeloManager.Api.Controllers
 
         protected override object Projection(File entity)
         {
+            return GetProjection(entity);
+        }
+
+        public static object GetProjection(File entity)
+        {
             var fileInfo = new FileInfo(entity.FullFileName);
             return new
             {
