@@ -29,6 +29,7 @@ namespace MeloManager.Api.Controllers
         {
             return new
             {
+                entity.Id,
                 entity.ParentId,
                 entity.ChildId,
             };

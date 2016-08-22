@@ -61,7 +61,12 @@ namespace MeloManager.Api.Controllers
         public HttpResponseMessage Download([FromUri] FileParameters parameters)
         {
             var files = GetEntities(parameters).ToList();
-            var file = files.Single();
+            var file = files.SingleOrDefault();
+
+            if (file == null)
+            {
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+            }
 
             var stream = new FileStream(file.FullFileName, FileMode.Open);
             var result = new HttpResponseMessage(HttpStatusCode.OK)

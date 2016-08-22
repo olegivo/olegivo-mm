@@ -70,6 +70,7 @@ namespace MeloManager.Api.Controllers
             {
                 entity.Id,
                 Type = entity.GetType().Name.ToLower(),
+                entity.RowGuid,
                 entity.Name,
                 entity.IsRoot,
                 entity.DateUpdate,
