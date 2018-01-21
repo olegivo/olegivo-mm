@@ -1,16 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
 using NHibernate;
 using NHibernate.Criterion;
 using Oleg_ivo.MeloManager.MediaObjects;
 
 namespace MeloManager.Api.Controllers
 {
+    [RoutePrefix("MediaContainers")]
     public class MediaContainersController : ControllerBase<MediaContainer, MediaContainersController.MediaContainerParameters>
     {
         private static readonly NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
+        private static readonly Dictionary<string, string> map = new Dictionary<string, string>
         {
+            {nameof(Category).ToLower(), "categories"},
+            {nameof(Playlist).ToLower(), "playlists"},
+            {nameof(MediaFile).ToLower(), "mediafiles"},
+        };
 
         public class MediaContainerParameters : SearchParameters<MediaContainer>
         {
@@ -56,6 +64,15 @@ namespace MeloManager.Api.Controllers
                         .WhereProperty(() => parentContainer.Id).In(parentIdsQuery);
                 }
             }
+        }
+
+        [Route("ByType")]
+        public Dictionary<string, List<MediaContainerProjection>> GetByType([FromUri] MediaContainerParameters parameters)
+        {
+            return GetEntities(parameters, Projection)
+                .Cast<MediaContainerProjection>()
+                .GroupBy(item => map[item.Type])
+                .ToDictionary(g => g.Key, g => g.ToList());
         }
 
         protected override object Projection(MediaContainer entity)
