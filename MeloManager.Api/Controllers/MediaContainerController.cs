@@ -10,12 +10,7 @@ namespace MeloManager.Api.Controllers
     {
         private static readonly NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
-        public enum MediaContainerTypes
         {
-            Category,
-            Playlist,
-            MediaFile
-        }
 
         public class MediaContainerParameters : SearchParameters<MediaContainer>
         {
@@ -28,9 +23,9 @@ namespace MeloManager.Api.Controllers
             private static readonly Dictionary<MediaContainerTypes, Type> types =
                 new Dictionary<MediaContainerTypes, Type>
                 {
-                    {MediaContainerTypes.Category, typeof (Category)},
-                    {MediaContainerTypes.Playlist, typeof (Playlist)},
-                    {MediaContainerTypes.MediaFile, typeof (MediaFile)},
+                    {MediaContainerTypes.Category, typeof(Category)},
+                    {MediaContainerTypes.Playlist, typeof(Playlist)},
+                    {MediaContainerTypes.MediaFile, typeof(MediaFile)},
                 };
 
             public override void ApplyDbFilters(IQueryOver<MediaContainer, MediaContainer> query)
@@ -40,20 +35,25 @@ namespace MeloManager.Api.Controllers
                     var type = types[Type.Value];
                     query.Where(mc => mc.GetType() == type);
                 }
+
                 if (Id != null)
                 {
                     query.Where(container => container.Id == Id);
                 }
+
                 if (IsRoot != null)
                 {
                     query.Where(container => container.IsRoot == IsRoot);
                 }
+
+                // ReSharper disable once InvertIf
                 if (ParentId != null)
                 {
                     var parentIdsQuery = QueryOver.Of<MediaContainer>().Where(p => p.Id == ParentId).Select(p => p.Id);
 
                     MediaContainer parentContainer = null;
-                    query.JoinAlias(mc => mc.ParentContainers, () => parentContainer).WithSubquery.WhereProperty(() => parentContainer.Id).In(parentIdsQuery);
+                    query.JoinAlias(mc => mc.ParentContainers, () => parentContainer).WithSubquery
+                        .WhereProperty(() => parentContainer.Id).In(parentIdsQuery);
                 }
             }
         }
@@ -78,6 +78,13 @@ namespace MeloManager.Api.Controllers
                 ParentContainersCount = entity.ParentContainers.Count,
                 FilesCount = entity.Files.Count,
             };
+        }
+
+        public enum MediaContainerTypes
+        {
+            Category,
+            Playlist,
+            MediaFile
         }
     }
 }
