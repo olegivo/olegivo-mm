@@ -148,12 +148,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\SqlDbConnectionModule.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\MediaContainerProjection.cs" />
     <Compile Include="Controllers\ControllerBase.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\MediaConainerFileController.cs" />
     <Compile Include="Controllers\MediaConainerParentChildController.cs" />
     <Compile Include="Controllers\MediaContainerController.cs" />
+    <Compile Include="Controllers\MediaFileProjection.cs" />
     <Compile Include="Controllers\MediaFilesController.cs" />
     <Compile Include="Controllers\SearchParameters.cs" />
     <Compile Include="Filters\ExceptionFilters.cs" />
