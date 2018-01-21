@@ -73,7 +73,7 @@ namespace MeloManager.Api.Controllers
                 RowGuid = entity.RowGuid,
                 Name = entity.Name,
                 IsRoot = entity.IsRoot,
-                DateUpdate = entity.DateUpdate,
+                DateUpdate = entity.DateUpdate?.ToUniversalTime() /*преобразование из локального времени (+3) в UTC*/,
                 ChildContainersCount = entity.ChildContainers.Count,
                 ParentContainersCount = entity.ParentContainers.Count,
                 FilesCount = entity.Files.Count,

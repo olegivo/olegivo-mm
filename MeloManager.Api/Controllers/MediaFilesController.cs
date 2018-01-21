@@ -67,7 +67,7 @@ namespace MeloManager.Api.Controllers
                 TrackCount = entity.TrackCount,
                 Year = entity.Year,
                 IsRoot = entity.IsRoot,
-                DateUpdate = entity.DateUpdate,
+                DateUpdate = entity.DateUpdate?.ToUniversalTime() /*преобразование из локального времени (+3) в UTC*/,
                 ParentContainersCount = entity.ParentContainers.Count,
                 FilesCount = entity.Files.Count,
                 File = files.Count == 1 ? FilesController.GetProjection(files.Single()) : null
