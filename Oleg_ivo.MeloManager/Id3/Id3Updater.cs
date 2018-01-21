@@ -66,33 +66,61 @@ namespace Oleg_ivo.MeloManager.Id3
                 return;
             }
 
+            var updated = false;
+
             var album = NullIfEmpty(file.Tag.Album);
             if (mediaFile.Album != album)
+            {
                 mediaFile.Album = album;
+                updated = true;
+            }
 
             var artist = NullIfEmpty(file.Tag.FirstAlbumArtist) ?? NullIfEmpty(file.Tag.FirstArtist);
             if (mediaFile.Artist != artist)
+            {
                 mediaFile.Artist = artist;
+                updated = true;
+            }
 
             var totalSeconds = NullIfEmpty((int) Math.Round(file.Properties.Duration.TotalSeconds));
             if (mediaFile.Length != totalSeconds && totalSeconds > 0)
+            {
                 mediaFile.Length = totalSeconds;
+                updated = true;
+            }
 
             var title = NullIfEmpty(file.Tag.Title);
             if (mediaFile.Title != title)
+            {
                 mediaFile.Title = title;
+                updated = true;
+            }
 
             var track = NullIfEmpty((int) file.Tag.Track);
             if (mediaFile.Track != track)
+            {
                 mediaFile.Track = track;
+                updated = true;
+            }
 
             var trackCount = NullIfEmpty((int) file.Tag.TrackCount);
             if (mediaFile.TrackCount != trackCount)
+            {
                 mediaFile.TrackCount = trackCount;
+                updated = true;
+            }
 
             var year = NullIfEmpty((int) file.Tag.Year);
             if (mediaFile.Year != year)
+            {
                 mediaFile.Year = year;
+                updated = true;
+            }
+
+            if (updated)
+            {
+                log.Debug("{0} updated", mediaFile);
+            }
         }
     }
 }
