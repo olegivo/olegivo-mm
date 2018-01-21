@@ -33,6 +33,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <param name="child"></param>
         protected virtual void AddChild(MediaContainer child)
         {
+            if (ChildContainers == null) ChildContainers = new List<MediaContainer>();
             ChildContainers.Add(child);
         }
 
@@ -42,6 +43,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         /// <param name="parent"></param>
         protected virtual void AddParent(MediaContainer parent)
         {
+            if (ParentContainers == null) ParentContainers = new List<MediaContainer>();
             ParentContainers.Add(parent);
         }
 

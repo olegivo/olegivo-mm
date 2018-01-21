@@ -249,6 +249,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
 
                     var file = GetOrAddCachedFile(filename);
                     mediaFile = new MediaFile { Name = file.Filename };
+                    if (mediaFile.Files == null) mediaFile.Files = new List<File>();
                     mediaFile.Files.Add(file);
                     return mediaFile;
                 });

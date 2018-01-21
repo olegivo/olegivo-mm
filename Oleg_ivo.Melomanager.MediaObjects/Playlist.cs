@@ -21,6 +21,7 @@ namespace Oleg_ivo.MeloManager.MediaObjects
         public Playlist(string originalFileName, IMediaCache mediaCache)
         {
             this.originalFileName = originalFileName;
+            if (Files == null) Files = new List<File>();
             if (System.IO.File.Exists(originalFileName) && !Files.Any())
             {
                 var file = mediaCache.GetOrAddCachedFile(originalFileName);
