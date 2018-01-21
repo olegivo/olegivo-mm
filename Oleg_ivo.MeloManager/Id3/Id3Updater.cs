@@ -70,7 +70,7 @@ namespace Oleg_ivo.MeloManager.Id3
             if (mediaFile.Album != album)
                 mediaFile.Album = album;
 
-            var artist = NullIfEmpty(file.Tag.FirstAlbumArtist);
+            var artist = NullIfEmpty(file.Tag.FirstAlbumArtist) ?? NullIfEmpty(file.Tag.FirstArtist);
             if (mediaFile.Artist != artist)
                 mediaFile.Artist = artist;
 
