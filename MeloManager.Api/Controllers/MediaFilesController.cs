@@ -46,28 +46,28 @@ namespace MeloManager.Api.Controllers
             return GetProjection(entity);
         }
 
-        internal static object GetProjection(MediaFile entity)
+        internal static MediaFileProjection GetProjection(MediaFile entity)
         {
             var files = entity.Files
                 .AsEnumerable()
                 .Where(f => File.Exists(f.FullFileName))
                 .ToList();
 
-            return new
+            return new MediaFileProjection
             {
-                entity.Id,
+                Id = entity.Id,
                 Type = entity.GetType().Name.ToLower(),
-                entity.RowGuid,
-                entity.Name,
-                entity.Album,
-                entity.Artist,
-                entity.Length,
-                entity.Title,
-                entity.Track,
-                entity.TrackCount,
-                entity.Year,
-                entity.IsRoot,
-                entity.DateUpdate,
+                RowGuid = entity.RowGuid,
+                Name = entity.Name,
+                Album = entity.Album,
+                Artist = entity.Artist,
+                Length = entity.Length,
+                Title = entity.Title,
+                Track = entity.Track,
+                TrackCount = entity.TrackCount,
+                Year = entity.Year,
+                IsRoot = entity.IsRoot,
+                DateUpdate = entity.DateUpdate,
                 ParentContainersCount = entity.ParentContainers.Count,
                 FilesCount = entity.Files.Count,
                 File = files.Count == 1 ? FilesController.GetProjection(files.Single()) : null

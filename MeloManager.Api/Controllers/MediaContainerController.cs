@@ -66,14 +66,14 @@ namespace MeloManager.Api.Controllers
                 return MediaFilesController.GetProjection(mediaFile);
             }
 
-            return new
+            return new MediaContainerProjection
             {
-                entity.Id,
+                Id = entity.Id,
                 Type = entity.GetType().Name.ToLower(),
-                entity.RowGuid,
-                entity.Name,
-                entity.IsRoot,
-                entity.DateUpdate,
+                RowGuid = entity.RowGuid,
+                Name = entity.Name,
+                IsRoot = entity.IsRoot,
+                DateUpdate = entity.DateUpdate,
                 ChildContainersCount = entity.ChildContainers.Count,
                 ParentContainersCount = entity.ParentContainers.Count,
                 FilesCount = entity.Files.Count,
